@@ -20,21 +20,20 @@ export class PlayerInstance {
   constructor(container: HTMLElement, options: PlayerOptions) {
     // 初始化核心播放器
     this.core = new PlayerCore(container, options);
-    // 向 Core 注入对外 PlayerInstance 引用，并延后初始化 UI
-    this.core.setExternalPlayer(this as any);
-    this.core.initializeUI();
+    
+    // 先初始化状态管理器，确保 UI 在构建时可以订阅到 Store
+    this.store = new PlayerStore(this.core.getState());
     
     // 初始化插件管理器
     this.pluginManager = new PluginManager(this);
     
-    // 初始化状态管理器，使用 Core 的当前状态作为单一可信源
-    this.store = new PlayerStore(this.core.getState());
-    
-    // 设置状态变化监听
+    // 设置状态变化监听与事件转发（依赖 store 已就绪）
     this.setupStateSync();
-    
-    // 设置事件转发
     this.setupEventForwarding();
+    
+    // 最后再初始化 UI，确保 DefaultUI 能访问到已就绪的 PlayerInstance 与 Store
+    this.core.setExternalPlayer(this as any);
+    this.core.initializeUI();
   }
 
   /**
