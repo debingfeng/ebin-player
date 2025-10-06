@@ -22,7 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
     muted: false,
     volume: 1,
     width: '100%',
-    height: 'auto'
+    height: 'auto',
+    debug: true
   });
 
   window.player = player;

@@ -5,6 +5,9 @@
 import { PlayerOptions, PlayerState, PlayerEventType, PlayerEvent, PlayerLifecycle, UIMode, ControlBarConfig, PlayerTheme, EventPayloadMap, PlayerEventBase } from '../types';
 import { DefaultUI } from '../ui/DefaultUI';
 import { AdvancedUI } from '../ui/AdvancedUI';
+import { Logger as CoreLogger } from './Logger';
+import type { Logger as LoggerType } from '../types';
+import { logMethod } from './decorators';
 
 export class PlayerCore {
   private videoElement!: HTMLVideoElement;
@@ -19,11 +22,14 @@ export class PlayerCore {
   private uiMode: UIMode;
   // 保存外部暴露的 PlayerInstance 引用，供 UI 使用
   private externalPlayer: any | null = null;
+  private logger: LoggerType;
 
   constructor(container: HTMLElement, options: PlayerOptions) {
     this.container = container;
     this.options = options;
     this.state = this.createInitialState();
+    this.logger = options?.logger || new CoreLogger('Core');
+
     
     // 确定UI模式
     this.uiMode = this.determineUIMode();
@@ -31,12 +37,14 @@ export class PlayerCore {
     this.initializeVideoElement();
     this.setupEventListeners();
     this.setupLifecycle();
+    this.logger.info('initialized');
   }
 
   /**
    * 初始化视频元素
    */
   private initializeVideoElement(): void {
+    this.logger.debug('initializeVideoElement');
     this.videoElement = document.createElement('video');
     this.videoElement.style.width = '100%';
     this.videoElement.style.height = '100%';
@@ -75,12 +83,14 @@ export class PlayerCore {
     }
     
     this.container.appendChild(this.videoElement);
+    this.logger.debug('video element appended');
   }
 
   /**
    * 设置事件监听器
    */
   private setupEventListeners(): void {
+    this.logger.debug('setupEventListeners');
     const mediaEvents: PlayerEventType[] = [
       'loadstart', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough',
       'play', 'pause', 'ended', 'error', 'timeupdate', 'volumechange', 'ratechange',
@@ -96,6 +106,7 @@ export class PlayerCore {
     // 监听全屏变化
     document.addEventListener('fullscreenchange', () => {
       this.emit('fullscreenchange', { isFullscreen: this.isFullscreen() });
+      this.logger.debug('fullscreenchange', { isFullscreen: this.isFullscreen() });
     });
 
     // 监听画中画变化
@@ -114,6 +125,15 @@ export class PlayerCore {
   private handleMediaEvent(eventType: PlayerEventType, event: Event): void {
     this.updateState();
     this.emit(eventType, event);
+    if (eventType === 'error') {
+      this.logger.error('media error', this.videoElement.error);
+    } else {
+      this.logger.debug('media event', eventType, {
+        currentTime: this.videoElement.currentTime,
+        duration: this.videoElement.duration,
+        paused: this.videoElement.paused
+      });
+    }
   }
 
   /**
@@ -122,26 +142,32 @@ export class PlayerCore {
   private setupLifecycle(): void {
     this.videoElement.addEventListener('loadstart', () => {
       this.setLifecycle(PlayerLifecycle.INITIALIZING);
+      this.logger.debug('lifecycle', 'INITIALIZING');
     });
 
     this.videoElement.addEventListener('canplay', () => {
       this.setLifecycle(PlayerLifecycle.READY);
+      this.logger.debug('lifecycle', 'READY');
     });
 
     this.videoElement.addEventListener('play', () => {
       this.setLifecycle(PlayerLifecycle.PLAYING);
+      this.logger.debug('lifecycle', 'PLAYING');
     });
 
     this.videoElement.addEventListener('pause', () => {
       this.setLifecycle(PlayerLifecycle.PAUSED);
+      this.logger.debug('lifecycle', 'PAUSED');
     });
 
     this.videoElement.addEventListener('ended', () => {
       this.setLifecycle(PlayerLifecycle.ENDED);
+      this.logger.debug('lifecycle', 'ENDED');
     });
 
     this.videoElement.addEventListener('error', () => {
       this.setLifecycle(PlayerLifecycle.ERROR);
+      this.logger.error('lifecycle', 'ERROR', this.videoElement.error);
     });
   }
 
@@ -197,6 +223,11 @@ export class PlayerCore {
       buffered: this.videoElement.buffered,
       seekable: this.videoElement.seekable
     };
+    this.logger.debug('state updated', {
+      currentTime: this.state.currentTime,
+      duration: this.state.duration,
+      paused: this.state.paused
+    });
   }
 
   /**
@@ -209,13 +240,16 @@ export class PlayerCore {
   /**
    * 播放视频
    */
+  @logMethod({ includeArgs: false })
   async play(): Promise<void> {
     if (this.isDestroyed) return;
     
     try {
+      this.logger.debug('video.play()');
       await this.videoElement.play();
     } catch (error) {
       console.error('播放失败:', error);
+      this.logger.error('play failed', error);
       throw error;
     }
   }
@@ -223,8 +257,10 @@ export class PlayerCore {
   /**
    * 暂停视频
    */
+  @logMethod({ includeArgs: false })
   pause(): void {
     if (this.isDestroyed) return;
+    this.logger.debug('video.pause()');
     this.videoElement.pause();
   }
 
@@ -353,6 +389,7 @@ export class PlayerCore {
     if (this.isDestroyed) return;
     
     this.state = { ...this.state, ...state };
+    this.logger.debug('setState', state);
     
     // 同步到视频元素
     if (state.volume !== undefined) {
@@ -576,6 +613,8 @@ export class PlayerCore {
       uiConfig,
       theme
     );
+    this.defaultUI.setDebug?.(!!this.options.debug);
+    this.logger.debug('default UI created');
   }
 
   /**
@@ -619,6 +658,8 @@ export class PlayerCore {
       uiConfig,
       theme
     );
+    (this.advancedUI as any).setDebug?.(!!this.options.debug);
+    this.logger.debug('advanced UI created');
   }
 
   /**
@@ -628,6 +669,7 @@ export class PlayerCore {
     if (this.isDestroyed) return;
     
     this.uiMode = uiMode;
+    this.logger.info('updateUIMode', uiMode);
     
     // 更新视频元素的controls属性
     this.videoElement.controls = uiMode === UIMode.NATIVE;
@@ -658,6 +700,7 @@ export class PlayerCore {
     if (this.isDestroyed) return;
     
     this.options.uiConfig = { ...this.options.uiConfig, ...config };
+    this.logger.info('updateUIConfig', config);
     
     if (this.defaultUI) {
       this.defaultUI.updateConfig(config);
@@ -671,6 +714,7 @@ export class PlayerCore {
     if (this.isDestroyed) return;
     
     this.options.theme = { ...this.options.theme, ...theme };
+    this.logger.info('updateUITheme', theme);
     
     if (this.defaultUI) {
       this.defaultUI.updateTheme(theme);
@@ -689,6 +733,12 @@ export class PlayerCore {
    */
   setExternalPlayer(player: any): void {
     this.externalPlayer = player;
+  }
+
+  setDebug(enabled: boolean): void {
+    this.logger.setEnabled(enabled);
+    if (this.defaultUI) this.defaultUI.setDebug?.(enabled);
+    if (this.advancedUI) (this.advancedUI as any).setDebug?.(enabled);
   }
 
   /**

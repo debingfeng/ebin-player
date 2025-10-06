@@ -3,6 +3,7 @@
  * 提供一套通用的UI渲染，支持自定义渲染
  */
 import { PlayerInstance, PlayerState, UIComponent, ControlBarConfig, PlayerTheme } from '../types';
+import { Logger } from '../core/Logger';
 
 export class DefaultUI {
   name = 'defaultUI';
@@ -17,6 +18,7 @@ export class DefaultUI {
   private isDestroyed = false;
   private config: ControlBarConfig;
   private theme: PlayerTheme;
+  private logger: Logger;
 
   constructor(
     player: PlayerInstance, 
@@ -46,6 +48,7 @@ export class DefaultUI {
       fontFamily: 'Arial, sans-serif',
       ...theme
     };
+    this.logger = new Logger('UI:Default', false);
 
     this.createUI();
     this.setupEventListeners();
@@ -55,6 +58,7 @@ export class DefaultUI {
    * 创建UI结构
    */
   private createUI(): void {
+    this.logger.debug('createUI');
     // 设置容器样式
     this.container.className = 'ebin-player';
     this.container.style.fontFamily = this.theme.fontFamily || 'system-ui, -apple-system, sans-serif';
@@ -73,6 +77,7 @@ export class DefaultUI {
    * 创建控制栏
    */
   private createControlBar(): void {
+    this.logger.debug('createControlBar');
     this.controlBar = document.createElement('div');
     this.controlBar.className = 'ebin-control-bar';
     this.controlBar.style.height = `${this.theme.controlBarHeight || 50}px`;
@@ -124,6 +129,7 @@ export class DefaultUI {
    * 创建播放按钮
    */
   private createPlayButton(): void {
+    this.logger.debug('createPlayButton');
     this.playButton = document.createElement('button');
     this.playButton.className = 'ebin-play-button';
     this.playButton.innerHTML = '▶';
@@ -137,6 +143,7 @@ export class DefaultUI {
    * 创建进度条
    */
   private createProgressBar(): void {
+    this.logger.debug('createProgressBar');
     const progressContainer = document.createElement('div');
     progressContainer.className = 'ebin-progress-container';
     progressContainer.setAttribute('role', 'slider');
@@ -160,6 +167,7 @@ export class DefaultUI {
    * 创建时间显示
    */
   private createTimeDisplay(): void {
+    this.logger.debug('createTimeDisplay');
     this.timeDisplay = document.createElement('div');
     this.timeDisplay.className = 'ebin-time-display';
     this.timeDisplay.setAttribute('aria-live', 'polite');
@@ -178,6 +186,7 @@ export class DefaultUI {
    * 创建音量控制
    */
   private createVolumeControl(): void {
+    this.logger.debug('createVolumeControl');
     this.volumeControl = document.createElement('div');
     this.volumeControl.className = 'ebin-volume-control';
 
@@ -204,6 +213,7 @@ export class DefaultUI {
    * 创建全屏按钮
    */
   private createFullscreenButton(): void {
+    this.logger.debug('createFullscreenButton');
     this.fullscreenButton = document.createElement('button');
     this.fullscreenButton.className = 'ebin-fullscreen-button';
     this.fullscreenButton.innerHTML = '⛶';
@@ -217,6 +227,7 @@ export class DefaultUI {
    * 创建播放按钮覆盖层
    */
   private createPlayButtonOverlay(): void {
+    this.logger.debug('createPlayButtonOverlay');
     const overlay = document.createElement('div');
     overlay.className = 'ebin-play-overlay';
     overlay.setAttribute('aria-label', '播放视频');
@@ -235,6 +246,7 @@ export class DefaultUI {
    * 创建加载指示器
    */
   private createLoadingIndicator(): void {
+    this.logger.debug('createLoadingIndicator');
     const loadingIndicator = document.createElement('div');
     loadingIndicator.className = 'ebin-loading-indicator';
     loadingIndicator.setAttribute('aria-label', '加载中');
@@ -247,6 +259,7 @@ export class DefaultUI {
    * 设置事件监听器
    */
   private setupEventListeners(): void {
+    this.logger.debug('setupEventListeners');
     // 鼠标悬停显示/隐藏控制栏
     this.container.addEventListener('mouseenter', () => {
       this.showControlBar();
@@ -259,6 +272,7 @@ export class DefaultUI {
     // 播放按钮
     if (this.playButton) {
       this.playButton.addEventListener('click', () => {
+        this.logger.debug('playButton.click');
         if (this.player.getPaused()) {
           this.player.play();
         } else {
@@ -271,6 +285,7 @@ export class DefaultUI {
     if (this.progressBar) {
       const progressContainer = this.progressBar.parentElement!;
       progressContainer.addEventListener('click', (e) => {
+        this.logger.debug('progress.click');
         const rect = progressContainer.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
         const percentage = clickX / rect.width;
@@ -286,11 +301,13 @@ export class DefaultUI {
       const volumeButton = this.volumeControl.querySelector('button') as HTMLButtonElement;
 
       volumeSlider.addEventListener('input', (e) => {
+        this.logger.debug('volume.input');
         const target = e.target as HTMLInputElement;
         this.player.setVolume(parseFloat(target.value));
       });
 
       volumeButton.addEventListener('click', () => {
+        this.logger.debug('volume.toggleMute');
         this.player.setMuted(!this.player.getMuted());
       });
     }
@@ -298,6 +315,7 @@ export class DefaultUI {
     // 全屏按钮
     if (this.fullscreenButton) {
       this.fullscreenButton.addEventListener('click', () => {
+        this.logger.debug('fullscreen.toggle');
         if (this.player.isFullscreen()) {
           this.player.exitFullscreen();
         } else {
@@ -309,6 +327,11 @@ export class DefaultUI {
     // 播放器状态变化
     if (this.player && 'subscribe' in this.player && typeof (this.player as any).subscribe === 'function') {
       (this.player as any).subscribe((state: PlayerState) => {
+        this.logger.debug('state.update', {
+          currentTime: state.currentTime,
+          duration: state.duration,
+          paused: state.paused
+        });
         this.updateUI(state);
       });
     }
@@ -394,6 +417,7 @@ export class DefaultUI {
     this.destroy();
     this.createUI();
     this.setupEventListeners();
+    this.logger.debug('updateConfig', config);
   }
 
   /**
@@ -405,6 +429,7 @@ export class DefaultUI {
     this.destroy();
     this.createUI();
     this.setupEventListeners();
+    this.logger.debug('updateTheme', theme);
   }
 
   /**
@@ -412,7 +437,7 @@ export class DefaultUI {
    */
   destroy(): void {
     if (this.isDestroyed) return;
-    
+    this.logger.info('destroy');
     this.isDestroyed = true;
     
     // 清理事件监听器
@@ -427,5 +452,10 @@ export class DefaultUI {
     if (playOverlay && playOverlay.parentNode) {
       playOverlay.parentNode.removeChild(playOverlay);
     }
+  }
+
+  setDebug(enabled: boolean): void {
+    if (!this.logger) return;
+    this.logger.setEnabled(enabled);
   }
 }

@@ -6,7 +6,9 @@ import { PlayerCore } from './PlayerCore';
 import { PlayerStore } from './PlayerStore';
 import { PlayerOptions, PlayerState, PlayerEventType, PlayerEvent, Plugin, UIMode, ControlBarConfig, PlayerTheme, MEDIA_EVENTS, EventPayloadMap, PlayerEventBase } from '../types';
 import { PluginManager } from '../plugin/PluginManager';
-import { chainable, chainableAsync } from './decorators';
+import { chainable, chainableAsync, logMethod } from './decorators';
+import { Logger as CoreLogger } from './Logger';
+import type { Logger as LoggerType } from '../types';
 
 export class PlayerInstance {
   public core: PlayerCore;
@@ -16,16 +18,23 @@ export class PlayerInstance {
   // 每帧节流相关
   private syncScheduled = false;
   private rafId: number | null = null;
+  private logger: LoggerType;
 
   constructor(container: HTMLElement, options: PlayerOptions) {
-    // 初始化核心播放器
-    this.core = new PlayerCore(container, options);
+    // 初始化日志（可外部注入，否则创建默认实例）
+    this.logger = options.logger || new CoreLogger('Player');
+    this.logger.setEnabled(!!options.debug);
+    this.logger.info('construct', { options: { ...options, src: !!options.src ? '***' : options.src } });
+
+    // 初始化核心播放器（复用同一 logger）
+    // 这里传入的 logger 是 types.Logger，但 PlayerCore 内部只以结构化使用，保持兼容
+    this.core = new PlayerCore(container, { ...options, logger: this.logger } as any);
     
     // 先初始化状态管理器，确保 UI 在构建时可以订阅到 Store
-    this.store = new PlayerStore(this.core.getState());
+    this.store = new PlayerStore(this.core.getState(), this.logger);
     
     // 初始化插件管理器
-    this.pluginManager = new PluginManager(this);
+    this.pluginManager = new PluginManager(this, this.logger);
     
     // 设置状态变化监听与事件转发（依赖 store 已就绪）
     this.setupStateSync();
@@ -36,13 +45,7 @@ export class PlayerInstance {
     this.core.initializeUI();
   }
 
-  /**
-   * 同步核心状态到状态管理器
-   */
-  private syncCoreToStore(): void {
-    const coreState = this.core.getState();
-    this.store.setState(coreState);
-  }
+
 
   /**
    * 设置状态同步
@@ -121,6 +124,7 @@ export class PlayerInstance {
   }
 
   @chainable
+  @logMethod({ includeArgs: false })
   pause(): PlayerInstance {
     this.core.pause();
     return this;
@@ -138,6 +142,7 @@ export class PlayerInstance {
   }
 
   @chainable
+  @logMethod({ includeArgs: true })
   setCurrentTime(time: number): PlayerInstance {
     this.core.setCurrentTime(time);
     return this;
@@ -152,6 +157,7 @@ export class PlayerInstance {
   }
 
   @chainable
+  @logMethod({ includeArgs: true })
   setVolume(volume: number): PlayerInstance {
     this.core.setVolume(volume);
     return this;
@@ -162,6 +168,7 @@ export class PlayerInstance {
   }
 
   @chainable
+  @logMethod({ includeArgs: true })
   setMuted(muted: boolean): PlayerInstance {
     this.core.setMuted(muted);
     return this;
@@ -172,6 +179,7 @@ export class PlayerInstance {
   }
 
   @chainable
+  @logMethod({ includeArgs: true })
   setPlaybackRate(rate: number): PlayerInstance {
     this.core.setPlaybackRate(rate);
     return this;
@@ -201,9 +209,10 @@ export class PlayerInstance {
   getState(): PlayerState {
     return this.store.getState();
   }
-
+  @chainable
+  @logMethod({ includeArgs: true })
   setState(state: Partial<PlayerState>): void {
-    if (this.isDestroyed) return;
+
     
     // 仅更新核心播放器状态，随后以 Core 的完整状态同步到 Store，保持单向数据流
     this.core.setState(state);
@@ -214,7 +223,7 @@ export class PlayerInstance {
   // 事件系统方法
   on<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): () => void {
     if (this.isDestroyed) return () => {};
-    
+    this.logger.info('on', event);
     // 同时监听核心播放器和状态管理器的事件，并返回统一退订函数
     this.core.on(event, callback as any);
     const unsubscribeStore = this.store.subscribeEvent(event, callback as any);
@@ -227,14 +236,13 @@ export class PlayerInstance {
 
   off<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): void {
     if (this.isDestroyed) return;
-    
     this.core.off(event, callback as any);
     // 尝试从 Store 侧移除（防止使用者未保存取消函数时的泄漏）
     // 由于 Store 需要取消函数，这里提供兜底方案：临时订阅后立刻退订以触发 delete
     const tmpUnsub = this.store.subscribeEvent(event, callback as any);
     tmpUnsub();
   }
-
+  @logMethod({ includeArgs: true })
   @chainable
   emit<T extends PlayerEventType>(event: T, data?: EventPayloadMap[T]): PlayerInstance {
     this.core.emit(event, data as any);
@@ -307,12 +315,14 @@ export class PlayerInstance {
     keys?: (keyof PlayerState)[]
   ): () => void {
     if (this.isDestroyed) return () => {};
+    this.logger.info('subscribe', keys);
     return this.store.subscribe(callback, keys);
   }
 
   // UI管理方法
   @chainable
   updateUIMode(uiMode: UIMode): PlayerInstance {
+    this.logger.info('updateUIMode', uiMode);
     this.core.updateUIMode(uiMode);
     return this;
   }
@@ -352,9 +362,9 @@ export class PlayerInstance {
   }
 
   // 销毁播放器
+  @logMethod({ includeArgs: false })
   destroy(): void {
     if (this.isDestroyed) return;
-    
     this.isDestroyed = true;
     // 取消可能存在的帧同步
     if (this.rafId !== null) {
@@ -375,5 +385,11 @@ export class PlayerInstance {
     
     // 销毁核心播放器
     this.core.destroy();
+  }
+
+  // 运行时切换调试
+  setDebug(enabled: boolean): void {
+    this.core.setDebug(enabled);
+    this.store.setDebug?.(enabled);
   }
 }

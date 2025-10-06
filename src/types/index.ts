@@ -11,6 +11,16 @@ export enum UIMode {
   NONE = 'none'            // 不使用任何UI
 }
 
+// 日志接口，用于在外部注入自定义日志实例
+export interface Logger {
+  setEnabled(enabled: boolean): void;
+  child(suffix: string): Logger;
+  debug(...args: any[]): void;
+  info(...args: any[]): void;
+  warn(...args: any[]): void;
+  error(...args: any[]): void;
+}
+
 // 播放器配置选项
 export interface PlayerOptions {
   src: string;
@@ -29,6 +39,8 @@ export interface PlayerOptions {
   uiMode?: UIMode;  // UI模式配置
   uiConfig?: ControlBarConfig;  // 自定义UI配置
   theme?: PlayerTheme;  // UI主题配置
+  logger?: Logger;
+  debug?: boolean; // 是否开启调试日志
 }
 
 // 播放器状态

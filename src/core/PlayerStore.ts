@@ -3,6 +3,8 @@
  * 负责内部组件间的状态数据管理和通信
  */
 import { PlayerState, PlayerEventType, PlayerEvent } from '../types';
+import type { Logger as LoggerType } from '../types';
+import { Logger as CoreLogger } from './Logger';
 
 export class PlayerStore {
   private state: PlayerState;
@@ -10,10 +12,13 @@ export class PlayerStore {
   private eventSubscribers: Map<PlayerEventType, Set<(event: PlayerEvent) => void>> = new Map();
   private stateHistory: PlayerState[] = [];
   private maxHistorySize = 50;
+  private logger: LoggerType;
 
-  constructor(initialState: PlayerState) {
+  constructor(initialState: PlayerState, logger?: LoggerType) {
     this.state = { ...initialState };
     this.stateHistory.push({ ...this.state });
+    this.logger = logger || new CoreLogger('Store');
+    this.logger.info('construct');
   }
 
   /**
@@ -29,6 +34,7 @@ export class PlayerStore {
   setState(newState: Partial<PlayerState>): void {
     const prevState = { ...this.state };
     this.state = { ...this.state, ...newState };
+    this.logger.debug('setState', newState);
     
     // 保存状态历史
     this.stateHistory.push({ ...this.state });
@@ -53,6 +59,7 @@ export class PlayerStore {
   setStateValue<K extends keyof PlayerState>(key: K, value: PlayerState[K]): void {
     const prevState = { ...this.state };
     this.state = { ...this.state, [key]: value };
+    this.logger.debug('setStateValue', key, value);
     
     // 保存状态历史
     this.stateHistory.push({ ...this.state });
@@ -71,6 +78,7 @@ export class PlayerStore {
     callback: (state: PlayerState) => void,
     keys?: (keyof PlayerState)[]
   ): () => void {
+    this.logger.debug('subscribe', keys);
     if (keys && keys.length > 0) {
       // 订阅特定状态键
       keys.forEach(key => {
@@ -89,6 +97,7 @@ export class PlayerStore {
 
     // 返回取消订阅函数
     return () => {
+      this.logger.debug('unsubscribe', keys);
       if (keys && keys.length > 0) {
         keys.forEach(key => {
           const subscribers = this.subscribers.get(key);
@@ -112,12 +121,14 @@ export class PlayerStore {
     eventType: PlayerEventType,
     callback: (event: PlayerEvent) => void
   ): () => void {
+    this.logger.debug('subscribeEvent', eventType);
     if (!this.eventSubscribers.has(eventType)) {
       this.eventSubscribers.set(eventType, new Set());
     }
     this.eventSubscribers.get(eventType)!.add(callback);
 
     return () => {
+      this.logger.debug('unsubscribeEvent', eventType);
       const subscribers = this.eventSubscribers.get(eventType);
       if (subscribers) {
         subscribers.delete(callback);
@@ -137,6 +148,7 @@ export class PlayerStore {
           callback(currentState);
         } catch (error) {
           console.error('状态订阅者回调错误:', error);
+          this.logger.error('subscriber error', error);
         }
       });
     }
@@ -165,6 +177,7 @@ export class PlayerStore {
           callback(currentState);
         } catch (error) {
           console.error(`状态订阅者回调错误 (${key}):`, error);
+          this.logger.error('subscriber error', key, error);
         }
       });
     }
@@ -174,6 +187,7 @@ export class PlayerStore {
    * 通知事件订阅者
    */
   notifyEvent(event: PlayerEvent): void {
+    this.logger.debug('notifyEvent', event.type);
     const subscribers = this.eventSubscribers.get(event.type);
     if (subscribers) {
       subscribers.forEach(callback => {
@@ -181,6 +195,7 @@ export class PlayerStore {
           callback(event);
         } catch (error) {
           console.error(`事件订阅者回调错误 (${event.type}):`, error);
+          this.logger.error('event subscriber error', event.type, error);
         }
       });
     }
@@ -301,6 +316,7 @@ export class PlayerStore {
    * 销毁状态管理器
    */
   destroy(): void {
+    this.logger.info('destroy');
     this.clearSubscribers();
     this.stateHistory = [];
   }
