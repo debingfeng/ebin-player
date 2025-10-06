@@ -4,6 +4,7 @@
  */
 import { PlayerOptions, PlayerState, PlayerEventType, PlayerEvent, PlayerLifecycle, UIMode, ControlBarConfig, PlayerTheme } from '../types';
 import { DefaultUI } from '../ui/DefaultUI';
+import { AdvancedUI } from '../ui/AdvancedUI';
 
 export class PlayerCore {
   private videoElement!: HTMLVideoElement;
@@ -14,6 +15,7 @@ export class PlayerCore {
   private state: PlayerState;
   private isDestroyed = false;
   private defaultUI: DefaultUI | null = null;
+  private advancedUI: AdvancedUI | null = null;
   private uiMode: UIMode;
 
   constructor(container: HTMLElement, options: PlayerOptions) {
@@ -533,6 +535,8 @@ export class PlayerCore {
   private initializeUI(): void {
     if (this.uiMode === UIMode.CUSTOM) {
       this.createDefaultUI();
+    } else if (this.uiMode === UIMode.ADVANCED) {
+      this.createAdvancedUI();
     }
   }
 
@@ -573,6 +577,49 @@ export class PlayerCore {
   }
 
   /**
+   * 创建高级UI
+   */
+  private createAdvancedUI(): void {
+    if (this.advancedUI) {
+      this.advancedUI.destroy();
+    }
+
+    const uiConfig: ControlBarConfig = {
+      playButton: true,
+      progressBar: true,
+      timeDisplay: true,
+      volumeControl: true,
+      fullscreenButton: true,
+      playbackRateControl: true,
+      qualitySelector: true,
+      subtitleToggle: true,
+      aspectRatio: true,
+      pictureInPicture: true,
+      screenshot: true,
+      skipButtons: true,
+      ...this.options.uiConfig
+    };
+
+    const theme: PlayerTheme = {
+      primaryColor: '#3b82f6',
+      secondaryColor: '#6c757d',
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      textColor: '#ffffff',
+      controlBarHeight: 60,
+      borderRadius: 8,
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      ...this.options.theme
+    };
+
+    this.advancedUI = new AdvancedUI(
+      this as any, // 这里会被PlayerInstance包装
+      this.container,
+      uiConfig,
+      theme
+    );
+  }
+
+  /**
    * 更新UI模式
    */
   updateUIMode(uiMode: UIMode): void {
@@ -589,9 +636,16 @@ export class PlayerCore {
       this.defaultUI = null;
     }
     
+    if (this.advancedUI) {
+      this.advancedUI.destroy();
+      this.advancedUI = null;
+    }
+    
     // 创建新的UI
     if (uiMode === UIMode.CUSTOM) {
       this.createDefaultUI();
+    } else if (uiMode === UIMode.ADVANCED) {
+      this.createAdvancedUI();
     }
   }
 
@@ -641,6 +695,11 @@ export class PlayerCore {
     if (this.defaultUI) {
       this.defaultUI.destroy();
       this.defaultUI = null;
+    }
+    
+    if (this.advancedUI) {
+      this.advancedUI.destroy();
+      this.advancedUI = null;
     }
     
     // 清理事件监听器

@@ -38,21 +38,27 @@ const playbackRateSelect = document.getElementById('playback-rate');
 // 初始化播放器
 async function initPlayer() {
   try {
-    // 使用原生版本，通过全局变量访问
-    // 首先加载原生版本脚本
-    await loadScript('/dist/ebin-player.native.js');
+    // 使用 UMD 版本，通过全局变量访问
+    await loadScript('../../dist/ebin-player.umd.js');
     
     // 从全局变量中获取播放器类
     const { PlayerInstance, PlaybackRatePlugin, DefaultUI } = window.EbinPlayer;
 
     // 从URL参数获取UI模式设置
     const urlParams = new URLSearchParams(window.location.search);
-    const uiMode = urlParams.get('ui') === 'custom' ? 'custom' : 'native';
+    const uiParam = urlParams.get('ui');
+    let uiMode = 'custom';
     
-    console.log('UI模式:', uiMode === 'custom' ? '自定义UI' : '原生控制条');
+    if (uiParam === 'custom') {
+      uiMode = 'custom';
+    } else if (uiParam === 'advanced') {
+      uiMode = 'advanced';
+    }
+    
+    console.log('UI模式:', uiMode === 'custom' ? '基础自定义UI' : uiMode === 'advanced' ? '高级UI' : '原生控制条');
     
     // 创建播放器实例，使用新的UI配置方式
-    player = new PlayerInstance(playerContainer, {
+    const playerOptions = {
       src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
       autoplay: false,
       muted: false,
@@ -60,19 +66,35 @@ async function initPlayer() {
       width: '100%',
       height: 'auto',
       uiMode: uiMode, // 使用新的uiMode配置
-      uiConfig: {
+      theme: {
+        primaryColor: '#3b82f6',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        textColor: '#ffffff',
+        controlBarHeight: 50,
+        borderRadius: 4,
+        fontFamily: 'system-ui, -apple-system, sans-serif'
+      }
+    };
+
+    // 根据UI模式添加不同的配置
+    if (uiMode === 'custom' || uiMode === 'advanced') {
+      playerOptions.uiConfig = {
         playButton: true,
         progressBar: true,
         timeDisplay: true,
         volumeControl: true,
-        fullscreenButton: true
-      },
-      theme: {
-        primaryColor: '#007bff',
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        textColor: '#ffffff'
-      }
-    });
+        fullscreenButton: true,
+        playbackRateControl: uiMode === 'advanced',
+        qualitySelector: uiMode === 'advanced',
+        subtitleToggle: uiMode === 'advanced',
+        aspectRatio: uiMode === 'advanced',
+        pictureInPicture: uiMode === 'advanced',
+        screenshot: uiMode === 'advanced',
+        skipButtons: uiMode === 'advanced'
+      };
+    }
+
+    player = new PlayerInstance(playerContainer, playerOptions);
 
     console.log('播放器初始化完成，UI模式:', player.getUIMode());
 
@@ -85,6 +107,17 @@ async function initPlayer() {
     
     // 更新UI状态
     updatePlayerInfo();
+    
+    // 确保在元数据加载后也更新一次
+    player.on('loadedmetadata', () => {
+      console.log('loadedmetadata event fired');
+      updatePlayerInfo();
+    });
+    
+    player.on('durationchange', () => {
+      console.log('durationchange event fired');
+      updatePlayerInfo();
+    });
     
     console.log('播放器初始化成功');
   } catch (error) {
@@ -183,6 +216,21 @@ function setupEventListeners() {
     }
   });
 
+  // 截图按钮
+  const screenshotBtn = document.getElementById('screenshot-btn');
+  if (screenshotBtn) {
+    screenshotBtn.addEventListener('click', () => {
+      if (player) {
+        // 这里可以实现截图功能
+        console.log('截图功能');
+        alert('截图功能已触发（实际实现需要Canvas支持）');
+      }
+    });
+  }
+
+  // UI配置功能
+  setupUIConfig();
+
   // 播放器事件监听
   player.on('play', () => {
     console.log('播放开始');
@@ -218,12 +266,111 @@ function setupEventListeners() {
   });
 }
 
+// 设置UI配置功能
+function setupUIConfig() {
+  const applyBtn = document.getElementById('apply-config');
+  const resetBtn = document.getElementById('reset-config');
+  const heightSlider = document.getElementById('controlBarHeight');
+  const heightValue = document.getElementById('heightValue');
+
+  // 控制栏高度滑块
+  if (heightSlider && heightValue) {
+    heightSlider.addEventListener('input', (e) => {
+      heightValue.textContent = e.target.value + 'px';
+    });
+  }
+
+  // 应用配置
+  if (applyBtn) {
+    applyBtn.addEventListener('click', () => {
+      if (!player) return;
+
+      const uiConfig = {
+        playButton: document.getElementById('playButton').checked,
+        progressBar: document.getElementById('progressBar').checked,
+        timeDisplay: document.getElementById('timeDisplay').checked,
+        volumeControl: document.getElementById('volumeControl').checked,
+        fullscreenButton: document.getElementById('fullscreenButton').checked,
+        playbackRateControl: document.getElementById('playbackRateControl').checked,
+        qualitySelector: document.getElementById('qualitySelector').checked,
+        subtitleToggle: document.getElementById('subtitleToggle').checked,
+        aspectRatio: document.getElementById('aspectRatio').checked,
+        pictureInPicture: document.getElementById('pictureInPicture').checked,
+        screenshot: document.getElementById('screenshot').checked,
+        skipButtons: document.getElementById('skipButtons').checked
+      };
+
+      const theme = {
+        primaryColor: document.getElementById('primaryColor').value,
+        backgroundColor: document.getElementById('backgroundColor').value + '80', // 添加透明度
+        textColor: document.getElementById('textColor').value,
+        controlBarHeight: parseInt(document.getElementById('controlBarHeight').value),
+        borderRadius: 4,
+        fontFamily: 'system-ui, -apple-system, sans-serif'
+      };
+
+      // 重新创建播放器
+      const currentSrc = player.getState().src;
+      player.destroy();
+      
+      player = new PlayerInstance(playerContainer, {
+        src: currentSrc,
+        autoplay: false,
+        muted: false,
+        volume: 1,
+        width: '100%',
+        height: 'auto',
+        uiMode: 'custom',
+        uiConfig: uiConfig,
+        theme: theme
+      });
+
+      // 重新设置事件监听器
+      setupEventListeners();
+      updatePlayerInfo();
+      
+      console.log('配置已应用:', { uiConfig, theme });
+    });
+  }
+
+  // 重置配置
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      // 重置所有复选框
+      document.getElementById('playButton').checked = true;
+      document.getElementById('progressBar').checked = true;
+      document.getElementById('timeDisplay').checked = true;
+      document.getElementById('volumeControl').checked = true;
+      document.getElementById('fullscreenButton').checked = true;
+      document.getElementById('playbackRateControl').checked = false;
+      document.getElementById('qualitySelector').checked = false;
+      document.getElementById('subtitleToggle').checked = false;
+      document.getElementById('aspectRatio').checked = false;
+      document.getElementById('pictureInPicture').checked = false;
+      document.getElementById('screenshot').checked = false;
+      document.getElementById('skipButtons').checked = false;
+
+      // 重置主题
+      document.getElementById('primaryColor').value = '#3b82f6';
+      document.getElementById('backgroundColor').value = '#000000';
+      document.getElementById('textColor').value = '#ffffff';
+      document.getElementById('controlBarHeight').value = '50';
+      document.getElementById('heightValue').textContent = '50px';
+    });
+  }
+}
+
 // 更新播放器信息显示
 function updatePlayerInfo() {
-  if (!player) return;
+  if (!player) {
+    console.log('updatePlayerInfo: player is null');
+    return;
+  }
 
   const state = player.getState();
   const info = playerInfo;
+  
+  console.log('updatePlayerInfo: state =', state);
   
   info.innerHTML = `
     <div class="info-item">状态: ${state.paused ? '暂停' : '播放中'}</div>
@@ -231,6 +378,7 @@ function updatePlayerInfo() {
     <div class="info-item">总时长: ${formatTime(state.duration)}</div>
     <div class="info-item">音量: ${Math.round(state.volume * 100)}%</div>
     <div class="info-item">播放速度: ${state.playbackRate}x</div>
+    <div class="info-item">UI模式: ${player.getUIMode()}</div>
     <div class="info-item">就绪状态: ${getReadyStateText(state.readyState)}</div>
     <div class="info-item">网络状态: ${getNetworkStateText(state.networkState)}</div>
     <div class="info-item">全屏: ${player.isFullscreen() ? '是' : '否'}</div>

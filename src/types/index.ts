@@ -7,6 +7,7 @@
 export enum UIMode {
   NATIVE = 'native',        // 使用原生HTML5控制条
   CUSTOM = 'custom',        // 使用内置自定义UI
+  ADVANCED = 'advanced',    // 使用高级UI（包含所有功能）
   NONE = 'none'            // 不使用任何UI
 }
 
@@ -173,6 +174,12 @@ export interface ControlBarConfig {
   playbackRateControl?: boolean;
   fullscreenButton?: boolean;
   pictureInPictureButton?: boolean;
+  qualitySelector?: boolean;
+  subtitleToggle?: boolean;
+  aspectRatio?: boolean;
+  pictureInPicture?: boolean;
+  screenshot?: boolean;
+  skipButtons?: boolean;
   customButtons?: UIComponent[];
 }
 

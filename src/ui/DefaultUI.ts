@@ -56,19 +56,17 @@ export class DefaultUI {
    */
   private createUI(): void {
     // 设置容器样式
-    this.container.style.cssText = `
-      position: relative;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      font-family: ${this.theme.fontFamily};
-    `;
+    this.container.className = 'ebin-player';
+    this.container.style.fontFamily = this.theme.fontFamily || 'system-ui, -apple-system, sans-serif';
 
     // 创建控制栏
     this.createControlBar();
     
     // 创建播放按钮覆盖层
     this.createPlayButtonOverlay();
+    
+    // 创建加载指示器
+    this.createLoadingIndicator();
   }
 
   /**
@@ -76,34 +74,23 @@ export class DefaultUI {
    */
   private createControlBar(): void {
     this.controlBar = document.createElement('div');
-    this.controlBar.className = 'ebin-player-control-bar';
-    this.controlBar.style.cssText = `
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: ${this.theme.controlBarHeight}px;
-      background: ${this.theme.backgroundColor};
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    `;
+    this.controlBar.className = 'ebin-control-bar';
+    this.controlBar.style.height = `${this.theme.controlBarHeight || 50}px`;
+    this.controlBar.style.backgroundColor = this.theme.backgroundColor || 'rgba(0, 0, 0, 0.8)';
 
     // 播放/暂停按钮
     if (this.config.playButton) {
       this.createPlayButton();
     }
 
+    // 时间显示优先于进度条（显示在进度条上方）
+    if (this.config.timeDisplay) {
+      this.createTimeDisplay();
+    }
+
     // 进度条
     if (this.config.progressBar) {
       this.createProgressBar();
-    }
-
-    // 时间显示
-    if (this.config.timeDisplay) {
-      this.createTimeDisplay();
     }
 
     // 音量控制
@@ -138,18 +125,10 @@ export class DefaultUI {
    */
   private createPlayButton(): void {
     this.playButton = document.createElement('button');
-    this.playButton.className = 'ebin-player-play-button';
+    this.playButton.className = 'ebin-play-button';
     this.playButton.innerHTML = '▶';
-    this.playButton.style.cssText = `
-      background: none;
-      border: none;
-      color: ${this.theme.textColor};
-      font-size: 18px;
-      cursor: pointer;
-      padding: 5px;
-      margin-right: 10px;
-      outline: none;
-    `;
+    this.playButton.setAttribute('aria-label', '播放/暂停');
+    this.playButton.style.color = this.theme.textColor || '#ffffff';
 
     this.controlBar.appendChild(this.playButton);
   }
@@ -159,27 +138,21 @@ export class DefaultUI {
    */
   private createProgressBar(): void {
     const progressContainer = document.createElement('div');
-    progressContainer.style.cssText = `
-      flex: 1;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 2px;
-      margin: 0 10px;
-      position: relative;
-      cursor: pointer;
-    `;
+    progressContainer.className = 'ebin-progress-container';
+    progressContainer.setAttribute('role', 'slider');
+    progressContainer.setAttribute('aria-label', '播放进度');
+    progressContainer.setAttribute('tabindex', '0');
 
     this.progressBar = document.createElement('div');
-    this.progressBar.className = 'ebin-player-progress-bar';
-    this.progressBar.style.cssText = `
-      height: 100%;
-      background: ${this.theme.primaryColor};
-      border-radius: 2px;
-      width: 0%;
-      transition: width 0.1s ease;
-    `;
+    this.progressBar.className = 'ebin-progress-bar';
+    this.progressBar.style.backgroundColor = this.theme.primaryColor || '#3b82f6';
+
+    // 创建进度条拖拽点
+    const progressThumb = document.createElement('div');
+    progressThumb.className = 'ebin-progress-thumb';
 
     progressContainer.appendChild(this.progressBar);
+    progressContainer.appendChild(progressThumb);
     this.controlBar.appendChild(progressContainer);
   }
 
@@ -188,15 +161,17 @@ export class DefaultUI {
    */
   private createTimeDisplay(): void {
     this.timeDisplay = document.createElement('div');
-    this.timeDisplay.className = 'ebin-player-time-display';
-    this.timeDisplay.style.cssText = `
-      color: ${this.theme.textColor};
-      font-size: 12px;
-      margin-left: 10px;
-      white-space: nowrap;
-    `;
+    this.timeDisplay.className = 'ebin-time-display';
+    this.timeDisplay.setAttribute('aria-live', 'polite');
+    this.timeDisplay.style.color = this.theme.textColor || '#ffffff';
 
-    this.controlBar.appendChild(this.timeDisplay);
+    // 插入到进度条上方（若进度条已存在则插入其前，否则追加到控制栏）
+    const progressContainer = this.controlBar.querySelector('.ebin-progress-container');
+    if (progressContainer && progressContainer.parentElement === this.controlBar) {
+      this.controlBar.insertBefore(this.timeDisplay, progressContainer);
+    } else {
+      this.controlBar.appendChild(this.timeDisplay);
+    }
   }
 
   /**
@@ -204,34 +179,21 @@ export class DefaultUI {
    */
   private createVolumeControl(): void {
     this.volumeControl = document.createElement('div');
-    this.volumeControl.className = 'ebin-player-volume-control';
-    this.volumeControl.style.cssText = `
-      display: flex;
-      align-items: center;
-      margin-left: 10px;
-    `;
+    this.volumeControl.className = 'ebin-volume-control';
 
     const volumeButton = document.createElement('button');
+    volumeButton.className = 'ebin-volume-button';
     volumeButton.innerHTML = '🔊';
-    volumeButton.style.cssText = `
-      background: none;
-      border: none;
-      color: ${this.theme.textColor};
-      font-size: 16px;
-      cursor: pointer;
-      padding: 5px;
-      outline: none;
-    `;
+    volumeButton.setAttribute('aria-label', '静音/取消静音');
+    volumeButton.style.color = this.theme.textColor || '#ffffff';
 
     const volumeSlider = document.createElement('input');
     volumeSlider.type = 'range';
+    volumeSlider.className = 'ebin-volume-slider';
     volumeSlider.min = '0';
     volumeSlider.max = '1';
     volumeSlider.step = '0.1';
-    volumeSlider.style.cssText = `
-      width: 60px;
-      margin-left: 5px;
-    `;
+    volumeSlider.setAttribute('aria-label', '音量调节');
 
     this.volumeControl.appendChild(volumeButton);
     this.volumeControl.appendChild(volumeSlider);
@@ -243,18 +205,10 @@ export class DefaultUI {
    */
   private createFullscreenButton(): void {
     this.fullscreenButton = document.createElement('button');
-    this.fullscreenButton.className = 'ebin-player-fullscreen-button';
+    this.fullscreenButton.className = 'ebin-fullscreen-button';
     this.fullscreenButton.innerHTML = '⛶';
-    this.fullscreenButton.style.cssText = `
-      background: none;
-      border: none;
-      color: ${this.theme.textColor};
-      font-size: 16px;
-      cursor: pointer;
-      padding: 5px;
-      margin-left: 10px;
-      outline: none;
-    `;
+    this.fullscreenButton.setAttribute('aria-label', '全屏/退出全屏');
+    this.fullscreenButton.style.color = this.theme.textColor || '#ffffff';
 
     this.controlBar.appendChild(this.fullscreenButton);
   }
@@ -264,35 +218,29 @@ export class DefaultUI {
    */
   private createPlayButtonOverlay(): void {
     const overlay = document.createElement('div');
-    overlay.className = 'ebin-player-play-overlay';
-    overlay.style.cssText = `
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 80px;
-      height: 80px;
-      background: ${this.theme.backgroundColor};
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      z-index: 100;
-    `;
+    overlay.className = 'ebin-play-overlay';
+    overlay.setAttribute('aria-label', '播放视频');
+    overlay.style.backgroundColor = this.theme.backgroundColor || 'rgba(0, 0, 0, 0.8)';
 
     const playIcon = document.createElement('div');
+    playIcon.className = 'ebin-play-overlay-icon';
     playIcon.innerHTML = '▶';
-    playIcon.style.cssText = `
-      color: ${this.theme.textColor};
-      font-size: 32px;
-      margin-left: 4px;
-    `;
+    playIcon.style.color = this.theme.textColor || '#ffffff';
 
     overlay.appendChild(playIcon);
     this.container.appendChild(overlay);
+  }
+
+  /**
+   * 创建加载指示器
+   */
+  private createLoadingIndicator(): void {
+    const loadingIndicator = document.createElement('div');
+    loadingIndicator.className = 'ebin-loading-indicator';
+    loadingIndicator.setAttribute('aria-label', '加载中');
+    loadingIndicator.style.display = 'none';
+
+    this.container.appendChild(loadingIndicator);
   }
 
   /**
@@ -424,7 +372,7 @@ export class DefaultUI {
    */
   private showControlBar(): void {
     if (this.controlBar) {
-      this.controlBar.style.opacity = '1';
+      this.controlBar.classList.add('visible');
     }
   }
 
@@ -433,7 +381,7 @@ export class DefaultUI {
    */
   private hideControlBar(): void {
     if (this.controlBar) {
-      this.controlBar.style.opacity = '0';
+      this.controlBar.classList.remove('visible');
     }
   }
 

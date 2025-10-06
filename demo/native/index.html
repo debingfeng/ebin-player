@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ebin Player - 原生HTML示例</title>
+    <link rel="stylesheet" href="../../dist/styles.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -189,6 +190,82 @@
             font-size: 14px;
             line-height: 1.5;
         }
+        
+        /* UI配置演示样式 */
+        .ui-config-demo {
+            margin-top: 20px;
+        }
+        
+        .config-group {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+        
+        .config-group h4 {
+            margin: 0 0 15px 0;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .config-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        
+        .config-controls label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .config-controls input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        
+        .theme-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .theme-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .theme-item label {
+            min-width: 80px;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .theme-item input[type="color"] {
+            width: 40px;
+            height: 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .theme-item input[type="range"] {
+            flex: 1;
+            margin: 0 10px;
+        }
+        
+        .config-actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .config-actions .control-btn {
+            margin: 0 10px;
+        }
     </style>
 </head>
 <body>
@@ -197,18 +274,19 @@
         
         <!-- 基础播放器演示 -->
         <div class="demo-section">
-            <div class="demo-title">基础播放器</div>
+            <div class="demo-title">🎬 播放器演示</div>
             <div class="ui-mode-info">
                 <p><strong>UI模式说明：</strong></p>
                 <ul>
                     <li>默认使用原生HTML5控制条（<code>uiMode: 'native'</code>）</li>
                     <li>添加 <code>?ui=custom</code> 参数使用内置自定义UI（<code>uiMode: 'custom'</code>）</li>
-                    <li>例如：<code>index.html?ui=custom</code></li>
-                    <li>现在UI已内置到播放器实例中，通过配置控制</li>
+                    <li>添加 <code>?ui=advanced</code> 参数使用高级UI（<code>uiMode: 'advanced'</code>）</li>
+                    <li>例如：<code>index.html?ui=advanced</code></li>
                 </ul>
                 <div class="ui-switch-buttons">
-                    <button class="control-btn" onclick="switchToNativeUI()">切换到原生控制条</button>
-                    <button class="control-btn" onclick="switchToCustomUI()">切换到自定义UI</button>
+                    <button class="control-btn" onclick="switchToNativeUI()">原生控制条</button>
+                    <button class="control-btn" onclick="switchToCustomUI()">基础自定义UI</button>
+                    <button class="control-btn" onclick="switchToAdvancedUI()">高级UI</button>
                 </div>
             </div>
             <div class="player-container" id="player-container"></div>
@@ -219,6 +297,7 @@
                 <button class="control-btn" id="mute-btn">静音</button>
                 <button class="control-btn" id="fullscreen-btn">全屏</button>
                 <button class="control-btn" id="pip-btn">画中画</button>
+                <button class="control-btn" id="screenshot-btn">截图</button>
             </div>
             
             <div class="info-panel" id="player-info">
@@ -227,6 +306,7 @@
                 <div class="info-item">总时长: 0s</div>
                 <div class="info-item">音量: 100%</div>
                 <div class="info-item">播放速度: 1x</div>
+                <div class="info-item">UI模式: 原生</div>
             </div>
         </div>
         
@@ -253,9 +333,67 @@
             </div>
         </div>
         
+        <!-- UI配置演示 -->
+        <div class="demo-section">
+            <div class="demo-title">🎨 UI配置演示</div>
+            <div class="ui-config-demo">
+                <div class="config-group">
+                    <h4>基础控制配置</h4>
+                    <div class="config-controls">
+                        <label><input type="checkbox" id="playButton" checked> 播放按钮</label>
+                        <label><input type="checkbox" id="progressBar" checked> 进度条</label>
+                        <label><input type="checkbox" id="timeDisplay" checked> 时间显示</label>
+                        <label><input type="checkbox" id="volumeControl" checked> 音量控制</label>
+                        <label><input type="checkbox" id="fullscreenButton" checked> 全屏按钮</label>
+                    </div>
+                </div>
+                
+                <div class="config-group">
+                    <h4>高级功能配置</h4>
+                    <div class="config-controls">
+                        <label><input type="checkbox" id="playbackRateControl"> 播放速度</label>
+                        <label><input type="checkbox" id="qualitySelector"> 画质选择</label>
+                        <label><input type="checkbox" id="subtitleToggle"> 字幕开关</label>
+                        <label><input type="checkbox" id="aspectRatio"> 画面比例</label>
+                        <label><input type="checkbox" id="pictureInPicture"> 画中画</label>
+                        <label><input type="checkbox" id="screenshot"> 截图功能</label>
+                        <label><input type="checkbox" id="skipButtons"> 快退/快进</label>
+                    </div>
+                </div>
+                
+                <div class="config-group">
+                    <h4>主题配置</h4>
+                    <div class="theme-controls">
+                        <div class="theme-item">
+                            <label>主色调:</label>
+                            <input type="color" id="primaryColor" value="#3b82f6">
+                        </div>
+                        <div class="theme-item">
+                            <label>背景色:</label>
+                            <input type="color" id="backgroundColor" value="#000000">
+                        </div>
+                        <div class="theme-item">
+                            <label>文字色:</label>
+                            <input type="color" id="textColor" value="#ffffff">
+                        </div>
+                        <div class="theme-item">
+                            <label>控制栏高度:</label>
+                            <input type="range" id="controlBarHeight" min="40" max="80" value="50">
+                            <span id="heightValue">50px</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-actions">
+                    <button class="control-btn" id="apply-config">应用配置</button>
+                    <button class="control-btn" id="reset-config">重置配置</button>
+                </div>
+            </div>
+        </div>
+
         <!-- 使用示例 -->
         <div class="demo-section">
-            <div class="demo-title">使用示例</div>
+            <div class="demo-title">📖 使用示例</div>
             <div class="code-example">
                 <h4>基础用法：</h4>
                 <pre><code>// 使用原生控制条（默认）
@@ -264,7 +402,7 @@ const player = new PlayerInstance(container, {
   uiMode: 'native'
 });
 
-// 使用内置自定义UI
+// 使用基础自定义UI
 const player = new PlayerInstance(container, {
   src: 'video.mp4',
   uiMode: 'custom',
@@ -276,16 +414,39 @@ const player = new PlayerInstance(container, {
     fullscreenButton: true
   },
   theme: {
-    primaryColor: '#007bff',
+    primaryColor: '#3b82f6',
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    textColor: '#ffffff'
+    textColor: '#ffffff',
+    controlBarHeight: 50
   }
 });
 
-// 不使用任何UI
+// 使用高级UI（包含所有功能）
 const player = new PlayerInstance(container, {
   src: 'video.mp4',
-  uiMode: 'none'
+  uiMode: 'advanced',
+  uiConfig: {
+    playButton: true,
+    progressBar: true,
+    timeDisplay: true,
+    volumeControl: true,
+    fullscreenButton: true,
+    playbackRateControl: true,
+    qualitySelector: true,
+    subtitleToggle: true,
+    aspectRatio: true,
+    pictureInPicture: true,
+    screenshot: true,
+    skipButtons: true
+  },
+  theme: {
+    primaryColor: '#3b82f6',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    textColor: '#ffffff',
+    controlBarHeight: 60,
+    borderRadius: 8,
+    fontFamily: 'system-ui, -apple-system, sans-serif'
+  }
 });</code></pre>
             </div>
         </div>
@@ -339,6 +500,12 @@ const player = new PlayerInstance(container, {
         function switchToCustomUI() {
             const currentUrl = new URL(window.location);
             currentUrl.searchParams.set('ui', 'custom');
+            window.location.href = currentUrl.toString();
+        }
+        
+        function switchToAdvancedUI() {
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('ui', 'advanced');
             window.location.href = currentUrl.toString();
         }
     </script>

@@ -74,17 +74,6 @@ export default [
     ],
     plugins: sharedPlugins
   },
-  // 原生HTML版本：不包含React依赖
-  {
-    input: 'src/native.ts',
-    output: { 
-      file: 'dist/ebin-player.native.js', 
-      format: 'umd', 
-      name: 'EbinPlayer',
-      sourcemap: isDev
-    },
-    plugins: sharedPlugins
-  },
   // 类型声明
   {
     input: 'dist/types/index.d.ts',
