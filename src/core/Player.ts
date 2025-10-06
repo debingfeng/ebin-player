@@ -4,41 +4,20 @@
  */
 import { PlayerCore } from './PlayerCore';
 import { PlayerStore } from './PlayerStore';
-import { PlayerOptions, PlayerState, PlayerEventType, PlayerEvent, Plugin, UIMode, ControlBarConfig, PlayerTheme } from '../types';
+import { PlayerOptions, PlayerState, PlayerEventType, PlayerEvent, Plugin, UIMode, ControlBarConfig, PlayerTheme, MEDIA_EVENTS, EventPayloadMap, PlayerEventBase } from '../types';
 import { PluginManager } from '../plugin/PluginManager';
-
-const initialState: PlayerState = {
-  src: '',
-  currentTime: 0,
-  duration: 0,
-  paused: true,
-  muted: false,
-  volume: 1,
-  playbackRate: 1,
-  readyState: 0,
-  networkState: 0,
-  error: null,
-  ended: false,
-  loading: false,
-  seeking: false,
-  videoWidth: 0,
-  videoHeight: 0,
-  buffered: null,
-  seekable: null,
-  quality: 'auto',
-  bitrate: 0
-};
+import { chainable, chainableAsync } from './decorators';
 
 export class PlayerInstance {
   public core: PlayerCore;
   public store: PlayerStore;
   public pluginManager: PluginManager;
   private isDestroyed = false;
+  // 每帧节流相关
+  private syncScheduled = false;
+  private rafId: number | null = null;
 
   constructor(container: HTMLElement, options: PlayerOptions) {
-    // 初始化状态管理器
-    this.store = new PlayerStore(initialState);
-    
     // 初始化核心播放器
     this.core = new PlayerCore(container, options);
     // 向 Core 注入对外 PlayerInstance 引用，并延后初始化 UI
@@ -48,8 +27,8 @@ export class PlayerInstance {
     // 初始化插件管理器
     this.pluginManager = new PluginManager(this);
     
-    // 同步核心状态到状态管理器
-    this.syncCoreToStore();
+    // 初始化状态管理器，使用 Core 的当前状态作为单一可信源
+    this.store = new PlayerStore(this.core.getState());
     
     // 设置状态变化监听
     this.setupStateSync();
@@ -70,23 +49,39 @@ export class PlayerInstance {
    * 设置状态同步
    */
   private setupStateSync(): void {
-    // 监听核心播放器的状态变化
-    const syncState = () => {
+    // 立即同步一次，确保初始一致
+    const immediateSync = () => {
       if (this.isDestroyed) return;
       const coreState = this.core.getState();
       this.store.setState(coreState);
     };
 
+    // 高频事件合帧同步
+    const scheduleSync = () => {
+      if (this.isDestroyed) return;
+      if (this.syncScheduled) return;
+      this.syncScheduled = true;
+      this.rafId = (typeof requestAnimationFrame !== 'undefined'
+        ? requestAnimationFrame
+        : (cb: FrameRequestCallback) => setTimeout(() => cb(Date.now()), 16)
+      )(() => {
+        this.syncScheduled = false;
+        immediateSync();
+      }) as unknown as number;
+    };
+
     // 监听关键事件来同步状态
-    const events: PlayerEventType[] = [
-      'timeupdate', 'play', 'pause', 'volumechange', 'ratechange',
-      'seeking', 'seeked', 'loadedmetadata', 'canplay', 'canplaythrough',
-      'ended', 'error', 'waiting', 'stalled'
-    ];
+    // 复用集中管理的媒体事件列表
+    const events: PlayerEventType[] = MEDIA_EVENTS;
 
     events.forEach(eventType => {
       this.core.on(eventType, () => {
-        syncState();
+        // 对高频事件进行合帧，其余事件即时同步
+        if (eventType === 'timeupdate' || eventType === 'progress') {
+          scheduleSync();
+        } else {
+          immediateSync();
+        }
       });
     });
   }
@@ -120,19 +115,22 @@ export class PlayerInstance {
   }
 
   // 播放控制方法
-  async play(): Promise<void> {
-    if (this.isDestroyed) return;
+  @chainableAsync
+  async play(): Promise<PlayerInstance> {
     await this.core.play();
+    return this;
   }
 
-  pause(): void {
-    if (this.isDestroyed) return;
+  @chainable
+  pause(): PlayerInstance {
     this.core.pause();
+    return this;
   }
 
-  load(): void {
-    if (this.isDestroyed) return;
+  @chainable
+  load(): PlayerInstance {
     this.core.load();
+    return this;
   }
 
   // 属性访问方法
@@ -140,9 +138,10 @@ export class PlayerInstance {
     return this.core.getCurrentTime();
   }
 
-  setCurrentTime(time: number): void {
-    if (this.isDestroyed) return;
+  @chainable
+  setCurrentTime(time: number): PlayerInstance {
     this.core.setCurrentTime(time);
+    return this;
   }
 
   getDuration(): number {
@@ -153,27 +152,30 @@ export class PlayerInstance {
     return this.core.getVolume();
   }
 
-  setVolume(volume: number): void {
-    if (this.isDestroyed) return;
+  @chainable
+  setVolume(volume: number): PlayerInstance {
     this.core.setVolume(volume);
+    return this;
   }
 
   getMuted(): boolean {
     return this.core.getMuted();
   }
 
-  setMuted(muted: boolean): void {
-    if (this.isDestroyed) return;
+  @chainable
+  setMuted(muted: boolean): PlayerInstance {
     this.core.setMuted(muted);
+    return this;
   }
 
   getPlaybackRate(): number {
     return this.core.getPlaybackRate();
   }
 
-  setPlaybackRate(rate: number): void {
-    if (this.isDestroyed) return;
+  @chainable
+  setPlaybackRate(rate: number): PlayerInstance {
     this.core.setPlaybackRate(rate);
+    return this;
   }
 
   getPaused(): boolean {
@@ -204,46 +206,51 @@ export class PlayerInstance {
   setState(state: Partial<PlayerState>): void {
     if (this.isDestroyed) return;
     
-    // 更新核心播放器状态
+    // 仅更新核心播放器状态，随后以 Core 的完整状态同步到 Store，保持单向数据流
     this.core.setState(state);
-    
-    // 更新状态管理器
-    this.store.setState(state);
+    const syncedState = this.core.getState();
+    this.store.setState(syncedState);
   }
 
   // 事件系统方法
-  on(event: PlayerEventType, callback: (event: PlayerEvent) => void): void {
-    if (this.isDestroyed) return;
+  on<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): () => void {
+    if (this.isDestroyed) return () => {};
     
-    // 同时监听核心播放器和状态管理器的事件
-    this.core.on(event, callback);
-    this.store.subscribeEvent(event, callback);
+    // 同时监听核心播放器和状态管理器的事件，并返回统一退订函数
+    this.core.on(event, callback as any);
+    const unsubscribeStore = this.store.subscribeEvent(event, callback as any);
+
+    return () => {
+      this.core.off(event, callback as any);
+      unsubscribeStore();
+    };
   }
 
-  off(event: PlayerEventType, callback: (event: PlayerEvent) => void): void {
+  off<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): void {
     if (this.isDestroyed) return;
     
-    this.core.off(event, callback);
-    // 注意：PlayerStore 的 subscribeEvent 返回的取消函数需要保存才能调用
-    // 这里简化处理，实际使用中建议保存取消函数
+    this.core.off(event, callback as any);
+    // 尝试从 Store 侧移除（防止使用者未保存取消函数时的泄漏）
+    // 由于 Store 需要取消函数，这里提供兜底方案：临时订阅后立刻退订以触发 delete
+    const tmpUnsub = this.store.subscribeEvent(event, callback as any);
+    tmpUnsub();
   }
 
-  emit(event: PlayerEventType, data?: any): void {
-    if (this.isDestroyed) return;
-    this.core.emit(event, data);
+  @chainable
+  emit<T extends PlayerEventType>(event: T, data?: EventPayloadMap[T]): PlayerInstance {
+    this.core.emit(event, data as any);
+    return this;
   }
 
   // 插件系统方法
+  @chainable
   use(plugin: Plugin): PlayerInstance {
-    if (this.isDestroyed) return this;
-    
     this.pluginManager.use(plugin);
     return this;
   }
 
+  @chainable
   unuse(pluginName: string): PlayerInstance {
-    if (this.isDestroyed) return this;
-    
     this.pluginManager.unuse(pluginName);
     return this;
   }
@@ -263,14 +270,16 @@ export class PlayerInstance {
   }
 
   // 全屏控制方法
-  async requestFullscreen(): Promise<void> {
-    if (this.isDestroyed) return;
+  @chainableAsync
+  async requestFullscreen(): Promise<PlayerInstance> {
     await this.core.requestFullscreen();
+    return this;
   }
 
-  async exitFullscreen(): Promise<void> {
-    if (this.isDestroyed) return;
+  @chainableAsync
+  async exitFullscreen(): Promise<PlayerInstance> {
     await this.core.exitFullscreen();
+    return this;
   }
 
   isFullscreen(): boolean {
@@ -283,9 +292,10 @@ export class PlayerInstance {
     return await this.core.requestPictureInPicture();
   }
 
-  async exitPictureInPicture(): Promise<void> {
-    if (this.isDestroyed) return;
+  @chainableAsync
+  async exitPictureInPicture(): Promise<PlayerInstance> {
     await this.core.exitPictureInPicture();
+    return this;
   }
 
   isPictureInPicture(): boolean {
@@ -302,23 +312,20 @@ export class PlayerInstance {
   }
 
   // UI管理方法
+  @chainable
   updateUIMode(uiMode: UIMode): PlayerInstance {
-    if (this.isDestroyed) return this;
-    
     this.core.updateUIMode(uiMode);
     return this;
   }
 
+  @chainable
   updateUIConfig(config: ControlBarConfig): PlayerInstance {
-    if (this.isDestroyed) return this;
-    
     this.core.updateUIConfig(config);
     return this;
   }
 
+  @chainable
   updateUITheme(theme: PlayerTheme): PlayerInstance {
-    if (this.isDestroyed) return this;
-    
     this.core.updateUITheme(theme);
     return this;
   }
@@ -337,7 +344,7 @@ export class PlayerInstance {
     uiMode: UIMode;
   } {
     return {
-      version: '1.0.0',
+      version: (typeof __VERSION__ !== 'undefined' ? (__VERSION__ as any) : '0.0.0'),
       lifecycle: this.core.getLifecycle(),
       plugins: this.pluginManager.getPluginNames(),
       state: this.getState(),
@@ -350,6 +357,16 @@ export class PlayerInstance {
     if (this.isDestroyed) return;
     
     this.isDestroyed = true;
+    // 取消可能存在的帧同步
+    if (this.rafId !== null) {
+      const cancel = (typeof cancelAnimationFrame !== 'undefined' 
+        ? cancelAnimationFrame 
+        : (id: number) => clearTimeout(id as any)
+      );
+      cancel(this.rafId);
+      this.rafId = null;
+      this.syncScheduled = false;
+    }
     
     // 销毁插件
     this.pluginManager.destroy();

@@ -2,7 +2,7 @@
  * 播放器核心类
  * 负责播放器内核能力封装、API差异抹平、生命周期管理
  */
-import { PlayerOptions, PlayerState, PlayerEventType, PlayerEvent, PlayerLifecycle, UIMode, ControlBarConfig, PlayerTheme } from '../types';
+import { PlayerOptions, PlayerState, PlayerEventType, PlayerEvent, PlayerLifecycle, UIMode, ControlBarConfig, PlayerTheme, EventPayloadMap, PlayerEventBase } from '../types';
 import { DefaultUI } from '../ui/DefaultUI';
 import { AdvancedUI } from '../ui/AdvancedUI';
 
@@ -372,37 +372,37 @@ export class PlayerCore {
   /**
    * 事件监听
    */
-  on(event: PlayerEventType, callback: (event: PlayerEvent) => void): void {
+  on<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): void {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, new Set());
     }
-    this.eventListeners.get(event)!.add(callback);
+    this.eventListeners.get(event)!.add(callback as any);
   }
 
   /**
    * 移除事件监听
    */
-  off(event: PlayerEventType, callback: (event: PlayerEvent) => void): void {
+  off<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.delete(callback);
+      listeners.delete(callback as any);
     }
   }
 
   /**
    * 触发事件
    */
-  emit(event: PlayerEventType, data?: any): void {
+  emit<T extends PlayerEventType>(event: T, data?: EventPayloadMap[T]): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      const playerEvent: PlayerEvent = {
+      const playerEvent: PlayerEventBase<T> = {
         type: event,
         target: this as any, // 这里会被PlayerInstance包装
         data,
         timestamp: Date.now()
       };
       
-      listeners.forEach(callback => {
+      (listeners as Set<(e: PlayerEventBase<T>) => void>).forEach(callback => {
         try {
           callback(playerEvent);
         } catch (error) {

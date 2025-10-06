@@ -9,16 +9,23 @@ import replace from '@rollup/plugin-replace';
 import alias from '@rollup/plugin-alias';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const isDev = process.env.ROLLUP_WATCH;
 
+// 读取 package.json 版本号用于构建时注入
+const pkgJsonPath = resolve(__dirname, 'package.json');
+const pkg = JSON.parse(fs.readFileSync(pkgJsonPath, 'utf-8'));
+const buildVersion = pkg.version || '0.0.0';
+
 const sharedPlugins = [
   replace({ 
     preventAssignment: true, 
-    'process.env.NODE_ENV': JSON.stringify(isDev ? 'development' : 'production') 
+    'process.env.NODE_ENV': JSON.stringify(isDev ? 'development' : 'production'),
+    __VERSION__: JSON.stringify(buildVersion)
   }),
   alias({
     entries: [

@@ -89,31 +89,59 @@ export type PlayerEventType =
   | 'leavepictureinpicture';
 
 // 播放器事件
-export interface PlayerEvent {
-  type: PlayerEventType;
+// 事件载荷映射（后续可细化为更具体的事件对象）
+export type EventPayloadMap = {
+  loadstart: Event;
+  loadedmetadata: Event;
+  loadeddata: Event;
+  canplay: Event;
+  canplaythrough: Event;
+  play: Event;
+  pause: Event;
+  ended: Event;
+  error: Event;
+  timeupdate: Event;
+  volumechange: Event;
+  ratechange: Event;
+  seeking: Event;
+  seeked: Event;
+  waiting: Event;
+  stalled: Event;
+  progress: Event;
+  durationchange: Event;
+  resize: Event;
+  fullscreenchange: { isFullscreen: boolean };
+  enterpictureinpicture: {};
+  leavepictureinpicture: {};
+};
+
+export interface PlayerEventBase<T extends PlayerEventType = PlayerEventType> {
+  type: T;
   target: PlayerInstance;
-  data?: any;
+  data?: EventPayloadMap[T];
   timestamp: number;
 }
+
+export type PlayerEvent = PlayerEventBase;
 
 // 播放器实例接口
 export interface PlayerInstance {
   // 基础方法
-  play(): Promise<void>;
-  pause(): void;
-  load(): void;
+  play(): Promise<PlayerInstance>;
+  pause(): PlayerInstance;
+  load(): PlayerInstance;
   destroy(): void;
   
   // 属性访问
   getCurrentTime(): number;
-  setCurrentTime(time: number): void;
+  setCurrentTime(time: number): PlayerInstance;
   getDuration(): number;
   getVolume(): number;
-  setVolume(volume: number): void;
+  setVolume(volume: number): PlayerInstance;
   getMuted(): boolean;
-  setMuted(muted: boolean): void;
+  setMuted(muted: boolean): PlayerInstance;
   getPlaybackRate(): number;
-  setPlaybackRate(rate: number): void;
+  setPlaybackRate(rate: number): PlayerInstance;
   getPaused(): boolean;
   getEnded(): boolean;
   getReadyState(): number;
@@ -125,9 +153,9 @@ export interface PlayerInstance {
   setState(state: Partial<PlayerState>): void;
   
   // 事件系统
-  on(event: PlayerEventType, callback: (event: PlayerEvent) => void): void;
-  off(event: PlayerEventType, callback: (event: PlayerEvent) => void): void;
-  emit(event: PlayerEventType, data?: any): void;
+  on<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): () => void;
+  off<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): void;
+  emit<T extends PlayerEventType>(event: T, data?: EventPayloadMap[T]): PlayerInstance;
   
   // 插件系统
   use(plugin: Plugin): PlayerInstance;
@@ -139,13 +167,13 @@ export interface PlayerInstance {
   getVideoElement(): HTMLVideoElement;
   
   // 全屏控制
-  requestFullscreen(): Promise<void>;
-  exitFullscreen(): Promise<void>;
+  requestFullscreen(): Promise<PlayerInstance>;
+  exitFullscreen(): Promise<PlayerInstance>;
   isFullscreen(): boolean;
   
   // 画中画
   requestPictureInPicture(): Promise<PictureInPictureWindow>;
-  exitPictureInPicture(): Promise<void>;
+  exitPictureInPicture(): Promise<PlayerInstance>;
   isPictureInPicture(): boolean;
 }
 

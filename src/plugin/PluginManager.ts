@@ -2,10 +2,10 @@
  * 插件管理器
  * 负责插件的注册、卸载、数据通信和生命周期管理
  */
-import type { PlayerInstance } from '../core/Player';
-import { Plugin, PlayerEventType, PlayerEvent } from '../types';
+import type { PlayerInstance } from '../types';
+import { Plugin, PlayerEventType, PlayerEvent, PlayerEventBase } from '../types';
 
-export interface PluginManager {
+export interface IPluginManager {
   use(plugin: Plugin): void;
   unuse(pluginName: string): void;
   getPlugin(name: string): Plugin | undefined;
@@ -13,7 +13,7 @@ export interface PluginManager {
   destroy(): void;
 }
 
-export class PluginManager implements PluginManager {
+export class PluginManager implements IPluginManager {
   private plugins: Map<string, Plugin> = new Map();
   private player: PlayerInstance;
   private pluginEvents: Map<string, Map<PlayerEventType, Set<(event: PlayerEvent) => void>>> = new Map();
@@ -34,7 +34,7 @@ export class PluginManager implements PluginManager {
 
     try {
       // 应用插件
-      plugin.apply(this.player);
+      plugin.apply(this.player as any);
       
       // 注册插件
       this.plugins.set(plugin.name, plugin);
@@ -47,8 +47,11 @@ export class PluginManager implements PluginManager {
       
       console.log(`插件 ${plugin.name} 注册成功`);
     } catch (error) {
+      // 隔离失败：不抛出到上层，记录错误并确保未注册任何残留
       console.error(`插件 ${plugin.name} 注册失败:`, error);
-      throw error;
+      this.plugins.delete(plugin.name);
+      this.pluginData.delete(plugin.name);
+      this.pluginEvents.delete(plugin.name);
     }
   }
 
@@ -79,6 +82,7 @@ export class PluginManager implements PluginManager {
       
       console.log(`插件 ${pluginName} 卸载成功`);
     } catch (error) {
+      // 隔离失败：卸载异常不影响管理器继续工作
       console.error(`插件 ${pluginName} 卸载失败:`, error);
     }
   }
@@ -185,7 +189,7 @@ export class PluginManager implements PluginManager {
 
     const event: PlayerEvent = {
       type: eventType,
-      target: this.player,
+      target: this.player as any,
       data,
       timestamp: Date.now()
     };
