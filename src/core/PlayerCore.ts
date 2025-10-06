@@ -17,6 +17,8 @@ export class PlayerCore {
   private defaultUI: DefaultUI | null = null;
   private advancedUI: AdvancedUI | null = null;
   private uiMode: UIMode;
+  // 保存外部暴露的 PlayerInstance 引用，供 UI 使用
+  private externalPlayer: any | null = null;
 
   constructor(container: HTMLElement, options: PlayerOptions) {
     this.container = container;
@@ -29,7 +31,6 @@ export class PlayerCore {
     this.initializeVideoElement();
     this.setupEventListeners();
     this.setupLifecycle();
-    this.initializeUI();
   }
 
   /**
@@ -532,7 +533,8 @@ export class PlayerCore {
   /**
    * 初始化UI
    */
-  private initializeUI(): void {
+  // 由外部（PlayerInstance）在设置 externalPlayer 后调用
+  initializeUI(): void {
     if (this.uiMode === UIMode.CUSTOM) {
       this.createDefaultUI();
     } else if (this.uiMode === UIMode.ADVANCED) {
@@ -569,7 +571,7 @@ export class PlayerCore {
     };
 
     this.defaultUI = new DefaultUI(
-      this as any, // 这里会被PlayerInstance包装
+      (this.externalPlayer || (this as any)),
       this.container,
       uiConfig,
       theme
@@ -612,7 +614,7 @@ export class PlayerCore {
     };
 
     this.advancedUI = new AdvancedUI(
-      this as any, // 这里会被PlayerInstance包装
+      (this.externalPlayer || (this as any)),
       this.container,
       uiConfig,
       theme
@@ -680,6 +682,13 @@ export class PlayerCore {
    */
   getUIMode(): UIMode {
     return this.uiMode;
+  }
+
+  /**
+   * 由 PlayerInstance 注入外部 Player 引用
+   */
+  setExternalPlayer(player: any): void {
+    this.externalPlayer = player;
   }
 
   /**

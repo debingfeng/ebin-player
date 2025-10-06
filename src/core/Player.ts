@@ -41,6 +41,9 @@ export class PlayerInstance {
     
     // 初始化核心播放器
     this.core = new PlayerCore(container, options);
+    // 向 Core 注入对外 PlayerInstance 引用，并延后初始化 UI
+    this.core.setExternalPlayer(this as any);
+    this.core.initializeUI();
     
     // 初始化插件管理器
     this.pluginManager = new PluginManager(this);
