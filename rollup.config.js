@@ -1,26 +1,57 @@
 import typescript from '@rollup/plugin-typescript';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import dts from 'rollup-plugin-dts';
+import { dts } from 'rollup-plugin-dts';
 import babel from '@rollup/plugin-babel';
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 import replace from '@rollup/plugin-replace';
+import alias from '@rollup/plugin-alias';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const isDev = process.env.ROLLUP_WATCH;
 
 const sharedPlugins = [
-  replace({ preventAssignment: true, 'process.env.NODE_ENV': JSON.stringify(isDev ? 'development' : 'production') }),
-  nodeResolve({ browser: true }),
+  replace({ 
+    preventAssignment: true, 
+    'process.env.NODE_ENV': JSON.stringify(isDev ? 'development' : 'production') 
+  }),
+  alias({
+    entries: [
+      { find: '@', replacement: resolve(__dirname, 'src') }
+    ]
+  }),
+  nodeResolve({ 
+    browser: true,
+    preferBuiltins: false
+  }),
   commonjs(),
-  typescript({ tsconfig: './tsconfig.json', exclude: ['**/demo/**'] }),
-  babel({ extensions: ['.ts', '.tsx'], babelHelpers: 'bundled', presets: [['@babel/preset-react', { runtime: 'automatic' }], ['@babel/preset-env']] })
+  typescript({ 
+    tsconfig: './tsconfig.json', 
+    exclude: ['**/demo/**', '**/*.test.*'] 
+  }),
+  babel({ 
+    extensions: ['.ts'], 
+    babelHelpers: 'bundled',
+    presets: [
+      ['@babel/preset-env', { targets: { browsers: ['> 1%', 'last 2 versions'] } }]
+    ],
+    exclude: 'node_modules/**'
+  })
 ];
 
 if (isDev) {
   sharedPlugins.push(
-    serve({ contentBase: '.', port: 8080, openPage: '/src/demo/index.html' }),
-    livereload({ watch: ['dist', 'src/demo'] })
+    serve({ 
+      contentBase: '.', 
+      port: 8080, 
+      openPage: '/demo/index.html' 
+    }),
+    livereload({ watch: ['dist', 'demo'] })
   );
 }
 
@@ -29,22 +60,35 @@ export default [
   {
     input: 'src/index.ts',
     output: [
-      { file: 'dist/web-player.esm.js', format: 'es' },
-      { file: 'dist/web-player.umd.js', format: 'umd', name: 'WebPlayer', globals: { react: 'React' } }
+      { 
+        file: 'dist/ebin-player.esm.js', 
+        format: 'es',
+        sourcemap: isDev
+      },
+      { 
+        file: 'dist/ebin-player.umd.js', 
+        format: 'umd', 
+        name: 'EbinPlayer',
+        sourcemap: isDev
+      }
     ],
-    external: ['react'],
+    plugins: sharedPlugins
+  },
+  // 原生HTML版本：不包含React依赖
+  {
+    input: 'src/native.ts',
+    output: { 
+      file: 'dist/ebin-player.native.js', 
+      format: 'umd', 
+      name: 'EbinPlayer',
+      sourcemap: isDev
+    },
     plugins: sharedPlugins
   },
   // 类型声明
   {
     input: 'dist/types/index.d.ts',
-    output: [{ file: 'dist/web-player.d.ts', format: 'es' }],
+    output: [{ file: 'dist/ebin-player.d.ts', format: 'es' }],
     plugins: [dts()]
-  },
-  // Demo
-  {
-    input: 'src/demo/main.ts',
-    output: { file: 'dist/demo.js', format: 'iife' },
-    plugins: sharedPlugins.filter(p => !['rollup-plugin-serve', 'rollup-plugin-livereload'].includes(p.name))
   }
 ];

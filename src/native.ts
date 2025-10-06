@@ -1,6 +1,6 @@
 /**
- * ebin-player 主入口文件
- * 导出所有公共API和类型
+ * ebin-player 原生HTML入口文件
+ * 不包含React相关组件，适合在原生HTML环境中使用
  */
 
 // 核心播放器
@@ -30,10 +30,8 @@ export { PlaybackRatePlugin } from './plugin/built-in/PlaybackRatePlugin';
 // UI组件
 export { DefaultUI } from './ui/DefaultUI';
 
-
 // 工具函数
 export const createPlayer = (container: HTMLElement, options: import('./types').PlayerOptions) => {
-  const { PlayerInstance } = require('./core/Player');
   return new PlayerInstance(container, options);
 };
 

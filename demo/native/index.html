@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ebin Player - 原生HTML示例</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .demo-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .player-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .control-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .control-btn:hover {
+            background: #0056b3;
+        }
+        
+        .control-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .info-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .info-item {
+            margin-bottom: 5px;
+        }
+        
+        .video-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .video-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+        
+        .video-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .video-item.active {
+            background-color: #e3f2fd;
+            border-color: #2196f3;
+        }
+        
+        .plugin-demo {
+            margin-top: 20px;
+        }
+        
+        .plugin-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .plugin-controls select {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .ui-mode-info {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .ui-mode-info ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .ui-mode-info li {
+            margin: 5px 0;
+        }
+        
+        .ui-mode-info code {
+            background: #e9ecef;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .ui-switch-buttons {
+            margin-top: 15px;
+        }
+        
+        .ui-switch-buttons .control-btn {
+            margin-right: 10px;
+        }
+        
+        .code-example {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        
+        .code-example h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .code-example pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 0;
+        }
+        
+        .code-example code {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Ebin Player - 原生HTML示例</h1>
+        
+        <!-- 基础播放器演示 -->
+        <div class="demo-section">
+            <div class="demo-title">基础播放器</div>
+            <div class="ui-mode-info">
+                <p><strong>UI模式说明：</strong></p>
+                <ul>
+                    <li>默认使用原生HTML5控制条（<code>uiMode: 'native'</code>）</li>
+                    <li>添加 <code>?ui=custom</code> 参数使用内置自定义UI（<code>uiMode: 'custom'</code>）</li>
+                    <li>例如：<code>index.html?ui=custom</code></li>
+                    <li>现在UI已内置到播放器实例中，通过配置控制</li>
+                </ul>
+                <div class="ui-switch-buttons">
+                    <button class="control-btn" onclick="switchToNativeUI()">切换到原生控制条</button>
+                    <button class="control-btn" onclick="switchToCustomUI()">切换到自定义UI</button>
+                </div>
+            </div>
+            <div class="player-container" id="player-container"></div>
+            
+            <div class="controls">
+                <button class="control-btn" id="play-btn">播放</button>
+                <button class="control-btn" id="pause-btn">暂停</button>
+                <button class="control-btn" id="mute-btn">静音</button>
+                <button class="control-btn" id="fullscreen-btn">全屏</button>
+                <button class="control-btn" id="pip-btn">画中画</button>
+            </div>
+            
+            <div class="info-panel" id="player-info">
+                <div class="info-item">状态: 初始化中...</div>
+                <div class="info-item">当前时间: 0s</div>
+                <div class="info-item">总时长: 0s</div>
+                <div class="info-item">音量: 100%</div>
+                <div class="info-item">播放速度: 1x</div>
+            </div>
+        </div>
+        
+        <!-- 视频源选择 -->
+        <div class="demo-section">
+            <div class="demo-title">视频源选择</div>
+            <div class="video-list" id="video-list">
+                <div class="video-item active" data-src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">
+                    <div>Big Buck Bunny</div>
+                    <small>示例视频1</small>
+                </div>
+                <div class="video-item" data-src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4">
+                    <div>Elephants Dream</div>
+                    <small>示例视频2</small>
+                </div>
+                <div class="video-item" data-src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4">
+                    <div>For Bigger Blazes</div>
+                    <small>示例视频3</small>
+                </div>
+                <div class="video-item" data-src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4">
+                    <div>For Bigger Escapes</div>
+                    <small>示例视频4</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 使用示例 -->
+        <div class="demo-section">
+            <div class="demo-title">使用示例</div>
+            <div class="code-example">
+                <h4>基础用法：</h4>
+                <pre><code>// 使用原生控制条（默认）
+const player = new PlayerInstance(container, {
+  src: 'video.mp4',
+  uiMode: 'native'
+});
+
+// 使用内置自定义UI
+const player = new PlayerInstance(container, {
+  src: 'video.mp4',
+  uiMode: 'custom',
+  uiConfig: {
+    playButton: true,
+    progressBar: true,
+    timeDisplay: true,
+    volumeControl: true,
+    fullscreenButton: true
+  },
+  theme: {
+    primaryColor: '#007bff',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    textColor: '#ffffff'
+  }
+});
+
+// 不使用任何UI
+const player = new PlayerInstance(container, {
+  src: 'video.mp4',
+  uiMode: 'none'
+});</code></pre>
+            </div>
+        </div>
+        
+        <!-- 插件演示 -->
+        <div class="demo-section">
+            <div class="demo-title">插件系统演示</div>
+            <div class="plugin-demo">
+                <p>播放速度控制插件已加载，鼠标悬停在播放器上可以看到控制按钮。</p>
+                <div class="plugin-controls">
+                    <label>播放速度:</label>
+                    <select id="playback-rate">
+                        <option value="0.25">0.25x</option>
+                        <option value="0.5">0.5x</option>
+                        <option value="0.75">0.75x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.25">1.25x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="1.75">1.75x</option>
+                        <option value="2">2x</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 功能特性展示 -->
+        <div class="demo-section">
+            <div class="demo-title">功能特性</div>
+            <ul>
+                <li>✅ 模块化架构设计</li>
+                <li>✅ 插件系统支持</li>
+                <li>✅ 状态管理</li>
+                <li>✅ 事件系统</li>
+                <li>✅ 全屏支持</li>
+                <li>✅ 画中画支持</li>
+                <li>✅ 自定义UI</li>
+                <li>✅ TypeScript支持</li>
+                <li>✅ 多格式导出 (ESM/UMD)</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // UI模式切换函数
+        function switchToNativeUI() {
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.delete('ui');
+            window.location.href = currentUrl.toString();
+        }
+        
+        function switchToCustomUI() {
+            const currentUrl = new URL(window.location);
+            currentUrl.searchParams.set('ui', 'custom');
+            window.location.href = currentUrl.toString();
+        }
+    </script>
+    <script src="./main.js"></script>
+</body>
+</html>

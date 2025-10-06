@@ -1,0 +1,229 @@
+/**
+ * 播放器核心类型定义
+ * 基于架构文档的Web视频播放器设计
+ */
+
+// UI模式枚举
+export enum UIMode {
+  NATIVE = 'native',        // 使用原生HTML5控制条
+  CUSTOM = 'custom',        // 使用内置自定义UI
+  NONE = 'none'            // 不使用任何UI
+}
+
+// 播放器配置选项
+export interface PlayerOptions {
+  src: string;
+  autoplay?: boolean;
+  muted?: boolean;
+  volume?: number;
+  playbackRate?: number;
+  poster?: string;
+  width?: number | string;
+  height?: number | string;
+  controls?: boolean;  // 已废弃，使用uiMode替代
+  loop?: boolean;
+  preload?: 'none' | 'metadata' | 'auto';
+  crossOrigin?: 'anonymous' | 'use-credentials' | '';
+  playsInline?: boolean;
+  uiMode?: UIMode;  // UI模式配置
+  uiConfig?: ControlBarConfig;  // 自定义UI配置
+  theme?: PlayerTheme;  // UI主题配置
+}
+
+// 播放器状态
+export interface PlayerState {
+  // 基础播放状态
+  src: string;
+  currentTime: number;
+  duration: number;
+  paused: boolean;
+  muted: boolean;
+  volume: number;
+  playbackRate: number;
+  
+  // 媒体状态
+  readyState: number;
+  networkState: number;
+  error: MediaError | null;
+  ended: boolean;
+  loading: boolean;
+  seeking: boolean;
+  
+  // 视频尺寸
+  videoWidth: number;
+  videoHeight: number;
+  
+  // 缓冲状态
+  buffered: TimeRanges | null;
+  seekable: TimeRanges | null;
+  
+  // 播放质量
+  quality: string;
+  bitrate: number;
+}
+
+// 播放器事件类型
+export type PlayerEventType = 
+  | 'loadstart'
+  | 'loadedmetadata'
+  | 'loadeddata'
+  | 'canplay'
+  | 'canplaythrough'
+  | 'play'
+  | 'pause'
+  | 'ended'
+  | 'error'
+  | 'timeupdate'
+  | 'volumechange'
+  | 'ratechange'
+  | 'seeking'
+  | 'seeked'
+  | 'waiting'
+  | 'stalled'
+  | 'progress'
+  | 'durationchange'
+  | 'resize'
+  | 'fullscreenchange'
+  | 'enterpictureinpicture'
+  | 'leavepictureinpicture';
+
+// 播放器事件
+export interface PlayerEvent {
+  type: PlayerEventType;
+  target: PlayerInstance;
+  data?: any;
+  timestamp: number;
+}
+
+// 播放器实例接口
+export interface PlayerInstance {
+  // 基础方法
+  play(): Promise<void>;
+  pause(): void;
+  load(): void;
+  destroy(): void;
+  
+  // 属性访问
+  getCurrentTime(): number;
+  setCurrentTime(time: number): void;
+  getDuration(): number;
+  getVolume(): number;
+  setVolume(volume: number): void;
+  getMuted(): boolean;
+  setMuted(muted: boolean): void;
+  getPlaybackRate(): number;
+  setPlaybackRate(rate: number): void;
+  getPaused(): boolean;
+  getEnded(): boolean;
+  getReadyState(): number;
+  getNetworkState(): number;
+  getError(): MediaError | null;
+  
+  // 状态管理
+  getState(): PlayerState;
+  setState(state: Partial<PlayerState>): void;
+  
+  // 事件系统
+  on(event: PlayerEventType, callback: (event: PlayerEvent) => void): void;
+  off(event: PlayerEventType, callback: (event: PlayerEvent) => void): void;
+  emit(event: PlayerEventType, data?: any): void;
+  
+  // 插件系统
+  use(plugin: Plugin): PlayerInstance;
+  unuse(pluginName: string): PlayerInstance;
+  getPlugin(name: string): Plugin | undefined;
+  
+  // UI控制
+  getContainer(): HTMLElement;
+  getVideoElement(): HTMLVideoElement;
+  
+  // 全屏控制
+  requestFullscreen(): Promise<void>;
+  exitFullscreen(): Promise<void>;
+  isFullscreen(): boolean;
+  
+  // 画中画
+  requestPictureInPicture(): Promise<PictureInPictureWindow>;
+  exitPictureInPicture(): Promise<void>;
+  isPictureInPicture(): boolean;
+}
+
+// 插件接口
+export interface Plugin {
+  name: string;
+  version?: string;
+  apply(player: PlayerInstance): void;
+  destroy?(): void;
+}
+
+// UI组件接口
+export interface UIComponent {
+  name: string;
+  render(container: HTMLElement, player: PlayerInstance): HTMLElement | void;
+  destroy(): void;
+  update?(state: PlayerState): void;
+}
+
+// 控制栏配置
+export interface ControlBarConfig {
+  playButton?: boolean;
+  progressBar?: boolean;
+  timeDisplay?: boolean;
+  volumeControl?: boolean;
+  playbackRateControl?: boolean;
+  fullscreenButton?: boolean;
+  pictureInPictureButton?: boolean;
+  customButtons?: UIComponent[];
+}
+
+// 播放器主题配置
+export interface PlayerTheme {
+  primaryColor?: string;
+  secondaryColor?: string;
+  backgroundColor?: string;
+  textColor?: string;
+  controlBarHeight?: number;
+  borderRadius?: number;
+  fontFamily?: string;
+}
+
+// 播放器配置
+export interface PlayerConfig extends PlayerOptions {
+  theme?: PlayerTheme;
+  controlBar?: ControlBarConfig;
+  plugins?: Plugin[];
+  customUI?: boolean;
+}
+
+// 媒体事件映射
+export const MEDIA_EVENTS: PlayerEventType[] = [
+  'loadstart',
+  'loadedmetadata', 
+  'loadeddata',
+  'canplay',
+  'canplaythrough',
+  'play',
+  'pause',
+  'ended',
+  'error',
+  'timeupdate',
+  'volumechange',
+  'ratechange',
+  'seeking',
+  'seeked',
+  'waiting',
+  'stalled',
+  'progress',
+  'durationchange'
+];
+
+// 播放器生命周期阶段
+export enum PlayerLifecycle {
+  INITIALIZING = 'initializing',
+  READY = 'ready',
+  PLAYING = 'playing',
+  PAUSED = 'paused',
+  ENDED = 'ended',
+  ERROR = 'error',
+  DESTROYED = 'destroyed'
+}
