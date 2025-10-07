@@ -1,7 +1,3 @@
-/**
- * 播放器核心类
- * 负责播放器内核能力封装、API差异抹平、生命周期管理
- */
 import { PlayerOptions, PlayerState, PlayerEventType, PlayerEvent, PlayerLifecycle, UIMode, ControlBarConfig, PlayerTheme, EventPayloadMap, PlayerEventBase } from '../types';
 import { Logger as CoreLogger } from './Logger';
 import type { Logger as LoggerType } from '../types';
@@ -30,6 +26,18 @@ export class PlayerCore {
   private uiMode: UIMode;
   // 日志记录器
   private logger: LoggerType;
+  // DOM 事件处理器引用，便于销毁时解绑
+  private mediaEventHandlers: Map<PlayerEventType, (event: Event) => void> = new Map();
+  private lifecycleEventHandlers: Array<{ type: string; handler: (event: Event) => void }> = [];
+  private fullscreenChangeHandler?: () => void;
+  private webkitFullscreenChangeHandler?: () => void;
+  private mozFullscreenChangeHandler?: () => void;
+  private msFullscreenChangeHandler?: () => void;
+  private pipEnterHandler?: () => void;
+  private pipLeaveHandler?: () => void;
+  // 日志节流时间戳
+  private lastDebugAt: Record<string, number> = {};
+  private debugThrottleMs = 250;
 
   /**
    * PlayerCore 构造函数
@@ -111,25 +119,37 @@ export class PlayerCore {
     ];
 
     mediaEvents.forEach(eventType => {
-      this.videoElement.addEventListener(eventType, (event) => {
+      const handler = (event: Event) => {
         this.handleMediaEvent(eventType, event);
-      });
+      };
+      this.mediaEventHandlers.set(eventType, handler);
+      this.videoElement.addEventListener(eventType, handler);
     });
 
     // 监听全屏变化
-    document.addEventListener('fullscreenchange', () => {
+    this.fullscreenChangeHandler = () => {
       this.emit('fullscreenchange', { isFullscreen: this.isFullscreen() });
       this.logger.debug('fullscreenchange', { isFullscreen: this.isFullscreen() });
-    });
+    };
+    document.addEventListener('fullscreenchange', this.fullscreenChangeHandler);
+    // 兼容前缀事件
+    this.webkitFullscreenChangeHandler = this.fullscreenChangeHandler;
+    this.mozFullscreenChangeHandler = this.fullscreenChangeHandler;
+    this.msFullscreenChangeHandler = this.fullscreenChangeHandler;
+    (document as any).addEventListener?.('webkitfullscreenchange', this.webkitFullscreenChangeHandler);
+    (document as any).addEventListener?.('mozfullscreenchange', this.mozFullscreenChangeHandler);
+    (document as any).addEventListener?.('MSFullscreenChange', this.msFullscreenChangeHandler);
 
     // 监听画中画变化
-    this.videoElement.addEventListener('enterpictureinpicture', () => {
+    this.pipEnterHandler = () => {
       this.emit('enterpictureinpicture', {});
-    });
+    };
+    this.videoElement.addEventListener('enterpictureinpicture', this.pipEnterHandler);
 
-    this.videoElement.addEventListener('leavepictureinpicture', () => {
+    this.pipLeaveHandler = () => {
       this.emit('leavepictureinpicture', {});
-    });
+    };
+    this.videoElement.addEventListener('leavepictureinpicture', this.pipLeaveHandler);
   }
 
   /**
@@ -141,11 +161,16 @@ export class PlayerCore {
     if (eventType === 'error') {
       this.logger.error('media error', this.videoElement.error);
     } else {
-      this.logger.debug('media event', eventType, {
-        currentTime: this.videoElement.currentTime,
-        duration: this.videoElement.duration,
-        paused: this.videoElement.paused
-      });
+      const now = Date.now();
+      const last = this.lastDebugAt[eventType] || 0;
+      if (now - last >= this.debugThrottleMs) {
+        this.lastDebugAt[eventType] = now;
+        this.logger.debug('media event', eventType, {
+          currentTime: this.videoElement.currentTime,
+          duration: this.videoElement.duration,
+          paused: this.videoElement.paused
+        });
+      }
     }
   }
 
@@ -153,32 +178,37 @@ export class PlayerCore {
    * 设置生命周期管理，根据不同的事件更新播放器的生命周期状态
    */
   private setupLifecycle(): void {
-    this.videoElement.addEventListener('loadstart', () => {
+    const bind = (type: string, handler: (event: Event) => void) => {
+      this.lifecycleEventHandlers.push({ type, handler });
+      this.videoElement.addEventListener(type, handler);
+    };
+
+    bind('loadstart', () => {
       this.setLifecycle(PlayerLifecycle.INITIALIZING);
       this.logger.debug('lifecycle', 'INITIALIZING');
     });
 
-    this.videoElement.addEventListener('canplay', () => {
+    bind('canplay', () => {
       this.setLifecycle(PlayerLifecycle.READY);
       this.logger.debug('lifecycle', 'READY');
     });
 
-    this.videoElement.addEventListener('play', () => {
+    bind('play', () => {
       this.setLifecycle(PlayerLifecycle.PLAYING);
       this.logger.debug('lifecycle', 'PLAYING');
     });
 
-    this.videoElement.addEventListener('pause', () => {
+    bind('pause', () => {
       this.setLifecycle(PlayerLifecycle.PAUSED);
       this.logger.debug('lifecycle', 'PAUSED');
     });
 
-    this.videoElement.addEventListener('ended', () => {
+    bind('ended', () => {
       this.setLifecycle(PlayerLifecycle.ENDED);
       this.logger.debug('lifecycle', 'ENDED');
     });
 
-    this.videoElement.addEventListener('error', () => {
+    bind('error', () => {
       this.setLifecycle(PlayerLifecycle.ERROR);
       this.logger.error('lifecycle', 'ERROR', this.videoElement.error);
     });
@@ -236,11 +266,17 @@ export class PlayerCore {
       buffered: this.videoElement.buffered,
       seekable: this.videoElement.seekable
     };
-    this.logger.debug('state updated', {
-      currentTime: this.state.currentTime,
-      duration: this.state.duration,
-      paused: this.state.paused
-    });
+    const now = Date.now();
+    const eventType = 'state:update';
+    const last = this.lastDebugAt[eventType] || 0;
+    if (now - last >= this.debugThrottleMs) {
+      this.lastDebugAt[eventType] = now;
+      this.logger.debug('state updated', {
+        currentTime: this.state.currentTime,
+        duration: this.state.duration,
+        paused: this.state.paused
+      });
+    }
   }
 
   /**
@@ -248,6 +284,7 @@ export class PlayerCore {
    */
   private setLifecycle(lifecycle: PlayerLifecycle): void {
     this.lifecycle = lifecycle;
+    this.emit('lifecyclechange', { lifecycle });
   }
 
   /**
@@ -417,16 +454,30 @@ export class PlayerCore {
     if (state.currentTime !== undefined) {
       this.setCurrentTime(state.currentTime);
     }
+
+    // 更新内部状态快照并对外通知
+    this.updateState();
+    this.emit('statechange', { state: { ...this.state } });
+  }
+
+  /**
+   * 配置调试日志节流窗口
+   */
+  setDebugThrottle(ms: number): void {
+    if (Number.isFinite(ms) && ms >= 0) {
+      this.debugThrottleMs = ms;
+    }
   }
 
   /**
    * 事件监听
    */
-  on<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): void {
+  on<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): () => void {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, new Set());
     }
     this.eventListeners.get(event)!.add(callback as any);
+    return () => this.off(event, callback as any);
   }
 
   /**
@@ -482,14 +533,34 @@ export class PlayerCore {
   async requestFullscreen(): Promise<void> {
     if (this.isDestroyed) return;
     
+    const el: any = this.videoElement as any;
     if (this.videoElement.requestFullscreen) {
       await this.videoElement.requestFullscreen();
-    } else if ((this.videoElement as any).webkitRequestFullscreen) {
-      await (this.videoElement as any).webkitRequestFullscreen();
-    } else if ((this.videoElement as any).mozRequestFullScreen) {
-      await (this.videoElement as any).mozRequestFullScreen();
-    } else if ((this.videoElement as any).msRequestFullscreen) {
-      await (this.videoElement as any).msRequestFullscreen();
+      return;
+    }
+    if (el.webkitRequestFullscreen) {
+      await el.webkitRequestFullscreen();
+      return;
+    }
+    if (el.mozRequestFullScreen) {
+      await el.mozRequestFullScreen();
+      return;
+    }
+    if (el.msRequestFullscreen) {
+      await el.msRequestFullscreen();
+      return;
+    }
+    // iOS Safari 专用的内联视频进入原生全屏
+    if (typeof el.webkitEnterFullscreen === 'function') {
+      el.webkitEnterFullscreen();
+      return;
+    }
+    // 尝试容器全屏作为降级
+    const container: any = this.container as any;
+    if (this.container.requestFullscreen) {
+      await this.container.requestFullscreen();
+    } else if (container.webkitRequestFullscreen) {
+      await container.webkitRequestFullscreen();
     }
   }
 
@@ -499,14 +570,31 @@ export class PlayerCore {
   async exitFullscreen(): Promise<void> {
     if (this.isDestroyed) return;
     
-    if (document.exitFullscreen) {
+    const doc: any = document as any;
+    if (document.fullscreenElement && document.exitFullscreen) {
       await document.exitFullscreen();
-    } else if ((document as any).webkitExitFullscreen) {
-      await (document as any).webkitExitFullscreen();
-    } else if ((document as any).mozCancelFullScreen) {
-      await (document as any).mozCancelFullScreen();
-    } else if ((document as any).msExitFullscreen) {
-      await (document as any).msExitFullscreen();
+      return;
+    }
+    if (doc.webkitFullscreenElement && doc.webkitExitFullscreen) {
+      await doc.webkitExitFullscreen();
+      return;
+    }
+    if (doc.mozFullScreenElement && doc.mozCancelFullScreen) {
+      await doc.mozCancelFullScreen();
+      return;
+    }
+    if (doc.msFullscreenElement && doc.msExitFullscreen) {
+      await doc.msExitFullscreen();
+      return;
+    }
+    // iOS Safari 退出视频原生全屏
+    const el: any = this.videoElement as any;
+    try {
+      if (typeof el.webkitExitFullscreen === 'function') {
+        el.webkitExitFullscreen();
+      }
+    } catch (err) {
+      this.logger.warn('webkitExitFullscreen failed', err);
     }
   }
 
@@ -528,11 +616,12 @@ export class PlayerCore {
   async requestPictureInPicture(): Promise<PictureInPictureWindow> {
     if (this.isDestroyed) throw new Error('播放器已销毁');
     
-    if (this.videoElement.requestPictureInPicture) {
-      return await this.videoElement.requestPictureInPicture();
-    } else {
-      throw new Error('浏览器不支持画中画功能');
+    const anyDoc: any = document as any;
+    const anyVideo: any = this.videoElement as any;
+    if (anyVideo.requestPictureInPicture && anyDoc.pictureInPictureEnabled && !anyVideo.disablePictureInPicture) {
+      return await anyVideo.requestPictureInPicture();
     }
+    throw new Error('浏览器不支持画中画功能');
   }
 
   /**
@@ -541,11 +630,12 @@ export class PlayerCore {
   async exitPictureInPicture(): Promise<void> {
     if (this.isDestroyed) return;
     
-    if (document.exitPictureInPicture) {
-      await document.exitPictureInPicture();
-    } else {
-      throw new Error('浏览器不支持画中画功能');
+    const anyDoc: any = document as any;
+    if (anyDoc.pictureInPictureElement && anyDoc.exitPictureInPicture) {
+      await anyDoc.exitPictureInPicture();
+      return;
     }
+    throw new Error('浏览器不支持画中画功能');
   }
 
   /**
@@ -657,8 +747,43 @@ export class PlayerCore {
     // UI销毁现在由外部UI系统处理
     this.logger.debug('Player destroyed, external UI system should handle cleanup');
     
-    // 清理事件监听器
+    // 清理自建事件监听器集合
     this.eventListeners.clear();
+    // 解绑媒体事件
+    this.mediaEventHandlers.forEach((handler, type) => {
+      this.videoElement.removeEventListener(type, handler as any);
+    });
+    this.mediaEventHandlers.clear();
+    // 解绑生命周期事件
+    this.lifecycleEventHandlers.forEach(({ type, handler }) => {
+      this.videoElement.removeEventListener(type, handler);
+    });
+    this.lifecycleEventHandlers = [];
+    // 解绑全屏与画中画事件
+    if (this.fullscreenChangeHandler) {
+      document.removeEventListener('fullscreenchange', this.fullscreenChangeHandler);
+      this.fullscreenChangeHandler = undefined;
+    }
+    if (this.webkitFullscreenChangeHandler) {
+      (document as any).removeEventListener?.('webkitfullscreenchange', this.webkitFullscreenChangeHandler);
+      this.webkitFullscreenChangeHandler = undefined;
+    }
+    if (this.mozFullscreenChangeHandler) {
+      (document as any).removeEventListener?.('mozfullscreenchange', this.mozFullscreenChangeHandler);
+      this.mozFullscreenChangeHandler = undefined;
+    }
+    if (this.msFullscreenChangeHandler) {
+      (document as any).removeEventListener?.('MSFullscreenChange', this.msFullscreenChangeHandler);
+      this.msFullscreenChangeHandler = undefined;
+    }
+    if (this.pipEnterHandler) {
+      this.videoElement.removeEventListener('enterpictureinpicture', this.pipEnterHandler);
+      this.pipEnterHandler = undefined;
+    }
+    if (this.pipLeaveHandler) {
+      this.videoElement.removeEventListener('leavepictureinpicture', this.pipLeaveHandler);
+      this.pipLeaveHandler = undefined;
+    }
     
     // 移除视频元素
     if (this.videoElement && this.videoElement.parentNode) {
@@ -667,5 +792,32 @@ export class PlayerCore {
     
     // 清理状态
     this.state = this.createInitialState();
+  }
+
+  /**
+   * 切换媒体源
+   */
+  setSource(options: { src: string; poster?: string; autoplay?: boolean; preload?: 'none' | 'metadata' | 'auto' }): void {
+    if (this.isDestroyed) return;
+    const { src, poster, autoplay, preload } = options;
+    this.options.src = src;
+    if (poster !== undefined) this.options.poster = poster;
+    if (preload !== undefined) this.options.preload = preload;
+    this.videoElement.src = src;
+    if (poster !== undefined) this.videoElement.poster = poster || '';
+    if (preload !== undefined) this.videoElement.preload = preload;
+    // 同步内部状态中的 src，避免外部立即读取到旧值
+    this.state = { ...this.state, src };
+    // 重置生命周期并加载
+    this.setLifecycle(PlayerLifecycle.INITIALIZING);
+    if (autoplay) {
+      // 尝试自动播放
+      this.play().catch((e) => {
+        this.logger.warn('autoplay failed on setSource, fallback to load()', e);
+        this.videoElement.load();
+      });
+    } else {
+      this.videoElement.load();
+    }
   }
 }

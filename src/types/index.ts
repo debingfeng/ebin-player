@@ -98,7 +98,9 @@ export type PlayerEventType =
   | 'resize'
   | 'fullscreenchange'
   | 'enterpictureinpicture'
-  | 'leavepictureinpicture';
+  | 'leavepictureinpicture'
+  | 'lifecyclechange'
+  | 'statechange';
 
 // 播放器事件
 // 事件载荷映射（后续可细化为更具体的事件对象）
@@ -125,6 +127,8 @@ export type EventPayloadMap = {
   fullscreenchange: { isFullscreen: boolean };
   enterpictureinpicture: {};
   leavepictureinpicture: {};
+  lifecyclechange: { lifecycle: PlayerLifecycle };
+  statechange: { state: PlayerState };
 };
 
 export interface PlayerEventBase<T extends PlayerEventType = PlayerEventType> {
