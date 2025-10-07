@@ -40,8 +40,6 @@ export class PlayerInstance {
     this.setupStateSync();
     this.setupEventForwarding();
     
-    // 最后再初始化 UI，确保 DefaultUI 能访问到已就绪的 PlayerInstance 与 Store
-    this.core.setExternalPlayer(this as any);
     this.core.initializeUI();
   }
 
