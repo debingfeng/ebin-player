@@ -38,14 +38,26 @@ export interface ComponentTheme {
   spacing?: number;
 }
 
+/**
+ * 组件基类，提供所有组件共有的基础功能
+ * 包括初始化、主题管理、事件处理、错误处理等
+ */
 export abstract class BaseComponent {
+  // 播放器实例
   protected player: PlayerInstance;
+  // 组件容器元素
   protected container: HTMLElement;
+  // 组件配置
   protected config: ComponentConfig;
+  // 组件主题
   protected theme: ComponentTheme;
+  // 日志记录器
   protected logger: Logger;
+  // 组件DOM元素
   protected element: HTMLElement | null = null;
+  // 组件是否已销毁
   protected isDestroyed = false;
+  // 事件监听器列表
   protected eventListeners: Array<{ element: HTMLElement; event: string; handler: EventListener }> = [];
 
   constructor(

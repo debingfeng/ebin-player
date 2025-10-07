@@ -7,19 +7,35 @@ import { Logger as CoreLogger } from './Logger';
 import type { Logger as LoggerType } from '../types';
 import { logMethod } from './decorators';
 
+/**
+ * PlayerCore 类是视频播放器的核心实现类，负责管理视频播放的基本功能、状态和生命周期。
+ * 它处理视频元素的创建、事件监听、状态管理，并提供了一系列控制播放的方法。
+ */
 export class PlayerCore {
+  // 视频元素实例
   private videoElement!: HTMLVideoElement;
+  // 播放器容器元素
   private container: HTMLElement;
+  // 播放器配置选项
   private options: PlayerOptions;
+  // 播放器生命周期状态
   private lifecycle: PlayerLifecycle = PlayerLifecycle.INITIALIZING;
+  // 事件监听器映射表，存储不同类型事件的回调函数集合
   private eventListeners: Map<PlayerEventType, Set<(event: PlayerEvent) => void>> = new Map();
+  // 播放器状态对象
   private state: PlayerState;
+  // 标记播放器是否已销毁
   private isDestroyed = false;
+  // UI模式（原生、自定义等）
   private uiMode: UIMode;
-  // 保存外部暴露的 PlayerInstance 引用，供 UI 使用
-  private externalPlayer: any | null = null;
+  // 日志记录器
   private logger: LoggerType;
 
+  /**
+   * PlayerCore 构造函数
+   * @param container 播放器容器元素
+   * @param options 播放器配置选项
+   */
   constructor(container: HTMLElement, options: PlayerOptions) {
     this.container = container;
     this.options = options;
@@ -30,6 +46,7 @@ export class PlayerCore {
     // 确定UI模式
     this.uiMode = this.determineUIMode();
     
+    // 初始化视频元素、事件监听器和生命周期管理
     this.initializeVideoElement();
     this.setupEventListeners();
     this.setupLifecycle();
@@ -37,7 +54,7 @@ export class PlayerCore {
   }
 
   /**
-   * 初始化视频元素
+   * 初始化视频元素，创建video标签并设置基本属性
    */
   private initializeVideoElement(): void {
     this.logger.debug('initializeVideoElement');
@@ -83,7 +100,7 @@ export class PlayerCore {
   }
 
   /**
-   * 设置事件监听器
+   * 设置事件监听器，包括媒体事件、全屏事件和画中画事件
    */
   private setupEventListeners(): void {
     this.logger.debug('setupEventListeners');
@@ -116,7 +133,7 @@ export class PlayerCore {
   }
 
   /**
-   * 处理媒体事件
+   * 处理媒体事件，更新播放器状态并触发相应的事件
    */
   private handleMediaEvent(eventType: PlayerEventType, event: Event): void {
     this.updateState();
@@ -133,7 +150,7 @@ export class PlayerCore {
   }
 
   /**
-   * 设置生命周期管理
+   * 设置生命周期管理，根据不同的事件更新播放器的生命周期状态
    */
   private setupLifecycle(): void {
     this.videoElement.addEventListener('loadstart', () => {
@@ -620,13 +637,6 @@ export class PlayerCore {
    */
   getUIMode(): UIMode {
     return this.uiMode;
-  }
-
-  /**
-   * 由 PlayerInstance 注入外部 Player 引用
-   */
-  setExternalPlayer(player: any): void {
-    this.externalPlayer = player;
   }
 
   setDebug(enabled: boolean): void {
