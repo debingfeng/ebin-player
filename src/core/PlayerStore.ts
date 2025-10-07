@@ -1,31 +1,51 @@
-/**
- * 播放器状态管理
- * 负责内部组件间的状态数据管理和通信
- */
 import { PlayerState, PlayerEventType, PlayerEvent } from '../types';
 import type { Logger as LoggerType } from '../types';
 import { Logger as CoreLogger } from './Logger';
 
+/**
+ * PlayerStore 类 - 播放器状态管理器
+ * 负责管理播放器状态、订阅/通知机制、状态历史记录等功能
+ */
 export class PlayerStore {
+  // 私有属性：当前播放器状态
   private state: PlayerState;
-  private subscribers: Map<keyof PlayerState | 'all', Set<(state: PlayerState) => void>> = new Map();
-  private eventSubscribers: Map<PlayerEventType, Set<(event: PlayerEvent) => void>> = new Map();
-  private stateHistory: PlayerState[] = [];
-  private maxHistorySize = 50;
+  // 私有属性：状态订阅者映射表
+  // 键为状态键名或'all'，值为回调函数集合
+  private subscribers: Map<keyof PlayerState, Set<(state: PlayerState) => void>> = new Map();
+  private globalSubscribers: Set<(state: PlayerState) => void> = new Set();
+  // 私有属性：事件订阅者映射表
+  // 键为事件类型或'all'，值为回调函数集合
+  private eventSubscribers: Map<PlayerEventType | 'all', Set<(event: PlayerEvent) => void>> = new Map();
+  // 私有属性：日志记录器
   private logger: LoggerType;
 
   constructor(initialState: PlayerState, logger?: LoggerType) {
     this.state = { ...initialState };
-    this.stateHistory.push({ ...this.state });
     this.logger = logger || new CoreLogger('Store');
     this.logger.info('construct');
+  }
+
+  /**
+   * 深拷贝工具，优先使用原生 structuredClone，回退到 JSON 序列化
+   */
+  private deepClone<T>(value: T): T {
+    try {
+      // @ts-ignore structuredClone 可能不存在于某些运行环境
+      if (typeof structuredClone === 'function') return structuredClone(value);
+    } catch {}
+    try {
+      return JSON.parse(JSON.stringify(value));
+    } catch {
+      return value;
+    }
   }
 
   /**
    * 获取当前状态
    */
   getState(): PlayerState {
-    return { ...this.state };
+    // 返回深拷贝，避免外部意外修改内部状态
+    return this.deepClone(this.state);
   }
 
   /**
@@ -35,13 +55,7 @@ export class PlayerStore {
     const prevState = { ...this.state };
     this.state = { ...this.state, ...newState };
     this.logger.debug('setState', newState);
-    
-    // 保存状态历史
-    this.stateHistory.push({ ...this.state });
-    if (this.stateHistory.length > this.maxHistorySize) {
-      this.stateHistory.shift();
-    }
-    
+
     // 通知订阅者
     this.notifySubscribers(prevState, this.state);
   }
@@ -50,7 +64,11 @@ export class PlayerStore {
    * 获取特定状态值
    */
   getStateValue<K extends keyof PlayerState>(key: K): PlayerState[K] {
-    return this.state[key];
+    const value = this.state[key];
+    if (value && typeof value === 'object') {
+      return this.deepClone(value);
+    }
+    return value;
   }
 
   /**
@@ -60,13 +78,7 @@ export class PlayerStore {
     const prevState = { ...this.state };
     this.state = { ...this.state, [key]: value };
     this.logger.debug('setStateValue', key, value);
-    
-    // 保存状态历史
-    this.stateHistory.push({ ...this.state });
-    if (this.stateHistory.length > this.maxHistorySize) {
-      this.stateHistory.shift();
-    }
-    
+
     // 通知特定状态的订阅者
     this.notifySpecificSubscribers(key, prevState, this.state);
   }
@@ -89,10 +101,7 @@ export class PlayerStore {
       });
     } else {
       // 订阅所有状态变化
-      if (!this.subscribers.has('all')) {
-        this.subscribers.set('all', new Set());
-      }
-      this.subscribers.get('all')!.add(callback);
+      this.globalSubscribers.add(callback);
     }
 
     // 返回取消订阅函数
@@ -106,10 +115,7 @@ export class PlayerStore {
           }
         });
       } else {
-        const allSubscribers = this.subscribers.get('all');
-        if (allSubscribers) {
-          allSubscribers.delete(callback);
-        }
+        this.globalSubscribers.delete(callback);
       }
     };
   }
@@ -118,7 +124,7 @@ export class PlayerStore {
    * 订阅事件
    */
   subscribeEvent(
-    eventType: PlayerEventType,
+    eventType: PlayerEventType | 'all',
     callback: (event: PlayerEvent) => void
   ): () => void {
     this.logger.debug('subscribeEvent', eventType);
@@ -141,17 +147,14 @@ export class PlayerStore {
    */
   private notifySubscribers(prevState: PlayerState, currentState: PlayerState): void {
     // 通知所有状态订阅者
-    const allSubscribers = this.subscribers.get('all');
-    if (allSubscribers) {
-      allSubscribers.forEach(callback => {
-        try {
-          callback(currentState);
-        } catch (error) {
-          console.error('状态订阅者回调错误:', error);
-          this.logger.error('subscriber error', error);
-        }
-      });
-    }
+    this.globalSubscribers.forEach(callback => {
+      try {
+        callback(currentState);
+      } catch (error) {
+        console.error('状态订阅者回调错误:', error);
+        this.logger.error('subscriber error', error);
+      }
+    });
 
     // 通知特定状态订阅者
     Object.keys(currentState).forEach(key => {
@@ -199,49 +202,17 @@ export class PlayerStore {
         }
       });
     }
-  }
-
-  /**
-   * 获取状态历史
-   */
-  getStateHistory(): PlayerState[] {
-    return [...this.stateHistory];
-  }
-
-  /**
-   * 获取状态变化历史
-   */
-  getStateChanges(): Array<{
-    timestamp: number;
-    key: keyof PlayerState;
-    prevValue: any;
-    newValue: any;
-  }> {
-    const changes: Array<{
-      timestamp: number;
-      key: keyof PlayerState;
-      prevValue: any;
-      newValue: any;
-    }> = [];
-
-    for (let i = 1; i < this.stateHistory.length; i++) {
-      const prevState = this.stateHistory[i - 1];
-      const currentState = this.stateHistory[i];
-      
-      Object.keys(currentState).forEach(key => {
-        const stateKey = key as keyof PlayerState;
-        if (prevState[stateKey] !== currentState[stateKey]) {
-          changes.push({
-            timestamp: Date.now(),
-            key: stateKey,
-            prevValue: prevState[stateKey],
-            newValue: currentState[stateKey]
-          });
+    const allSubscribers = this.eventSubscribers.get('all');
+    if (allSubscribers) {
+      allSubscribers.forEach(callback => {
+        try {
+          callback(event);
+        } catch (error) {
+          console.error(`事件订阅者回调错误 (all:${event.type}):`, error);
+          this.logger.error('event subscriber error', 'all', event.type, error);
         }
       });
     }
-
-    return changes;
   }
 
   /**
@@ -250,10 +221,7 @@ export class PlayerStore {
   resetState(newState?: Partial<PlayerState>): void {
     const prevState = { ...this.state };
     this.state = { ...this.state, ...newState };
-    
-    // 清空历史
-    this.stateHistory = [{ ...this.state }];
-    
+
     // 通知所有订阅者
     this.notifySubscribers(prevState, this.state);
   }
@@ -261,47 +229,16 @@ export class PlayerStore {
   /**
    * 批量更新状态
    */
-  batchUpdate(updates: Partial<PlayerState>[]): void {
+  batchUpdate(updates: Partial<PlayerState> | Partial<PlayerState>[]): void {
     const prevState = { ...this.state };
+    const list = Array.isArray(updates) ? updates : [updates];
     
-    updates.forEach(update => {
+    list.forEach(update => {
       this.state = { ...this.state, ...update };
     });
-    
-    // 保存状态历史
-    this.stateHistory.push({ ...this.state });
-    if (this.stateHistory.length > this.maxHistorySize) {
-      this.stateHistory.shift();
-    }
-    
+
     // 通知订阅者
     this.notifySubscribers(prevState, this.state);
-  }
-
-  /**
-   * 获取状态统计信息
-   */
-  getStateStats(): {
-    totalChanges: number;
-    mostChangedKey: keyof PlayerState | null;
-    changeFrequency: Record<keyof PlayerState, number>;
-  } {
-    const changes = this.getStateChanges();
-    const changeFrequency: Record<keyof PlayerState, number> = {} as any;
-    
-    changes.forEach(change => {
-      changeFrequency[change.key] = (changeFrequency[change.key] || 0) + 1;
-    });
-    
-    const mostChangedKey = Object.keys(changeFrequency).reduce((a, b) => 
-      changeFrequency[a as keyof PlayerState] > changeFrequency[b as keyof PlayerState] ? a : b
-    ) as keyof PlayerState | null;
-    
-    return {
-      totalChanges: changes.length,
-      mostChangedKey,
-      changeFrequency
-    };
   }
 
   /**
@@ -318,6 +255,5 @@ export class PlayerStore {
   destroy(): void {
     this.logger.info('destroy');
     this.clearSubscribers();
-    this.stateHistory = [];
   }
 }
