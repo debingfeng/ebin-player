@@ -27,8 +27,22 @@ export type {
 export { PluginManager } from './plugin/PluginManager';
 export { PlaybackRatePlugin } from './plugin/built-in/PlaybackRatePlugin';
 
+// UI组件 - 全新架构
+export { ImprovedDefaultUI } from './ui/ImprovedDefaultUI';
+export { UIManager } from './ui/UIManager';
+export { ThemeManager } from './ui/theme/ThemeManager';
+export { ResponsiveManager } from './ui/responsive/ResponsiveManager';
+export { ErrorHandler } from './ui/error/ErrorHandler';
+
 // UI组件
-export { DefaultUI } from './ui/DefaultUI';
+export { BaseComponent } from './ui/components/BaseComponent';
+export { PlayButton } from './ui/components/PlayButton';
+export { ProgressBar } from './ui/components/ProgressBar';
+export { VolumeControl } from './ui/components/VolumeControl';
+export { TimeDisplay } from './ui/components/TimeDisplay';
+
+// UI配置
+export { UIConfigManager } from './ui/config/UIConfig';
 
 
 // 工具函数

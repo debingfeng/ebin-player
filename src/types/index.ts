@@ -187,6 +187,9 @@ export interface PlayerInstance {
   requestPictureInPicture(): Promise<PictureInPictureWindow>;
   exitPictureInPicture(): Promise<PlayerInstance>;
   isPictureInPicture(): boolean;
+  
+  // 日志管理
+  getLogger?(): Logger;
 }
 
 // 插件接口

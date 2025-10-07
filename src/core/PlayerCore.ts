@@ -3,8 +3,6 @@
  * 负责播放器内核能力封装、API差异抹平、生命周期管理
  */
 import { PlayerOptions, PlayerState, PlayerEventType, PlayerEvent, PlayerLifecycle, UIMode, ControlBarConfig, PlayerTheme, EventPayloadMap, PlayerEventBase } from '../types';
-import { DefaultUI } from '../ui/DefaultUI';
-import { AdvancedUI } from '../ui/AdvancedUI';
 import { Logger as CoreLogger } from './Logger';
 import type { Logger as LoggerType } from '../types';
 import { logMethod } from './decorators';
@@ -17,8 +15,6 @@ export class PlayerCore {
   private eventListeners: Map<PlayerEventType, Set<(event: PlayerEvent) => void>> = new Map();
   private state: PlayerState;
   private isDestroyed = false;
-  private defaultUI: DefaultUI | null = null;
-  private advancedUI: AdvancedUI | null = null;
   private uiMode: UIMode;
   // 保存外部暴露的 PlayerInstance 引用，供 UI 使用
   private externalPlayer: any | null = null;
@@ -568,102 +564,17 @@ export class PlayerCore {
   }
 
   /**
-   * 初始化UI
+   * 初始化UI - 现在由外部UI系统处理
    */
-  // 由外部（PlayerInstance）在设置 externalPlayer 后调用
   initializeUI(): void {
-    if (this.uiMode === UIMode.CUSTOM) {
-      this.createDefaultUI();
-    } else if (this.uiMode === UIMode.ADVANCED) {
-      this.createAdvancedUI();
-    }
+    // UI初始化现在由外部UI系统（如ImprovedDefaultUI）处理
+    this.logger.debug('UI initialization delegated to external UI system');
   }
 
-  /**
-   * 创建默认UI
-   */
-  private createDefaultUI(): void {
-    if (this.defaultUI) {
-      this.defaultUI.destroy();
-    }
 
-    const uiConfig: ControlBarConfig = {
-      playButton: true,
-      progressBar: true,
-      timeDisplay: true,
-      volumeControl: true,
-      fullscreenButton: true,
-      ...this.options.uiConfig
-    };
-
-    const theme: PlayerTheme = {
-      primaryColor: '#007bff',
-      secondaryColor: '#6c757d',
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
-      textColor: '#ffffff',
-      controlBarHeight: 50,
-      borderRadius: 4,
-      fontFamily: 'Arial, sans-serif',
-      ...this.options.theme
-    };
-
-    this.defaultUI = new DefaultUI(
-      (this.externalPlayer || (this as any)),
-      this.container,
-      uiConfig,
-      theme
-    );
-    this.defaultUI.setDebug?.(!!this.options.debug);
-    this.logger.debug('default UI created');
-  }
 
   /**
-   * 创建高级UI
-   */
-  private createAdvancedUI(): void {
-    if (this.advancedUI) {
-      this.advancedUI.destroy();
-    }
-
-    const uiConfig: ControlBarConfig = {
-      playButton: true,
-      progressBar: true,
-      timeDisplay: true,
-      volumeControl: true,
-      fullscreenButton: true,
-      playbackRateControl: true,
-      qualitySelector: true,
-      subtitleToggle: true,
-      aspectRatio: true,
-      pictureInPicture: true,
-      screenshot: true,
-      skipButtons: true,
-      ...this.options.uiConfig
-    };
-
-    const theme: PlayerTheme = {
-      primaryColor: '#3b82f6',
-      secondaryColor: '#6c757d',
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
-      textColor: '#ffffff',
-      controlBarHeight: 60,
-      borderRadius: 8,
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-      ...this.options.theme
-    };
-
-    this.advancedUI = new AdvancedUI(
-      (this.externalPlayer || (this as any)),
-      this.container,
-      uiConfig,
-      theme
-    );
-    (this.advancedUI as any).setDebug?.(!!this.options.debug);
-    this.logger.debug('advanced UI created');
-  }
-
-  /**
-   * 更新UI模式
+   * 更新UI模式 - 现在只处理原生模式
    */
   updateUIMode(uiMode: UIMode): void {
     if (this.isDestroyed) return;
@@ -674,27 +585,12 @@ export class PlayerCore {
     // 更新视频元素的controls属性
     this.videoElement.controls = uiMode === UIMode.NATIVE;
     
-    // 销毁现有UI
-    if (this.defaultUI) {
-      this.defaultUI.destroy();
-      this.defaultUI = null;
-    }
-    
-    if (this.advancedUI) {
-      this.advancedUI.destroy();
-      this.advancedUI = null;
-    }
-    
-    // 创建新的UI
-    if (uiMode === UIMode.CUSTOM) {
-      this.createDefaultUI();
-    } else if (uiMode === UIMode.ADVANCED) {
-      this.createAdvancedUI();
-    }
+    // 其他UI模式现在由外部UI系统处理
+    this.logger.debug('UI mode updated, external UI system should handle the change');
   }
 
   /**
-   * 更新UI配置
+   * 更新UI配置 - 现在由外部UI系统处理
    */
   updateUIConfig(config: ControlBarConfig): void {
     if (this.isDestroyed) return;
@@ -702,13 +598,12 @@ export class PlayerCore {
     this.options.uiConfig = { ...this.options.uiConfig, ...config };
     this.logger.info('updateUIConfig', config);
     
-    if (this.defaultUI) {
-      this.defaultUI.updateConfig(config);
-    }
+    // UI配置更新现在由外部UI系统处理
+    this.logger.debug('UI config updated, external UI system should handle the change');
   }
 
   /**
-   * 更新UI主题
+   * 更新UI主题 - 现在由外部UI系统处理
    */
   updateUITheme(theme: PlayerTheme): void {
     if (this.isDestroyed) return;
@@ -716,9 +611,8 @@ export class PlayerCore {
     this.options.theme = { ...this.options.theme, ...theme };
     this.logger.info('updateUITheme', theme);
     
-    if (this.defaultUI) {
-      this.defaultUI.updateTheme(theme);
-    }
+    // UI主题更新现在由外部UI系统处理
+    this.logger.debug('UI theme updated, external UI system should handle the change');
   }
 
   /**
@@ -737,8 +631,8 @@ export class PlayerCore {
 
   setDebug(enabled: boolean): void {
     this.logger.setEnabled(enabled);
-    if (this.defaultUI) this.defaultUI.setDebug?.(enabled);
-    if (this.advancedUI) (this.advancedUI as any).setDebug?.(enabled);
+    // UI调试现在由外部UI系统处理
+    this.logger.debug('Debug mode updated, external UI system should handle the change');
   }
 
   /**
@@ -750,16 +644,8 @@ export class PlayerCore {
     this.isDestroyed = true;
     this.setLifecycle(PlayerLifecycle.DESTROYED);
     
-    // 销毁UI
-    if (this.defaultUI) {
-      this.defaultUI.destroy();
-      this.defaultUI = null;
-    }
-    
-    if (this.advancedUI) {
-      this.advancedUI.destroy();
-      this.advancedUI = null;
-    }
+    // UI销毁现在由外部UI系统处理
+    this.logger.debug('Player destroyed, external UI system should handle cleanup');
     
     // 清理事件监听器
     this.eventListeners.clear();
