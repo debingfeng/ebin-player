@@ -352,6 +352,15 @@ export class DefaultUI {
     if (this.progressBar && state.duration > 0) {
       const percentage = (state.currentTime / state.duration) * 100;
       this.progressBar.style.width = `${percentage}%`;
+      
+      // 更新进度条圆点位置
+      const progressContainer = this.progressBar.parentElement;
+      if (progressContainer) {
+        const progressThumb = progressContainer.querySelector('.ebin-progress-thumb') as HTMLElement;
+        if (progressThumb) {
+          progressThumb.style.left = `${percentage}%`;
+        }
+      }
     }
 
     // 更新时间显示

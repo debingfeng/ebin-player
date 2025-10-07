@@ -390,6 +390,5 @@ export class PlayerInstance {
   // 运行时切换调试
   setDebug(enabled: boolean): void {
     this.core.setDebug(enabled);
-    this.store.setDebug?.(enabled);
   }
 }

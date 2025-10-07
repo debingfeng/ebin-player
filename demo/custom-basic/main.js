@@ -10,7 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
       progressBar: true,
       timeDisplay: true,
       volumeControl: true,
-      fullscreenButton: true
+      fullscreenButton: true,
+      playbackRateControl: true,
+      qualitySelector: true,
+      subtitleToggle: true,
+      aspectRatio: true,
+      pictureInPicture: true,
+      screenshot: true,
+      skipButtons: true
     },
     theme: {
       primaryColor: '#3b82f6',
