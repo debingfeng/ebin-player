@@ -41,6 +41,10 @@ export interface PlayerOptions {
   theme?: PlayerTheme;  // UI主题配置
   logger?: Logger;
   debug?: boolean; // 是否开启调试日志
+  // 内置插件开关（按需开启即可自动注册）
+  builtinPlugins?: {
+    playbackRate?: boolean | { defaultRate?: number; options?: Array<{ value: number; label: string }> };
+  };
 }
 
 // 播放器状态
@@ -203,6 +207,79 @@ export interface Plugin {
   apply(player: PlayerInstance): void;
   destroy?(): void;
 }
+
+// 新一代插件体系（可与旧接口并存，便于渐进迁移）
+export type SemverRange = string;
+
+export interface PluginMeta {
+  id: string;                 // 唯一ID（建议: 包名或域前缀）
+  version: string;            // semver
+  displayName?: string;
+  description?: string;
+  requires?: Record<string, SemverRange>;   // 硬依赖: 插件ID → 版本范围
+  optional?: Record<string, SemverRange>;   // 软依赖
+  capabilities?: string[];                   // 暴露的能力标签
+  permissions?: string[];                    // 需要的权限（可用于沙箱策略）
+}
+
+export interface PluginContext {
+  player: PlayerInstance;
+  logger: Logger;
+  // 播放器事件
+  on<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): () => void;
+  off<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): void;
+  emit<T extends PlayerEventType>(event: T, data?: EventPayloadMap[T]): void;
+  onAnyPlayerEvent(callback: (event: PlayerEvent) => void): () => void;
+  // 插件事件
+  onPluginEvent(pluginId: string, type: string, callback: (data: any) => void): () => void;
+  emitPluginEvent(pluginId: string, type: string, data?: any): void;
+  // 服务定位
+  registerService<T>(name: string, service: T): void;
+  getService<T>(name: string): T | undefined;
+  // 配置
+  getConfig<T = unknown>(): T;
+  setConfig<T = unknown>(partial: Partial<T>): void;
+  // 存储（沙箱）
+  storage: {
+    get<T = unknown>(key: string): T | undefined;
+    set<T = unknown>(key: string, value: T): void;
+    delete(key: string): void;
+    keys(): string[];
+  };
+  // 权限
+  hasPermission?(perm: PluginPermission): boolean;
+}
+
+export interface PluginHooks<Config = unknown, Exports = unknown> {
+  onInit?(ctx: PluginContext): Promise<Exports> | Exports | void;
+  onStart?(ctx: PluginContext): Promise<void> | void;
+  onEvent?<T extends PlayerEventType>(event: PlayerEventBase<T>, ctx: PluginContext): void;
+  onConfigChange?(newConfig: Partial<Config>, ctx: PluginContext): void;
+  onDestroy?(ctx: PluginContext): Promise<void> | void;
+}
+
+export interface PluginDefinition<Config = unknown, Exports = unknown> extends PluginHooks<Config, Exports> {
+  meta: PluginMeta;
+  defaultConfig?: Config;
+  validateConfig?(config: unknown): { valid: boolean; errors?: string[] };
+  commands?: Record<string, (args: any, ctx: PluginContext) => any>;
+  // 配置版本与迁移（可选）
+  configVersion?: number; // 默认为 1
+  migrations?: Array<{
+    from: number;
+    to: number;
+    migrate: (oldConfig: any) => any;
+  }>;
+}
+
+// 权限字符串（占位）
+export type PluginPermission =
+  | 'ui:inject'
+  | 'player:control'
+  | 'storage:write'
+  | 'metrics:write'
+  | 'network'
+  | 'events:any';
 
 // UI组件接口
 export interface UIComponent {

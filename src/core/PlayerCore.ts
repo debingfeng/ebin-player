@@ -674,8 +674,187 @@ export class PlayerCore {
    * 初始化UI - 现在由外部UI系统处理
    */
   initializeUI(): void {
-    // UI初始化现在由外部UI系统（如ImprovedDefaultUI）处理
-    this.logger.debug('UI initialization delegated to external UI system');
+    // 根据UI模式初始化相应的UI
+    if (this.uiMode === UIMode.CUSTOM) {
+      this.initializeCustomUI();
+    } else if (this.uiMode === UIMode.NATIVE) {
+      this.videoElement.controls = true;
+    }
+    this.logger.debug('UI initialized', this.uiMode);
+  }
+
+  /**
+   * 初始化自定义UI
+   */
+  private initializeCustomUI(): void {
+    // 创建控制栏容器
+    const controlBar = document.createElement('div');
+    controlBar.className = 'ebin-player-control-bar';
+    controlBar.style.cssText = `
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 10;
+    `;
+
+    // 播放/暂停按钮
+    const playButton = document.createElement('button');
+    playButton.innerHTML = '▶';
+    playButton.style.cssText = `
+      background: none;
+      border: none;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 5px;
+    `;
+    playButton.addEventListener('click', () => {
+      if (this.videoElement.paused) {
+        this.play();
+      } else {
+        this.pause();
+      }
+    });
+
+    // 时间显示
+    const timeDisplay = document.createElement('span');
+    timeDisplay.className = 'ebin-player-time';
+    timeDisplay.style.cssText = `
+      color: white;
+      font-size: 12px;
+      min-width: 100px;
+    `;
+
+    // 进度条
+    const progressBar = document.createElement('div');
+    progressBar.className = 'ebin-player-progress';
+    progressBar.style.cssText = `
+      flex: 1;
+      height: 4px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+    `;
+
+    const progressFill = document.createElement('div');
+    progressFill.className = 'ebin-player-progress-fill';
+    progressFill.style.cssText = `
+      height: 100%;
+      background: #ff6b6b;
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.1s;
+    `;
+    progressBar.appendChild(progressFill);
+
+    // 音量控制
+    const volumeControl = document.createElement('input');
+    volumeControl.type = 'range';
+    volumeControl.min = '0';
+    volumeControl.max = '1';
+    volumeControl.step = '0.1';
+    volumeControl.value = String(this.videoElement.volume);
+    volumeControl.style.cssText = `
+      width: 60px;
+    `;
+    volumeControl.addEventListener('input', (e) => {
+      const target = e.target as HTMLInputElement;
+      this.videoElement.volume = parseFloat(target.value);
+    });
+
+    // 全屏按钮
+    const fullscreenButton = document.createElement('button');
+    fullscreenButton.innerHTML = '⛶';
+    fullscreenButton.style.cssText = `
+      background: none;
+      border: none;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 5px;
+    `;
+    fullscreenButton.addEventListener('click', () => {
+      this.requestFullscreen();
+    });
+
+    // 组装控制栏
+    controlBar.appendChild(playButton);
+    controlBar.appendChild(timeDisplay);
+    controlBar.appendChild(progressBar);
+    controlBar.appendChild(volumeControl);
+    controlBar.appendChild(fullscreenButton);
+
+    // 添加到容器
+    this.container.appendChild(controlBar);
+
+    // 显示/隐藏控制栏
+    const showControls = () => {
+      controlBar.style.opacity = '1';
+    };
+    const hideControls = () => {
+      controlBar.style.opacity = '0';
+    };
+
+    this.container.addEventListener('mouseenter', showControls);
+    this.container.addEventListener('mouseleave', hideControls);
+
+    // 更新播放状态
+    const updatePlayButton = () => {
+      playButton.innerHTML = this.videoElement.paused ? '▶' : '⏸';
+    };
+
+    // 更新时间显示
+    const updateTime = () => {
+      const current = this.formatTime(this.videoElement.currentTime);
+      const duration = this.formatTime(this.videoElement.duration || 0);
+      timeDisplay.textContent = `${current} / ${duration}`;
+    };
+
+    // 更新进度条
+    const updateProgress = () => {
+      const progress = this.videoElement.duration ? (this.videoElement.currentTime / this.videoElement.duration) * 100 : 0;
+      progressFill.style.width = `${progress}%`;
+    };
+
+    // 进度条点击
+    progressBar.addEventListener('click', (e) => {
+      const rect = progressBar.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const percentage = clickX / rect.width;
+      this.videoElement.currentTime = percentage * this.videoElement.duration;
+    });
+
+    // 绑定事件
+    this.videoElement.addEventListener('play', updatePlayButton);
+    this.videoElement.addEventListener('pause', updatePlayButton);
+    this.videoElement.addEventListener('timeupdate', () => {
+      updateTime();
+      updateProgress();
+    });
+    this.videoElement.addEventListener('loadedmetadata', updateTime);
+
+    // 初始状态
+    updatePlayButton();
+    updateTime();
+    updateProgress();
+  }
+
+  /**
+   * 格式化时间
+   */
+  private formatTime(seconds: number): string {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
 
 

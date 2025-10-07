@@ -1,204 +1,173 @@
 /**
- * 播放速度控制插件
- * 提供播放速度调节功能
+ * 播放速度控制插件（基于 BasePlugin 的实现）
  */
-import { Plugin, PlayerInstance, PlayerEventType, PlayerEvent } from '../../types';
+import { PluginDefinition } from '../../types';
+import { BasePlugin } from '../BasePlugin';
 
-export class PlaybackRatePlugin implements Plugin {
-  name = 'playbackRate';
-  version = '1.0.0';
-  
-  private player!: PlayerInstance;
-  private container!: HTMLElement;
-  private rateSelect!: HTMLSelectElement;
-  private isDestroyed = false;
+type RateOption = { value: number; label: string };
+type RateConfig = { defaultRate: number; options: RateOption[] };
+type RateExports = { setRate: (rate: number) => void; getOptions: () => RateOption[] };
 
-  // 预定义的播放速度选项
-  private rateOptions = [
-    { value: 0.25, label: '0.25x' },
-    { value: 0.5, label: '0.5x' },
-    { value: 0.75, label: '0.75x' },
-    { value: 1, label: '1x' },
-    { value: 1.25, label: '1.25x' },
-    { value: 1.5, label: '1.5x' },
-    { value: 1.75, label: '1.75x' },
-    { value: 2, label: '2x' }
-  ];
+function createContainer(): HTMLDivElement {
+  const div = document.createElement('div');
+  div.className = 'ebin-player-playback-rate';
+  div.style.cssText = `
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  `;
+  return div;
+}
 
-  apply(player: PlayerInstance): void {
-    this.player = player;
-    this.createUI();
-    this.setupEventListeners();
+function createSelect(): HTMLSelectElement {
+  const sel = document.createElement('select');
+  sel.style.cssText = `
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+    padding: 4px 6px;
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+    min-width: 60px;
+  `;
+  return sel;
+}
+
+class PlaybackRatePluginImpl extends BasePlugin<RateConfig, RateExports> {
+  meta = {
+    id: 'builtin.playback-rate',
+    version: '2.0.0',
+    displayName: 'Playback Rate',
+    description: '提供播放速度调节与 UI 控件',
+    capabilities: ['rate', 'ui:inject'],
+    permissions: ['player:control', 'ui:inject']
+  } as PluginDefinition<RateConfig, RateExports>['meta'];
+
+  configVersion = 1;
+  defaultConfig: RateConfig = {
+    defaultRate: 1,
+    options: [
+      { value: 0.25, label: '0.25x' },
+      { value: 0.5, label: '0.5x' },
+      { value: 0.75, label: '0.75x' },
+      { value: 1, label: '1x' },
+      { value: 1.25, label: '1.25x' },
+      { value: 1.5, label: '1.5x' },
+      { value: 1.75, label: '1.75x' },
+      { value: 2, label: '2x' }
+    ]
+  };
+
+  validateConfig = (config: unknown) => {
+    const c = config as Partial<RateConfig>;
+    const validRate = typeof c.defaultRate === 'number';
+    const validOptions = Array.isArray(c.options) && c.options.every(o => typeof o?.value === 'number' && typeof o?.label === 'string');
+    const valid = (!!c && validRate && validOptions) || config === undefined;
+    return { valid, errors: valid ? [] : ['配置不合法: defaultRate 必须为 number, options 必须为 {value,label}[]'] };
   }
 
-  /**
-   * 创建播放速度控制UI
-   */
-  private createUI(): void {
-    const container = this.player.getContainer();
+  commands = {
+    bump: (_args: any, ctx: any) => {
+      const cur = this.ctx.player.getPlaybackRate();
+      this.ctx.player.setPlaybackRate(Math.min(cur + 0.25, 3));
+    }
+  } as PluginDefinition<RateConfig, RateExports>['commands'];
+
+  async onInit(ctx: any) {
+    await super.onInit(ctx);
+    const conf = this.ctx.getConfig<RateConfig>();
+    const container = createContainer();
+    const select = createSelect();
+
+    const populate = (options: RateOption[]) => {
+      select.innerHTML = '';
+      options.forEach(opt => {
+        const el = document.createElement('option');
+        el.value = String(opt.value);
+        el.textContent = opt.label;
+        select.appendChild(el);
+      });
+    };
+
+    const updateRateUI = () => {
+      const current = this.ctx.player.getPlaybackRate();
+      select.value = String(current);
+    };
+
+    populate(conf.options);
+    container.appendChild(select);
     
-    // 创建控制容器
-    this.container = document.createElement('div');
-    this.container.className = 'ebin-player-playback-rate';
-    this.container.style.cssText = `
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      z-index: 1000;
-      background: rgba(0, 0, 0, 0.8);
-      border-radius: 4px;
-      padding: 5px;
-      display: none;
-    `;
+    // 添加到主控制栏而不是独立悬浮
+    const controlBar = this.ctx.player.getContainer().querySelector('.ebin-player-control-bar');
+    if (controlBar) {
+      controlBar.appendChild(container);
+    } else {
+      // 如果控制栏不存在，回退到原来的方式
+      this.ctx.player.getContainer().appendChild(container);
+    }
 
-    // 创建选择器
-    this.rateSelect = document.createElement('select');
-    this.rateSelect.style.cssText = `
-      background: transparent;
-      color: white;
-      border: 1px solid #666;
-      border-radius: 3px;
-      padding: 2px 5px;
-      font-size: 12px;
-      outline: none;
-    `;
-
-    // 添加选项
-    this.rateOptions.forEach(option => {
-      const optionElement = document.createElement('option');
-      optionElement.value = option.value.toString();
-      optionElement.textContent = option.label;
-      this.rateSelect.appendChild(optionElement);
-    });
-
-    // 设置当前播放速度
-    this.updateCurrentRate();
-
-    this.container.appendChild(this.rateSelect);
-    container.appendChild(this.container);
-  }
-
-  /**
-   * 设置事件监听器
-   */
-  private setupEventListeners(): void {
-    // 监听播放速度变化
-    this.rateSelect.addEventListener('change', (e) => {
+    const onChange = (e: Event) => {
       const target = e.target as HTMLSelectElement;
       const rate = parseFloat(target.value);
-      this.player.setPlaybackRate(rate);
-    });
+      this.ctx.player.setPlaybackRate(rate);
+    };
+    select.addEventListener('change', onChange);
+    this.addDisposer(() => select.removeEventListener('change', onChange));
 
-    // 监听播放器状态变化
-    this.player.on('ratechange', () => {
-      this.updateCurrentRate();
-    });
+    this.on('ratechange', () => updateRateUI());
+    updateRateUI();
 
-    // 监听鼠标悬停显示/隐藏控制
-    const videoContainer = this.player.getContainer();
-    videoContainer.addEventListener('mouseenter', () => {
-      this.showControls();
-    });
+    const setRate = (rate: number) => {
+      const allowed = this.ctx.getConfig<RateConfig>().options.some(o => o.value === rate);
+      if (allowed) this.ctx.player.setPlaybackRate(rate);
+      else this.ctx.logger.warn(`播放速度 ${rate} 不在预定义选项中`);
+    };
+    this.registerService('playbackRate.set', setRate);
 
-    videoContainer.addEventListener('mouseleave', () => {
-      this.hideControls();
-    });
+    return {
+      setRate,
+      getOptions: () => this.ctx.getConfig<RateConfig>().options
+    } as RateExports;
   }
 
-  /**
-   * 更新当前播放速度显示
-   */
-  private updateCurrentRate(): void {
-    if (this.isDestroyed) return;
-    
-    const currentRate = this.player.getPlaybackRate();
-    this.rateSelect.value = currentRate.toString();
-  }
-
-  /**
-   * 显示控制
-   */
-  private showControls(): void {
-    if (this.isDestroyed) return;
-    this.container.style.display = 'block';
-  }
-
-  /**
-   * 隐藏控制
-   */
-  private hideControls(): void {
-    if (this.isDestroyed) return;
-    this.container.style.display = 'none';
-  }
-
-  /**
-   * 设置播放速度选项
-   */
-  setRateOptions(options: Array<{ value: number; label: string }>): void {
-    if (this.isDestroyed) return;
-    
-    this.rateOptions = options;
-    
-    // 清空现有选项
-    this.rateSelect.innerHTML = '';
-    
-    // 添加新选项
-    options.forEach(option => {
-      const optionElement = document.createElement('option');
-      optionElement.value = option.value.toString();
-      optionElement.textContent = option.label;
-      this.rateSelect.appendChild(optionElement);
-    });
-    
-    // 更新当前播放速度
-    this.updateCurrentRate();
-  }
-
-  /**
-   * 获取当前播放速度选项
-   */
-  getRateOptions(): Array<{ value: number; label: string }> {
-    return [...this.rateOptions];
-  }
-
-  /**
-   * 设置播放速度
-   */
-  setRate(rate: number): void {
-    if (this.isDestroyed) return;
-    
-    // 检查速率是否在选项中
-    const validRate = this.rateOptions.find(option => option.value === rate);
-    if (validRate) {
-      this.player.setPlaybackRate(rate);
-    } else {
-      console.warn(`播放速度 ${rate} 不在预定义选项中`);
+  onStart() {
+    const conf = this.ctx.getConfig<RateConfig>();
+    if (typeof conf.defaultRate === 'number') {
+      this.ctx.player.setPlaybackRate(conf.defaultRate);
     }
   }
 
-  /**
-   * 获取当前播放速度
-   */
-  getCurrentRate(): number {
-    return this.player.getPlaybackRate();
+  onConfigChange(newConf: Partial<RateConfig>) {
+    const host = this.ctx.player.getContainer();
+    const container = host.querySelector('.ebin-player-playback-rate') as HTMLDivElement | null;
+    if (!container) return;
+    const select = container.querySelector('select') as HTMLSelectElement | null;
+    if (!select) return;
+    if (newConf.options) {
+      select.innerHTML = '';
+      newConf.options.forEach((opt) => {
+        const el = document.createElement('option');
+        el.value = String(opt.value);
+        el.textContent = opt.label;
+        select.appendChild(el);
+      });
+    }
+    if (typeof newConf.defaultRate === 'number') {
+      this.ctx.player.setPlaybackRate(newConf.defaultRate);
+      select.value = String(newConf.defaultRate);
+    }
   }
 
-  /**
-   * 销毁插件
-   */
-  destroy(): void {
-    if (this.isDestroyed) return;
-    
-    this.isDestroyed = true;
-    
-    // 移除UI元素
-    if (this.container && this.container.parentNode) {
-      this.container.parentNode.removeChild(this.container);
+  onDestroy() {
+    const host = this.ctx.player.getContainer();
+    const container = host.querySelector('.ebin-player-playback-rate');
+    if (container && container.parentNode) {
+      container.parentNode.removeChild(container);
     }
-    
-    // 清理引用
-    this.player = null as any;
-    this.container = null as any;
-    this.rateSelect = null as any;
+    super.onDestroy(this.ctx);
   }
 }
+
+export const PlaybackRatePlugin: PluginDefinition<RateConfig, RateExports> = new PlaybackRatePluginImpl();

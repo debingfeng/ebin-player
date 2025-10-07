@@ -4,7 +4,7 @@
  */
 import { PlayerCore } from './PlayerCore';
 import { PlayerStore } from './PlayerStore';
-import { PlayerOptions, PlayerState, PlayerEventType, PlayerEvent, Plugin, UIMode, ControlBarConfig, PlayerTheme, MEDIA_EVENTS, EventPayloadMap, PlayerEventBase } from '../types';
+import { PlayerOptions, PlayerState, PlayerEventType, PlayerEvent, Plugin, PluginDefinition, UIMode, ControlBarConfig, PlayerTheme, MEDIA_EVENTS, EventPayloadMap, PlayerEventBase } from '../types';
 import { PluginManager } from '../plugin/PluginManager';
 import { chainable, chainableAsync, logMethod } from './decorators';
 import { Logger as CoreLogger } from './Logger';
@@ -41,6 +41,8 @@ export class PlayerInstance {
     this.setupEventForwarding();
     
     this.core.initializeUI();
+    // 交由插件管理器根据配置初始化内置/外部插件
+    (this.pluginManager as any).initializeFromOptions?.(options);
   }
 
 
@@ -113,6 +115,8 @@ export class PlayerInstance {
       });
     });
   }
+
+  // 原内置插件初始化逻辑已迁移到 PluginManager
 
   // 播放控制方法
   @chainableAsync
@@ -249,7 +253,7 @@ export class PlayerInstance {
 
   // 插件系统方法
   @chainable
-  use(plugin: Plugin): PlayerInstance {
+  use(plugin: Plugin | PluginDefinition<any, any>): PlayerInstance {
     this.pluginManager.use(plugin);
     return this;
   }
