@@ -178,9 +178,9 @@ export interface PlayerInstance {
   emit<T extends PlayerEventType>(event: T, data?: EventPayloadMap[T]): PlayerInstance;
   
   // 插件系统
-  use(plugin: Plugin): PlayerInstance;
-  unuse(pluginName: string): PlayerInstance;
-  getPlugin(name: string): Plugin | undefined;
+  use(plugin: PluginDefinition): PlayerInstance;
+  unuse(pluginId: string): PlayerInstance;
+  getPlugin(pluginId: string): PluginDefinition | undefined;
   
   // UI控制
   getContainer(): HTMLElement;
@@ -200,15 +200,7 @@ export interface PlayerInstance {
   getLogger?(): Logger;
 }
 
-// 插件接口
-export interface Plugin {
-  name: string;
-  version?: string;
-  apply(player: PlayerInstance): void;
-  destroy?(): void;
-}
-
-// 新一代插件体系（可与旧接口并存，便于渐进迁移）
+// 现代插件体系
 export type SemverRange = string;
 
 export interface PluginMeta {
@@ -322,7 +314,6 @@ export interface PlayerTheme {
 export interface PlayerConfig extends PlayerOptions {
   theme?: PlayerTheme;
   controlBar?: ControlBarConfig;
-  plugins?: Plugin[];
   customUI?: boolean;
 }
 

@@ -4,7 +4,7 @@
  */
 import { PlayerCore } from './PlayerCore';
 import { PlayerStore } from './PlayerStore';
-import { PlayerOptions, PlayerState, PlayerEventType, PlayerEvent, Plugin, PluginDefinition, UIMode, ControlBarConfig, PlayerTheme, MEDIA_EVENTS, EventPayloadMap, PlayerEventBase } from '../types';
+import { PlayerOptions, PlayerState, PlayerEventType, PlayerEvent, PluginDefinition, UIMode, ControlBarConfig, PlayerTheme, MEDIA_EVENTS, EventPayloadMap, PlayerEventBase } from '../types';
 import { PluginManager } from '../plugin/PluginManager';
 import { chainable, chainableAsync, logMethod } from './decorators';
 import { Logger as CoreLogger } from './Logger';
@@ -34,7 +34,7 @@ export class PlayerInstance {
     this.store = new PlayerStore(this.core.getState(), this.logger);
     
     // 初始化插件管理器
-    this.pluginManager = new PluginManager(this, this.logger);
+    this.pluginManager = new PluginManager(this as any, this.logger);
     
     // 设置状态变化监听与事件转发（依赖 store 已就绪）
     this.setupStateSync();
@@ -107,7 +107,7 @@ export class PlayerInstance {
         // 更新事件目标为当前播放器实例
         const playerEvent: PlayerEvent = {
           ...event,
-          target: this
+          target: this as any
         };
         
         // 转发到状态管理器
@@ -253,20 +253,20 @@ export class PlayerInstance {
 
   // 插件系统方法
   @chainable
-  use(plugin: Plugin | PluginDefinition<any, any>): PlayerInstance {
+  use(plugin: PluginDefinition<any, any>): PlayerInstance {
     this.pluginManager.use(plugin);
     return this;
   }
 
   @chainable
-  unuse(pluginName: string): PlayerInstance {
-    this.pluginManager.unuse(pluginName);
+  unuse(pluginId: string): PlayerInstance {
+    this.pluginManager.unuse(pluginId);
     return this;
   }
 
-  getPlugin(name: string): Plugin | undefined {
+  getPlugin(pluginId: string): PluginDefinition | undefined {
     if (this.isDestroyed) return undefined;
-    return this.pluginManager.getPlugin(name);
+    return this.pluginManager.getPlugin(pluginId);
   }
 
   // UI控制方法
@@ -357,7 +357,7 @@ export class PlayerInstance {
     return {
       version: (typeof __VERSION__ !== 'undefined' ? (__VERSION__ as any) : '0.0.0'),
       lifecycle: this.core.getLifecycle(),
-      plugins: this.pluginManager.getPluginNames(),
+      plugins: this.pluginManager.getPluginIds(),
       state: this.getState(),
       uiMode: this.getUIMode()
     };
