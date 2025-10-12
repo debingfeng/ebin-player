@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# 简单的提交信息格式检查
+# 要求提交信息至少包含一个非空字符
+if [ -z "$(echo "$1" | tr -d '[:space:]')" ]; then
+  echo "❌ 提交信息不能为空"
+  exit 1
+fi
+
+# 检查提交信息长度
+if [ ${#1} -lt 3 ]; then
+  echo "❌ 提交信息太短，请提供更有意义的描述"
+  exit 1
+fi
+
+echo "✅ 提交信息格式检查通过"
