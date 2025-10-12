@@ -1,0 +1,295 @@
+/* 插件开发示例样式 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+h2, h3, h4 {
+    color: #555;
+    margin-bottom: 15px;
+}
+
+/* 播放器区域 */
+.player-section {
+    margin-bottom: 30px;
+}
+
+.player-container {
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-bottom: 20px;
+}
+
+/* 插件控制面板 */
+.plugin-controls {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.plugin-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.plugin-item {
+    background: white;
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.plugin-item h4 {
+    color: #007bff;
+    margin-bottom: 15px;
+    font-size: 16px;
+}
+
+.plugin-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.plugin-controls label {
+    font-weight: 500;
+    color: #555;
+    font-size: 14px;
+}
+
+.plugin-controls select {
+    padding: 8px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background: white;
+    font-size: 14px;
+}
+
+.plugin-controls button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 4px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.plugin-controls button:hover {
+    background: #0056b3;
+}
+
+.plugin-controls button:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+
+#plugin-status {
+    background: #e9ecef;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+#plugin-status p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+#plugin-status span {
+    font-weight: 600;
+    color: #007bff;
+}
+
+/* 代码区域 */
+.code-section {
+    background: #2d3748;
+    color: #e2e8f0;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.code-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #4a5568;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    color: #a0aec0;
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.tab-btn:hover {
+    color: #e2e8f0;
+}
+
+.tab-btn.active {
+    color: #63b3ed;
+    border-bottom-color: #63b3ed;
+}
+
+.tab-content {
+    position: relative;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.tab-pane pre {
+    margin: 0;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-x: auto;
+}
+
+.tab-pane code {
+    color: #e2e8f0;
+}
+
+/* 插件信息 */
+.plugin-info {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.info-item {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.info-item h4 {
+    color: #007bff;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.info-item ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.info-item li {
+    padding: 5px 0;
+    font-size: 13px;
+    color: #555;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.info-item li:last-child {
+    border-bottom: none;
+}
+
+.info-item li::before {
+    content: '•';
+    color: #007bff;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .plugin-panel {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .code-tabs {
+        flex-wrap: wrap;
+    }
+    
+    .tab-btn {
+        flex: 1;
+        min-width: 120px;
+    }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.player-container,
+.plugin-controls,
+.code-section,
+.plugin-info {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* 插件状态指示器 */
+.plugin-status-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.plugin-status-indicator.active {
+    background: #28a745;
+}
+
+.plugin-status-indicator.inactive {
+    background: #dc3545;
+}
+
+.plugin-status-indicator.loading {
+    background: #ffc107;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* 代码高亮 */
+.highlight-keyword { color: #c792ea; }
+.highlight-string { color: #c3e88d; }
+.highlight-comment { color: #676e95; }
+.highlight-function { color: #82aaff; }
+.highlight-variable { color: #f78c6c; }

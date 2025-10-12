@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EbinPlayer - 插件开发示例</title>
+    <link rel="stylesheet" href="../../dist/styles.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>EbinPlayer 插件开发示例</h1>
+        
+        <div class="player-section">
+            <h2>带插件的播放器</h2>
+            <div id="plugin-player" class="player-container"></div>
+        </div>
+        
+        <div class="plugin-controls">
+            <h3>插件控制面板</h3>
+            <div class="plugin-panel">
+                <div class="plugin-item">
+                    <h4>播放速度插件</h4>
+                    <div class="plugin-controls">
+                        <label>播放速度:</label>
+                        <select id="playback-rate">
+                            <option value="0.5">0.5x</option>
+                            <option value="0.75">0.75x</option>
+                            <option value="1" selected>1x</option>
+                            <option value="1.25">1.25x</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="2">2x</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="plugin-item">
+                    <h4>自定义插件</h4>
+                    <div class="plugin-controls">
+                        <button id="toggle-custom-plugin">启用自定义插件</button>
+                        <button id="custom-plugin-action">执行自定义操作</button>
+                    </div>
+                </div>
+                
+                <div class="plugin-item">
+                    <h4>插件状态</h4>
+                    <div id="plugin-status">
+                        <p>已加载插件: <span id="loaded-plugins">0</span></p>
+                        <p>活跃插件: <span id="active-plugins">0</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="code-section">
+            <h3>插件代码示例</h3>
+            <div class="code-tabs">
+                <button class="tab-btn active" data-tab="custom-plugin">自定义插件</button>
+                <button class="tab-btn" data-tab="plugin-usage">插件使用</button>
+                <button class="tab-btn" data-tab="plugin-api">插件API</button>
+            </div>
+            
+            <div class="tab-content">
+                <div id="custom-plugin" class="tab-pane active">
+                    <pre><code id="custom-plugin-code"></code></pre>
+                </div>
+                <div id="plugin-usage" class="tab-pane">
+                    <pre><code id="plugin-usage-code"></code></pre>
+                </div>
+                <div id="plugin-api" class="tab-pane">
+                    <pre><code id="plugin-api-code"></code></pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="plugin-info">
+            <h3>插件开发指南</h3>
+            <div class="info-grid">
+                <div class="info-item">
+                    <h4>插件结构</h4>
+                    <ul>
+                        <li>继承 BasePlugin 基类</li>
+                        <li>实现 meta 元数据</li>
+                        <li>定义配置接口</li>
+                        <li>实现生命周期钩子</li>
+                    </ul>
+                </div>
+                <div class="info-item">
+                    <h4>生命周期</h4>
+                    <ul>
+                        <li>onInit - 插件初始化</li>
+                        <li>onStart - 插件启动</li>
+                        <li>onConfigChange - 配置变更</li>
+                        <li>onDestroy - 插件销毁</li>
+                    </ul>
+                </div>
+                <div class="info-item">
+                    <h4>API接口</h4>
+                    <ul>
+                        <li>ctx.player - 播放器实例</li>
+                        <li>ctx.logger - 日志记录器</li>
+                        <li>ctx.on/off - 事件监听</li>
+                        <li>ctx.storage - 数据存储</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../../dist/ebin-player.umd.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

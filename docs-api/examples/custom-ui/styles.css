@@ -1,0 +1,345 @@
+/* 自定义UI示例样式 */
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+h2, h3 {
+    color: #555;
+    margin-bottom: 15px;
+}
+
+/* 主题选择器 */
+.theme-selector {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.theme-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.theme-btn {
+    padding: 10px 20px;
+    border: 2px solid #dee2e6;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.theme-btn:hover {
+    border-color: #007bff;
+    background: #f8f9ff;
+}
+
+.theme-btn.active {
+    border-color: #007bff;
+    background: #007bff;
+    color: white;
+}
+
+/* 播放器区域 */
+.player-section {
+    margin-bottom: 30px;
+}
+
+.player-container {
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    margin-bottom: 20px;
+}
+
+/* 自定义控制面板 */
+.custom-controls {
+    background: #fff;
+    border: 1px solid #dee2e6;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.control-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.control-group label {
+    font-weight: 500;
+    color: #555;
+    font-size: 14px;
+}
+
+.control-group input[type="color"] {
+    width: 100%;
+    height: 40px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.control-group input[type="range"] {
+    width: 100%;
+    margin: 5px 0;
+}
+
+.control-group span {
+    font-weight: 500;
+    color: #007bff;
+    font-size: 12px;
+}
+
+/* 组件预览 */
+.component-demo {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.preview-components {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.preview-play-button,
+.preview-progress,
+.preview-volume {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.preview-play-button span,
+.preview-progress span,
+.preview-volume span {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+}
+
+/* 预览组件样式 */
+.play-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: #007bff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.play-btn:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+}
+
+.progress-bar {
+    width: 150px;
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 3px;
+    position: relative;
+    cursor: pointer;
+}
+
+.progress-fill {
+    width: 60%;
+    height: 100%;
+    background: #007bff;
+    border-radius: 3px;
+    position: relative;
+}
+
+.progress-thumb {
+    width: 12px;
+    height: 12px;
+    background: #007bff;
+    border-radius: 50%;
+    position: absolute;
+    right: -6px;
+    top: -3px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.volume-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 4px;
+    background: #f8f9fa;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.volume-slider {
+    width: 100px;
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+}
+
+.volume-fill {
+    width: 70%;
+    height: 100%;
+    background: #007bff;
+    border-radius: 2px;
+}
+
+/* 代码显示区域 */
+.code-section {
+    background: #2d3748;
+    color: #e2e8f0;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.code-section pre {
+    margin: 0;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.code-section code {
+    color: #e2e8f0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .theme-buttons {
+        justify-content: center;
+    }
+    
+    .control-panel {
+        grid-template-columns: 1fr;
+    }
+    
+    .preview-components {
+        grid-template-columns: 1fr;
+    }
+    
+    .progress-bar {
+        width: 120px;
+    }
+    
+    .volume-slider {
+        width: 80px;
+    }
+}
+
+/* 主题样式 */
+.theme-dark {
+    background: #1a1a1a;
+    color: #e0e0e0;
+}
+
+.theme-dark .theme-selector,
+.theme-dark .custom-controls,
+.theme-dark .component-demo {
+    background: #2d2d2d;
+    border-color: #404040;
+}
+
+.theme-dark .theme-btn {
+    background: #404040;
+    border-color: #666;
+    color: #e0e0e0;
+}
+
+.theme-dark .theme-btn:hover {
+    background: #555;
+    border-color: #007bff;
+}
+
+.theme-dark .theme-btn.active {
+    background: #007bff;
+    border-color: #007bff;
+}
+
+.theme-dark .preview-play-button,
+.theme-dark .preview-progress,
+.theme-dark .preview-volume {
+    background: #404040;
+    color: #e0e0e0;
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.player-container,
+.custom-controls,
+.component-demo,
+.code-section {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* 加载状态 */
+.loading {
+    position: relative;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    margin: -20px 0 0 -20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

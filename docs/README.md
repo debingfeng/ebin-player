@@ -1,124 +1,128 @@
-# Ebin Player 架构文档
+# EbinPlayer 文档
 
-本目录包含了 Ebin Player 的完整架构文档和图表，帮助开发者理解系统的设计原理和实现细节。
+欢迎使用 EbinPlayer 文档！这里包含了完整的使用指南、API参考和示例代码。
 
-## 📁 文档结构
+## 📚 文档导航
 
-### 架构图表
-- **[architecture-diagrams.md](./architecture-diagrams.md)** - 完整的架构图表集合
-- **[architecture-overview.md](./architecture-overview.md)** - 架构概览和简化图表
-- **[detailed-class-diagram.md](./detailed-class-diagram.md)** - 详细的类图
+### 快速开始
+- [安装指南](./installation.md) - 如何安装和配置 EbinPlayer
+- [快速开始](./quick-start.md) - 5分钟快速上手指南
 
-## 🏗️ 架构概览
+### 使用示例
+- [基础播放器](./examples/basic-player.md) - 基础播放器使用示例
+- [自定义UI](./examples/custom-ui.md) - 自定义UI和主题示例
+- [插件开发](./examples/plugin-development.md) - 插件开发指南
+- [主题定制](./examples/theming.md) - 主题定制示例
+- [高级功能](./examples/advanced-features.md) - 高级功能使用
 
-Ebin Player 采用现代化的分层架构设计，主要包含以下层次：
+### API 文档
+- [完整API文档](../docs-api/) - 自动生成的API参考文档
+- [播放器API](./api/player-api.md) - 播放器核心API
+- [插件API](./api/plugin-api.md) - 插件系统API
+- [UI组件API](./api/ui-api.md) - UI组件API
+- [类型定义](./api/types.md) - TypeScript类型定义
 
-### 1. 用户接口层
-- **PlayerInstance API** - 对外提供的主要接口
-
-### 2. 核心业务层
-- **PlayerCore** - 播放器核心功能
-- **PlayerStore** - 状态管理系统
-- **PluginManager** - 插件管理系统
-
-### 3. UI表现层
-- **UIManager** - UI管理器
-- **ThemeManager** - 主题管理
-- **ResponsiveManager** - 响应式管理
-
-### 4. 组件层
-- **BaseComponent** - 基础组件类
-- **具体组件** - PlayButton、ProgressBar、VolumeControl等
-
-### 5. 插件层
-- **BasePlugin** - 插件基类
-- **内置插件** - PlaybackRatePlugin等
-- **自定义插件** - 用户开发的插件
-
-### 6. 基础设施层
-- **Logger** - 日志系统
-- **HTMLVideoElement** - 视频元素
-
-## 🎯 核心设计原则
-
-### 1. 分层架构
-- 清晰的职责分离
-- 低耦合高内聚
-- 易于维护和扩展
-
-### 2. 事件驱动
-- 基于事件的松耦合设计
-- 响应式状态管理
-- 异步处理机制
-
-### 3. 插件化设计
-- 现代插件架构
-- 服务定位模式
-- 命令系统
-
-### 4. 组件化UI
-- 可复用的UI组件
-- 统一的主题系统
-- 响应式设计
-
-## 📊 图表说明
-
-### 整体架构图
-展示了系统的整体结构和各组件间的关系，包括：
-- 分层架构设计
-- 组件依赖关系
-- 数据流向
-
-### 类关系图
-展示了主要类之间的继承和依赖关系，包括：
-- 核心类的详细结构
-- 接口和类型定义
-- 方法调用关系
-
-### 数据流图
-展示了用户操作到系统响应的完整流程，包括：
-- 用户交互处理
-- 状态更新机制
-- UI更新流程
-
-### 插件系统架构图
-展示了现代插件系统的设计，包括：
-- 插件管理器
-- 插件上下文
-- 生命周期管理
+### 在线演示
+- [完整演示](../demos/) - 在线功能演示
+- [基础示例](../examples/basic/) - 可运行的基础示例
+- [自定义UI示例](../examples/custom-ui/) - 自定义UI示例
+- [插件示例](../examples/plugins/) - 插件开发示例
+- [主题示例](../examples/themes/) - 主题定制示例
 
 ## 🚀 快速开始
 
-1. **查看架构概览** - 从 `architecture-overview.md` 开始
-2. **理解类关系** - 查看 `detailed-class-diagram.md`
-3. **深入了解** - 阅读 `architecture-diagrams.md`
+### 安装
 
-## 🔧 开发指南
+```bash
+npm install ebin-player
+```
 
-### 添加新组件
-1. 继承 `BaseComponent` 类
-2. 实现必要的抽象方法
-3. 在 `UIManager` 中注册
+### 基础使用
 
-### 开发插件
-1. 继承 `BasePlugin` 类
-2. 实现插件元数据
-3. 使用插件上下文API
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="node_modules/ebin-player/dist/styles.css">
+</head>
+<body>
+    <div id="player"></div>
+    <script src="node_modules/ebin-player/dist/ebin-player.umd.js"></script>
+    <script>
+        const player = new EbinPlayer(document.getElementById('player'), {
+            src: 'your-video.mp4',
+            autoplay: false,
+            controls: true
+        });
+    </script>
+</body>
+</html>
+```
 
-### 自定义主题
-1. 使用 `ThemeManager` 管理主题
-2. 定义 `ComponentTheme` 接口
-3. 应用到具体组件
+### 高级使用
 
-## 📝 贡献指南
+```typescript
+import { createPlayer, PlaybackRatePlugin } from 'ebin-player';
 
-欢迎贡献架构文档和图表！
+const player = createPlayer(container, {
+    src: 'video.mp4',
+    plugins: {
+        playbackRate: {
+            rates: [0.5, 1, 1.25, 1.5, 2]
+        }
+    },
+    theme: {
+        primaryColor: '#ff6b6b'
+    }
+});
 
-1. Fork 项目
-2. 创建功能分支
-3. 更新相关文档
-4. 提交 Pull Request
+player.on('play', () => {
+    console.log('视频开始播放');
+});
+```
+
+## 🎯 主要特性
+
+- **🎬 现代化播放器** - 基于HTML5 Video，支持所有现代浏览器
+- **🔌 插件系统** - 灵活的插件架构，支持自定义功能扩展
+- **🎨 主题定制** - 完整的主题系统，支持深色/浅色模式
+- **📱 响应式设计** - 自适应移动端和桌面端
+- **🎯 TypeScript** - 完整的TypeScript支持
+- **🧪 测试覆盖** - 完整的单元测试和集成测试
+
+## 📖 文档结构
+
+```
+docs/
+├── README.md                 # 文档首页
+├── installation.md          # 安装指南
+├── quick-start.md           # 快速开始
+├── examples/                # 使用示例
+│   ├── basic-player.md      # 基础播放器
+│   ├── custom-ui.md         # 自定义UI
+│   ├── plugin-development.md # 插件开发
+│   ├── theming.md           # 主题定制
+│   └── advanced-features.md # 高级功能
+├── api/                     # API文档
+│   ├── player-api.md        # 播放器API
+│   ├── plugin-api.md        # 插件API
+│   ├── ui-api.md           # UI组件API
+│   └── types.md            # 类型定义
+└── ../docs-api/            # 自动生成的API文档
+```
+
+## 🔗 相关链接
+
+- [项目主页](../README.md)
+- [GitHub仓库](https://github.com/your-username/ebin-player)
+- [NPM包](https://www.npmjs.com/package/ebin-player)
+- [变更日志](../CHANGELOG.md)
+- [许可证](../LICENSE)
+
+## 🤝 贡献
+
+欢迎贡献代码！请查看 [贡献指南](../CONTRIBUTING.md)。
 
 ## 📄 许可证
 
-MIT License - 详见项目根目录的 LICENSE 文件
+[MIT License](../LICENSE)

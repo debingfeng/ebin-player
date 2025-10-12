@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EbinPlayer - 主题定制示例</title>
+    <link rel="stylesheet" href="../../dist/styles.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>EbinPlayer 主题定制示例</h1>
+        
+        <div class="theme-gallery">
+            <h2>预设主题</h2>
+            <div class="theme-grid">
+                <div class="theme-card" data-theme="default">
+                    <div class="theme-preview">
+                        <div class="preview-player">
+                            <div class="preview-video"></div>
+                            <div class="preview-controls">
+                                <button class="preview-play">▶</button>
+                                <div class="preview-progress"></div>
+                                <button class="preview-volume">🔊</button>
+                            </div>
+                        </div>
+                    </div>
+                    <h3>默认主题</h3>
+                    <p>经典的蓝色主题，简洁大方</p>
+                </div>
+                
+                <div class="theme-card" data-theme="dark">
+                    <div class="theme-preview dark">
+                        <div class="preview-player">
+                            <div class="preview-video"></div>
+                            <div class="preview-controls">
+                                <button class="preview-play">▶</button>
+                                <div class="preview-progress"></div>
+                                <button class="preview-volume">🔊</button>
+                            </div>
+                        </div>
+                    </div>
+                    <h3>深色主题</h3>
+                    <p>适合夜间使用的深色主题</p>
+                </div>
+                
+                <div class="theme-card" data-theme="minimal">
+                    <div class="theme-preview minimal">
+                        <div class="preview-player">
+                            <div class="preview-video"></div>
+                            <div class="preview-controls">
+                                <button class="preview-play">▶</button>
+                                <div class="preview-progress"></div>
+                                <button class="preview-volume">🔊</button>
+                            </div>
+                        </div>
+                    </div>
+                    <h3>极简主题</h3>
+                    <p>极简设计，突出内容</p>
+                </div>
+                
+                <div class="theme-card" data-theme="colorful">
+                    <div class="theme-preview colorful">
+                        <div class="preview-player">
+                            <div class="preview-video"></div>
+                            <div class="preview-controls">
+                                <button class="preview-play">▶</button>
+                                <div class="preview-progress"></div>
+                                <button class="preview-volume">🔊</button>
+                            </div>
+                        </div>
+                    </div>
+                    <h3>彩色主题</h3>
+                    <p>活泼的彩色主题，充满活力</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="player-section">
+            <h2>实时预览</h2>
+            <div id="theme-player" class="player-container"></div>
+        </div>
+        
+        <div class="customizer">
+            <h2>主题定制器</h2>
+            <div class="customizer-panel">
+                <div class="color-section">
+                    <h3>颜色配置</h3>
+                    <div class="color-controls">
+                        <div class="color-item">
+                            <label>主色调:</label>
+                            <input type="color" id="primary-color" value="#007bff">
+                            <span id="primary-color-text">#007bff</span>
+                        </div>
+                        <div class="color-item">
+                            <label>背景色:</label>
+                            <input type="color" id="background-color" value="#000000">
+                            <span id="background-color-text">#000000</span>
+                        </div>
+                        <div class="color-item">
+                            <label>控制栏背景:</label>
+                            <input type="color" id="control-bg" value="#000000">
+                            <span id="control-bg-text">#000000</span>
+                        </div>
+                        <div class="color-item">
+                            <label>文字颜色:</label>
+                            <input type="color" id="text-color" value="#ffffff">
+                            <span id="text-color-text">#ffffff</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="size-section">
+                    <h3>尺寸配置</h3>
+                    <div class="size-controls">
+                        <div class="size-item">
+                            <label>控制栏高度:</label>
+                            <input type="range" id="control-height" min="30" max="80" value="50">
+                            <span id="control-height-text">50px</span>
+                        </div>
+                        <div class="size-item">
+                            <label>按钮大小:</label>
+                            <input type="range" id="button-size" min="24" max="48" value="32">
+                            <span id="button-size-text">32px</span>
+                        </div>
+                        <div class="size-item">
+                            <label>字体大小:</label>
+                            <input type="range" id="font-size" min="10" max="20" value="14">
+                            <span id="font-size-text">14px</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="style-section">
+                    <h3>样式配置</h3>
+                    <div class="style-controls">
+                        <div class="style-item">
+                            <label>圆角大小:</label>
+                            <input type="range" id="border-radius" min="0" max="20" value="4">
+                            <span id="border-radius-text">4px</span>
+                        </div>
+                        <div class="style-item">
+                            <label>阴影强度:</label>
+                            <input type="range" id="shadow-intensity" min="0" max="20" value="4">
+                            <span id="shadow-intensity-text">4px</span>
+                        </div>
+                        <div class="style-item">
+                            <label>透明度:</label>
+                            <input type="range" id="opacity" min="0.5" max="1" step="0.1" value="1">
+                            <span id="opacity-text">100%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="export-section">
+            <h2>导出主题</h2>
+            <div class="export-panel">
+                <button id="export-theme" class="export-btn">导出当前主题</button>
+                <button id="import-theme" class="import-btn">导入主题</button>
+                <input type="file" id="theme-file" accept=".json" style="display: none;">
+            </div>
+            <div class="theme-code">
+                <h3>主题代码</h3>
+                <pre><code id="theme-code"></code></pre>
+            </div>
+        </div>
+    </div>
+    
+    <script src="../../dist/ebin-player.umd.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

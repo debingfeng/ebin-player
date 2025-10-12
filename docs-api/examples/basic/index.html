@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EbinPlayer - 基础播放器示例</title>
+    <link rel="stylesheet" href="../../dist/styles.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>EbinPlayer 基础播放器示例</h1>
+        
+        <div class="player-section">
+            <h2>基础播放器</h2>
+            <div id="basic-player" class="player-container"></div>
+        </div>
+        
+        <div class="controls-section">
+            <h3>播放控制</h3>
+            <div class="controls">
+                <button id="play-btn">播放</button>
+                <button id="pause-btn">暂停</button>
+                <button id="mute-btn">静音</button>
+                <button id="fullscreen-btn">全屏</button>
+                <button id="speed-btn">1x</button>
+            </div>
+            <div class="volume-control">
+                <label for="volume-slider">音量:</label>
+                <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="1">
+                <span id="volume-text">100%</span>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h3>播放器信息</h3>
+            <div id="player-info">
+                <p>状态: <span id="status">未初始化</span></p>
+                <p>当前时间: <span id="current-time">0</span>s</p>
+                <p>总时长: <span id="duration">0</span>s</p>
+                <p>音量: <span id="volume">1</span></p>
+                <p>播放速度: <span id="playback-rate">1</span>x</p>
+            </div>
+        </div>
+        
+        <div class="keyboard-section">
+            <h3>键盘快捷键</h3>
+            <ul>
+                <li><kbd>空格键</kbd> - 播放/暂停</li>
+                <li><kbd>←</kbd> - 快退10秒</li>
+                <li><kbd>→</kbd> - 快进10秒</li>
+                <li><kbd>↑</kbd> - 增加音量</li>
+                <li><kbd>↓</kbd> - 减少音量</li>
+                <li><kbd>M</kbd> - 静音/取消静音</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script src="../../dist/ebin-player.umd.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

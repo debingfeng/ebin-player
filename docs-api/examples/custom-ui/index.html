@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EbinPlayer - 自定义UI示例</title>
+    <link rel="stylesheet" href="../../dist/styles.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>EbinPlayer 自定义UI示例</h1>
+        
+        <div class="theme-selector">
+            <h3>选择主题</h3>
+            <div class="theme-buttons">
+                <button class="theme-btn active" data-theme="default">默认主题</button>
+                <button class="theme-btn" data-theme="dark">深色主题</button>
+                <button class="theme-btn" data-theme="blue">蓝色主题</button>
+                <button class="theme-btn" data-theme="green">绿色主题</button>
+                <button class="theme-btn" data-theme="purple">紫色主题</button>
+            </div>
+        </div>
+        
+        <div class="player-section">
+            <h2>自定义主题播放器</h2>
+            <div id="custom-player" class="player-container"></div>
+        </div>
+        
+        <div class="custom-controls">
+            <h3>自定义控制面板</h3>
+            <div class="control-panel">
+                <div class="control-group">
+                    <label>主色调:</label>
+                    <input type="color" id="primary-color" value="#007bff">
+                </div>
+                <div class="control-group">
+                    <label>控制栏高度:</label>
+                    <input type="range" id="control-height" min="40" max="80" value="50">
+                    <span id="height-value">50px</span>
+                </div>
+                <div class="control-group">
+                    <label>圆角大小:</label>
+                    <input type="range" id="border-radius" min="0" max="20" value="4">
+                    <span id="radius-value">4px</span>
+                </div>
+                <div class="control-group">
+                    <label>字体大小:</label>
+                    <input type="range" id="font-size" min="12" max="20" value="14">
+                    <span id="font-value">14px</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="component-demo">
+            <h3>组件样式预览</h3>
+            <div class="preview-components">
+                <div class="preview-play-button">
+                    <button class="play-btn">▶</button>
+                    <span>播放按钮</span>
+                </div>
+                <div class="preview-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                        <div class="progress-thumb"></div>
+                    </div>
+                    <span>进度条</span>
+                </div>
+                <div class="preview-volume">
+                    <div class="volume-control">
+                        <button class="volume-btn">🔊</button>
+                        <div class="volume-slider">
+                            <div class="volume-fill"></div>
+                        </div>
+                    </div>
+                    <span>音量控制</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="code-section">
+            <h3>当前主题配置</h3>
+            <pre><code id="theme-code"></code></pre>
+        </div>
+    </div>
+    
+    <script src="../../dist/ebin-player.umd.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

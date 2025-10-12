@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EbinPlayer 文档</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background: #f5f5f5; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 60px 20px; text-align: center; }
+        .header h1 { font-size: 3rem; margin-bottom: 10px; }
+        .header p { font-size: 1.2rem; opacity: 0.9; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .nav-card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; transition: transform 0.2s; }
+        .nav-card:hover { transform: translateY(-5px); }
+        .nav-card h3 { color: #333; margin-bottom: 15px; font-size: 1.5rem; }
+        .nav-card p { color: #666; margin-bottom: 20px; }
+        .nav-card a { display: inline-block; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; }
+        .nav-card a:hover { background: #0056b3; }
+        .footer { background: #333; color: white; text-align: center; padding: 30px 20px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>EbinPlayer</h1>
+        <p>现代化的Web视频播放器</p>
+    </div>
+    
+    <div class="container">
+        <div class="nav-grid">
+            <div class="nav-card">
+                <h3>📚 API 文档</h3>
+                <p>完整的API参考文档，包含所有类、方法和属性的详细说明。</p>
+                <a href="modules.html">查看API文档</a>
+            </div>
+            <div class="nav-card">
+                <h3>🎬 在线演示</h3>
+                <p>体验EbinPlayer的所有功能，包括基础播放、自定义UI、插件系统等。</p>
+                <a href="demos/index.html">开始体验</a>
+            </div>
+            <div class="nav-card">
+                <h3>💻 代码示例</h3>
+                <p>查看各种使用场景的代码示例，快速上手EbinPlayer。</p>
+                <a href="examples/index.html">查看示例</a>
+            </div>
+            <div class="nav-card">
+                <h3>🚀 快速开始</h3>
+                <p>5分钟快速上手EbinPlayer，从安装到第一个播放器。</p>
+                <a href="https://github.com/your-username/ebin-player#quick-start">开始使用</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>EbinPlayer - 现代化的Web视频播放器</p>
+        <p>© 2024 EbinPlayer Team. All rights reserved.</p>
+    </div>
+</body>
+</html>

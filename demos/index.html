@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EbinPlayer - 在线演示</title>
+    <link rel="stylesheet" href="../dist/styles.css">
+    <link rel="stylesheet" href="assets/styles/demo.css">
+</head>
+<body>
+    <div class="demo-container">
+        <header class="demo-header">
+            <h1>EbinPlayer 在线演示</h1>
+            <p>体验现代化的Web视频播放器</p>
+        </header>
+        
+        <nav class="demo-nav">
+            <a href="#basic" class="nav-item active">基础播放器</a>
+            <a href="#custom-ui" class="nav-item">自定义UI</a>
+            <a href="#plugins" class="nav-item">插件系统</a>
+            <a href="#themes" class="nav-item">主题定制</a>
+            <a href="#advanced" class="nav-item">高级功能</a>
+        </nav>
+        
+        <main class="demo-main">
+            <!-- 基础播放器演示 -->
+            <section id="basic" class="demo-section active">
+                <h2>基础播放器</h2>
+                <div class="demo-player-container">
+                    <div id="basic-demo-player" class="demo-player"></div>
+                </div>
+                <div class="demo-controls">
+                    <button id="basic-play">播放</button>
+                    <button id="basic-pause">暂停</button>
+                    <button id="basic-mute">静音</button>
+                    <input type="range" id="basic-volume" min="0" max="1" step="0.1" value="1">
+                    <span id="basic-volume-text">100%</span>
+                </div>
+                <div class="demo-info">
+                    <h3>功能特性</h3>
+                    <ul>
+                        <li>HTML5视频播放</li>
+                        <li>响应式设计</li>
+                        <li>键盘快捷键支持</li>
+                        <li>全屏播放</li>
+                        <li>画中画模式</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- 自定义UI演示 -->
+            <section id="custom-ui" class="demo-section">
+                <h2>自定义UI</h2>
+                <div class="demo-player-container">
+                    <div id="custom-ui-demo-player" class="demo-player"></div>
+                </div>
+                <div class="theme-controls">
+                    <h3>主题定制</h3>
+                    <div class="theme-buttons">
+                        <button class="theme-btn" data-theme="default">默认</button>
+                        <button class="theme-btn" data-theme="dark">深色</button>
+                        <button class="theme-btn" data-theme="blue">蓝色</button>
+                        <button class="theme-btn" data-theme="green">绿色</button>
+                    </div>
+                    <div class="color-controls">
+                        <label>主色调: <input type="color" id="theme-color" value="#007bff"></label>
+                        <label>控制栏高度: <input type="range" id="control-height" min="30" max="80" value="50"></label>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 插件系统演示 -->
+            <section id="plugins" class="demo-section">
+                <h2>插件系统</h2>
+                <div class="demo-player-container">
+                    <div id="plugins-demo-player" class="demo-player"></div>
+                </div>
+                <div class="plugin-controls">
+                    <h3>插件控制</h3>
+                    <div class="plugin-buttons">
+                        <button id="toggle-playback-rate">播放速度插件</button>
+                        <button id="toggle-custom-plugin">自定义插件</button>
+                        <button id="plugin-action">执行插件操作</button>
+                    </div>
+                    <div class="plugin-info">
+                        <p>已加载插件: <span id="plugin-count">0</span></p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 主题定制演示 -->
+            <section id="themes" class="demo-section">
+                <h2>主题定制</h2>
+                <div class="demo-player-container">
+                    <div id="themes-demo-player" class="demo-player"></div>
+                </div>
+                <div class="theme-customizer">
+                    <h3>主题定制器</h3>
+                    <div class="customizer-grid">
+                        <div class="customizer-group">
+                            <label>主色调</label>
+                            <input type="color" id="primary-color" value="#007bff">
+                        </div>
+                        <div class="customizer-group">
+                            <label>控制栏高度</label>
+                            <input type="range" id="control-bar-height" min="30" max="80" value="50">
+                        </div>
+                        <div class="customizer-group">
+                            <label>圆角大小</label>
+                            <input type="range" id="border-radius" min="0" max="20" value="4">
+                        </div>
+                        <div class="customizer-group">
+                            <label>字体大小</label>
+                            <input type="range" id="font-size" min="10" max="20" value="14">
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 高级功能演示 -->
+            <section id="advanced" class="demo-section">
+                <h2>高级功能</h2>
+                <div class="demo-player-container">
+                    <div id="advanced-demo-player" class="demo-player"></div>
+                </div>
+                <div class="advanced-controls">
+                    <h3>高级控制</h3>
+                    <div class="control-grid">
+                        <button id="fullscreen-btn">全屏</button>
+                        <button id="pip-btn">画中画</button>
+                        <button id="speed-btn">播放速度</button>
+                        <button id="quality-btn">画质选择</button>
+                    </div>
+                    <div class="advanced-info">
+                        <h4>键盘快捷键</h4>
+                        <ul>
+                            <li><kbd>空格</kbd> 播放/暂停</li>
+                            <li><kbd>←</kbd> 快退10秒</li>
+                            <li><kbd>→</kbd> 快进10秒</li>
+                            <li><kbd>↑</kbd> 增加音量</li>
+                            <li><kbd>↓</kbd> 减少音量</li>
+                            <li><kbd>M</kbd> 静音</li>
+                            <li><kbd>F</kbd> 全屏</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="demo-footer">
+            <p>EbinPlayer - 现代化的Web视频播放器</p>
+            <div class="footer-links">
+                <a href="../docs/quick-start.md">文档</a>
+                <a href="../docs/api/">API</a>
+                <a href="https://github.com/your-username/ebin-player">GitHub</a>
+            </div>
+        </footer>
+    </div>
+    
+    <script src="../dist/ebin-player.umd.js"></script>
+    <script src="components/demo-player.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

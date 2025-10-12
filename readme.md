@@ -774,6 +774,22 @@ src/
 └── index.ts               # 主入口文件
 ```
 
+## 📚 文档
+
+- [📖 完整文档](./docs/README.md)
+- [🚀 快速开始](./docs/quick-start.md)
+- [🔌 插件开发](./docs/examples/plugin-development.md)
+- [🎨 主题定制](./docs/examples/theming.md)
+- [📋 API文档](./docs-api/)
+
+## 🎯 在线演示
+
+- [🎬 完整演示](./demos/)
+- [💻 基础示例](./examples/basic/)
+- [🎨 自定义UI示例](./examples/custom-ui/)
+- [🔌 插件示例](./examples/plugins/)
+- [🎨 主题示例](./examples/themes/)
+
 ## 📖 示例和演示
 
 ### 基础使用示例

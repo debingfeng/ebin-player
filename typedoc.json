@@ -1,0 +1,50 @@
+{
+  "entryPoints": ["src/index.ts"],
+  "out": "docs-api",
+  "theme": "default",
+  "name": "EbinPlayer API Documentation",
+  "includeVersion": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeExternals": true,
+  "readme": "docs/api/README.md",
+  "categorizeByGroup": true,
+  "defaultCategory": "Other",
+  "categoryOrder": [
+    "Core",
+    "Plugin System", 
+    "UI Components",
+    "Types",
+    "Other"
+  ],
+  "sort": ["source-order"],
+  "kindSortOrder": [
+    "Project",
+    "Module", 
+    "Namespace",
+    "Enum",
+    "Class",
+    "Interface",
+    "TypeAlias",
+    "Constructor",
+    "Property",
+    "Variable",
+    "Function",
+    "Accessor",
+    "Method"
+  ],
+  "navigation": {
+    "includeCategories": true,
+    "includeGroups": true
+  },
+  "searchInComments": true,
+  "searchInComments": true,
+  "excludeTags": ["@internal", "@private"],
+  "externalPattern": "node_modules/**",
+  "exclude": [
+    "**/node_modules/**",
+    "**/tests/**",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
+}
