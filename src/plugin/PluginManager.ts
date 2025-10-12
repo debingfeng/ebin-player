@@ -21,14 +21,14 @@ export class PluginManager implements IPluginManager {
   private permissionCheck: (pluginId: string, perm: string) => boolean = () => true; // 占位：默认允许
   
   // 现代插件架构：插件定义、配置、导出、命令、服务、插件间事件
-  private pluginDefs: Map<string, PluginDefinition<any, any>> = new Map();
-  private pluginExports: Map<string, any> = new Map();
-  private pluginConfigs: Map<string, any> = new Map();
+  private pluginDefs: Map<string, PluginDefinition<unknown, unknown>> = new Map();
+  private pluginExports: Map<string, unknown> = new Map();
+  private pluginConfigs: Map<string, unknown> = new Map();
   private pluginConfigVersions: Map<string, number> = new Map();
-  private services: Map<string, any> = new Map(); // 全局服务命名空间: "pluginId:name" 或全局名
-  private commands: Map<string, Map<string, (args: any, ctx: PluginContext) => any>> = new Map();
-  private interPluginEvents: Map<string, Map<string, Set<(data: any) => void>>> = new Map();
-  private pluginData: Map<string, Map<string, any>> = new Map();
+  private services: Map<string, unknown> = new Map(); // 全局服务命名空间: "pluginId:name" 或全局名
+  private commands: Map<string, Map<string, (args: unknown, ctx: PluginContext) => unknown>> = new Map();
+  private interPluginEvents: Map<string, Map<string, Set<(data: unknown) => void>>> = new Map();
+  private pluginData: Map<string, Map<string, unknown>> = new Map();
 
   constructor(player: PlayerInstance, logger?: LoggerType) {
     this.player = player;
@@ -61,7 +61,7 @@ export class PluginManager implements IPluginManager {
   /**
    * 注册插件
    */
-  use(plugin: PluginDefinition<any, any>): void {
+  use(plugin: PluginDefinition<unknown, unknown>): void {
     const id = plugin.meta.id;
     if (this.pluginDefs.has(id)) {
       this.logger.warn?.(`插件 ${id} 已存在，将被替换`);
@@ -75,7 +75,7 @@ export class PluginManager implements IPluginManager {
     }
 
     // 配置初始化与校验
-    const initialConfig = plugin.defaultConfig ?? {} as any;
+    const initialConfig = plugin.defaultConfig ?? {} as Record<string, unknown>;
     const targetVersion = plugin.configVersion ?? 1;
     // 配置迁移（首次安装仅记录目标版本）
     if (plugin.validateConfig) {
@@ -95,7 +95,7 @@ export class PluginManager implements IPluginManager {
     this.commands.set(id, new Map());
 
     // 构建上下文
-    const ctx = this.buildContext<any>(id);
+    const ctx = this.buildContext(id);
 
     try {
       // onInit
@@ -118,13 +118,13 @@ export class PluginManager implements IPluginManager {
     }
   }
 
-  private buildContext<C = any>(id: string): PluginContext {
+  private buildContext(id: string): PluginContext {
     const ctx: PluginContext = {
       player: this.player,
       logger: (this.player.getLogger?.() as LoggerType) || (this.logger as LoggerType),
-      on: (event, cb) => this.player.on(event, cb as any),
-      off: (event, cb) => this.player.off(event, cb as any),
-      emit: (event, data) => { this.player.emit(event, data as any); },
+      on: (event, cb) => this.player.on(event, cb),
+      off: (event, cb) => this.player.off(event, cb),
+      emit: (event, data) => { this.player.emit(event, data); },
       onAnyPlayerEvent: (cb) => {
         if (!this.permissionCheck(id, 'events:any')) {
           this.logger.warn?.(`插件 ${id} 无权限订阅所有播放器事件`);
@@ -150,14 +150,14 @@ export class PluginManager implements IPluginManager {
       registerService: (name, service) => {
         this.services.set(`${id}:${name}`, service);
       },
-      getService: (name) => this.services.get(name) ?? this.services.get(`${id}:${name}`),
+      getService: <T>(name: string) => (this.services.get(name) ?? this.services.get(`${id}:${name}`)) as T | undefined,
       getConfig: <T = unknown>() => this.pluginConfigs.get(id) as T,
       setConfig: <T = unknown>(partial: Partial<T>) => {
         const cur = this.pluginConfigs.get(id) || {};
         const next = { ...cur, ...(partial as object) };
         this.pluginConfigs.set(id, next);
         const def = this.pluginDefs.get(id);
-        def?.onConfigChange?.(partial as any, ctx);
+        def?.onConfigChange?.(partial as Record<string, unknown>, ctx);
       },
       storage: {
         get: <T = unknown>(key: string) => {
@@ -194,7 +194,7 @@ export class PluginManager implements IPluginManager {
       .filter(m => m.from >= currentVersion && m.to <= targetVersion)
       .sort((a, b) => a.from - b.from);
     for (const step of route) {
-      try { conf = step.migrate(conf); } catch (e) { this.logger.error?.(`迁移 ${pluginId} 配置 ${step.from}->${step.to} 失败:`, e); }
+      try { conf = step.migrate(conf) as Record<string, unknown>; } catch (e) { this.logger.error?.(`迁移 ${pluginId} 配置 ${step.from}->${step.to} 失败:`, e); }
     }
     this.pluginConfigs.set(pluginId, conf);
     this.pluginConfigVersions.set(pluginId, targetVersion);
@@ -249,22 +249,22 @@ export class PluginManager implements IPluginManager {
   /**
    * 更新插件配置
    */
-  updatePluginConfig<C = any>(pluginId: string, partial: Partial<C>): void {
+  updatePluginConfig<C = unknown>(pluginId: string, partial: Partial<C>): void {
     const def = this.pluginDefs.get(pluginId);
     if (!def) return;
-    const ctx = this.buildContext<C>(pluginId);
+    const ctx = this.buildContext(pluginId);
     ctx.setConfig(partial);
   }
 
   /**
    * 命令注册与调用
    */
-  registerCommand(pluginId: string, name: string, fn: (args: any, ctx: PluginContext) => any): void {
+  registerCommand(pluginId: string, name: string, fn: (args: unknown, ctx: PluginContext) => unknown): void {
     if (!this.commands.has(pluginId)) this.commands.set(pluginId, new Map());
     this.commands.get(pluginId)!.set(name, fn);
   }
 
-  invokeCommand(pluginId: string, name: string, args?: any): any {
+  invokeCommand(pluginId: string, name: string, args?: unknown): unknown {
     const cmd = this.commands.get(pluginId)?.get(name);
     if (!cmd) {
       this.logger.warn?.(`命令未找到: ${pluginId}.${name}`);

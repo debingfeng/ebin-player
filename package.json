@@ -5,20 +5,38 @@
   "main": "dist/ebin-player.umd.js",
   "module": "dist/ebin-player.esm.js",
   "types": "dist/ebin-player.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/ebin-player.esm.js",
+      "require": "./dist/ebin-player.umd.js",
+      "types": "./dist/ebin-player.d.ts"
+    },
+    "./styles": "./dist/styles.css",
+    "./dist/styles.css": "./dist/styles.css"
+  },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/ebin-player.git"
+  },
+  "homepage": "https://github.com/your-username/ebin-player#readme",
+  "bugs": {
+    "url": "https://github.com/your-username/ebin-player/issues"
+  },
   "scripts": {
-    "build": "rollup -c --bundleConfigAsCjs",
+    "build": "npm run clean && npm run build:css:prod && rollup -c --bundleConfigAsCjs",
+    "build:dev": "npm run clean && npm run build:css && rollup -c --bundleConfigAsCjs",
     "dev": "rollup -c -w --bundleConfigAsCjs",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
-    "build:css": "@tailwindcss/cli -i ./src/styles/tailwind.css -o ./dist/styles.css --watch",
-    "build:css:prod": "@tailwindcss/cli -i ./src/styles/tailwind.css -o ./dist/styles.css --minify",
-    "serve": "http-server . -p 8000 -c-1 --cors --gzip --brotli",
-    "serve:demo": "http-server demo -p 8000 -c-1 --cors --gzip --brotli",
-    "demo": "npm run build:css:prod && npm run build && npm run serve"
+    "build:css": "npx @tailwindcss/cli -i ./src/styles/tailwind.css -o ./dist/styles.css --watch",
+    "build:css:prod": "npx @tailwindcss/cli -i ./src/styles/tailwind.css -o ./dist/styles.css --minify",
+    "prepublishOnly": "npm run build",
+    "prepack": "npm run build"
   },
   "keywords": [
     "video-player",
@@ -39,12 +57,9 @@
     "@tailwindcss/cli": "^4.1.14",
     "@types/node": "^24.6.2",
     "autoprefixer": "^10.4.21",
-    "http-server": "^14.1.1",
     "postcss": "^8.5.6",
     "rollup": "^4.52.4",
     "rollup-plugin-dts": "^6.2.3",
-    "rollup-plugin-livereload": "^2.0.5",
-    "rollup-plugin-serve": "^3.0.0",
     "tailwindcss": "^4.1.14",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3"

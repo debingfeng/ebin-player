@@ -75,7 +75,7 @@ pnpm add ebin-player
 
 ```javascript
 import { PlayerInstance } from 'ebin-player';
-import 'ebin-player/dist/styles.css';
+import 'ebin-player/styles';
 
 const player = new PlayerInstance(container, {
     src: 'video.mp4',
@@ -88,6 +88,7 @@ const player = new PlayerInstance(container, {
 
 ```javascript
 import { createPlayer } from 'ebin-player';
+import 'ebin-player/styles';
 
 const player = createPlayer(container, {
     src: 'video.mp4',

@@ -83,7 +83,7 @@ export default [
   },
   // 类型声明
   {
-    input: 'dist/types/index.d.ts',
+    input: 'src/index.ts',
     output: [{ file: 'dist/ebin-player.d.ts', format: 'es' }],
     plugins: [dts()]
   }

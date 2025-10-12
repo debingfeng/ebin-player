@@ -7,18 +7,23 @@
 export enum UIMode {
   NATIVE = 'native',        // 使用原生HTML5控制条
   CUSTOM = 'custom',        // 使用内置自定义UI
-  ADVANCED = 'advanced',    // 使用高级UI（包含所有功能）
   NONE = 'none'            // 不使用任何UI
 }
+
+// 日志级别
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+// 日志参数类型
+export type LogArgs = [string, ...unknown[]];
 
 // 日志接口，用于在外部注入自定义日志实例
 export interface Logger {
   setEnabled(enabled: boolean): void;
   child(suffix: string): Logger;
-  debug(...args: any[]): void;
-  info(...args: any[]): void;
-  warn(...args: any[]): void;
-  error(...args: any[]): void;
+  debug(message: string, ...args: unknown[]): void;
+  info(message: string, ...args: unknown[]): void;
+  warn(message: string, ...args: unknown[]): void;
+  error(message: string, ...args: unknown[]): void;
 }
 
 // 播放器配置选项
@@ -223,8 +228,8 @@ export interface PluginContext {
   emit<T extends PlayerEventType>(event: T, data?: EventPayloadMap[T]): void;
   onAnyPlayerEvent(callback: (event: PlayerEvent) => void): () => void;
   // 插件事件
-  onPluginEvent(pluginId: string, type: string, callback: (data: any) => void): () => void;
-  emitPluginEvent(pluginId: string, type: string, data?: any): void;
+  onPluginEvent(pluginId: string, type: string, callback: (data: unknown) => void): () => void;
+  emitPluginEvent(pluginId: string, type: string, data?: unknown): void;
   // 服务定位
   registerService<T>(name: string, service: T): void;
   getService<T>(name: string): T | undefined;
@@ -254,13 +259,13 @@ export interface PluginDefinition<Config = unknown, Exports = unknown> extends P
   meta: PluginMeta;
   defaultConfig?: Config;
   validateConfig?(config: unknown): { valid: boolean; errors?: string[] };
-  commands?: Record<string, (args: any, ctx: PluginContext) => any>;
+  commands?: Record<string, (args: unknown, ctx: PluginContext) => unknown>;
   // 配置版本与迁移（可选）
   configVersion?: number; // 默认为 1
   migrations?: Array<{
     from: number;
     to: number;
-    migrate: (oldConfig: any) => any;
+    migrate: (oldConfig: unknown) => unknown;
   }>;
 }
 

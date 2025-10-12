@@ -28,13 +28,13 @@ export class PlayerInstance {
 
     // 初始化核心播放器（复用同一 logger）
     // 这里传入的 logger 是 types.Logger，但 PlayerCore 内部只以结构化使用，保持兼容
-    this.core = new PlayerCore(container, { ...options, logger: this.logger } as any);
+    this.core = new PlayerCore(container, { ...options, logger: this.logger });
     
     // 先初始化状态管理器，确保 UI 在构建时可以订阅到 Store
     this.store = new PlayerStore(this.core.getState(), this.logger);
     
     // 初始化插件管理器
-    this.pluginManager = new PluginManager(this as any, this.logger);
+    this.pluginManager = new PluginManager(this, this.logger);
     
     // 设置状态变化监听与事件转发（依赖 store 已就绪）
     this.setupStateSync();
@@ -42,7 +42,8 @@ export class PlayerInstance {
     
     this.core.initializeUI();
     // 交由插件管理器根据配置初始化内置/外部插件
-    (this.pluginManager as any).initializeFromOptions?.(options);
+    // 插件管理器初始化
+    this.pluginManager.updateFromOptions(options);
   }
 
 
@@ -107,7 +108,7 @@ export class PlayerInstance {
         // 更新事件目标为当前播放器实例
         const playerEvent: PlayerEvent = {
           ...event,
-          target: this as any
+          target: this
         };
         
         // 转发到状态管理器
@@ -227,33 +228,33 @@ export class PlayerInstance {
     if (this.isDestroyed) return () => {};
     this.logger.info('on', event);
     // 同时监听核心播放器和状态管理器的事件，并返回统一退订函数
-    this.core.on(event, callback as any);
-    const unsubscribeStore = this.store.subscribeEvent(event, callback as any);
+    this.core.on(event, callback);
+    const unsubscribeStore = this.store.subscribeEvent(event, callback as (event: PlayerEvent) => void);
 
     return () => {
-      this.core.off(event, callback as any);
+      this.core.off(event, callback);
       unsubscribeStore();
     };
   }
 
   off<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): void {
     if (this.isDestroyed) return;
-    this.core.off(event, callback as any);
+    this.core.off(event, callback);
     // 尝试从 Store 侧移除（防止使用者未保存取消函数时的泄漏）
     // 由于 Store 需要取消函数，这里提供兜底方案：临时订阅后立刻退订以触发 delete
-    const tmpUnsub = this.store.subscribeEvent(event, callback as any);
+    const tmpUnsub = this.store.subscribeEvent(event, callback as (event: PlayerEvent) => void);
     tmpUnsub();
   }
   @logMethod({ includeArgs: true })
   @chainable
   emit<T extends PlayerEventType>(event: T, data?: EventPayloadMap[T]): PlayerInstance {
-    this.core.emit(event, data as any);
+    this.core.emit(event, data);
     return this;
   }
 
   // 插件系统方法
   @chainable
-  use(plugin: PluginDefinition<any, any>): PlayerInstance {
+  use(plugin: PluginDefinition<unknown, unknown>): PlayerInstance {
     this.pluginManager.use(plugin);
     return this;
   }
@@ -355,7 +356,7 @@ export class PlayerInstance {
     uiMode: UIMode;
   } {
     return {
-      version: (typeof __VERSION__ !== 'undefined' ? (__VERSION__ as any) : '0.0.0'),
+      version: (typeof __VERSION__ !== 'undefined' ? String(__VERSION__) : '0.0.0'),
       lifecycle: this.core.getLifecycle(),
       plugins: this.pluginManager.getPluginIds(),
       state: this.getState(),
@@ -372,7 +373,7 @@ export class PlayerInstance {
     if (this.rafId !== null) {
       const cancel = (typeof cancelAnimationFrame !== 'undefined' 
         ? cancelAnimationFrame 
-        : (id: number) => clearTimeout(id as any)
+        : (id: number) => clearTimeout(id)
       );
       cancel(this.rafId);
       this.rafId = null;

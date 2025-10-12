@@ -1,7 +1,7 @@
 /**
  * 播放速度控制插件（基于 BasePlugin 的实现）
  */
-import { PluginDefinition } from '../../types';
+import { PluginDefinition, PluginContext } from '../../types';
 import { BasePlugin } from '../BasePlugin';
 
 type RateOption = { value: number; label: string };
@@ -69,13 +69,13 @@ class PlaybackRatePluginImpl extends BasePlugin<RateConfig, RateExports> {
   }
 
   commands = {
-    bump: (_args: any, ctx: any) => {
+    bump: (_args: unknown, _ctx: PluginContext) => {
       const cur = this.ctx.player.getPlaybackRate();
       this.ctx.player.setPlaybackRate(Math.min(cur + 0.25, 3));
     }
   } as PluginDefinition<RateConfig, RateExports>['commands'];
 
-  async onInit(ctx: any) {
+  async onInit(ctx: PluginContext) {
     await super.onInit(ctx);
     const conf = this.ctx.getConfig<RateConfig>();
     const container = createContainer();

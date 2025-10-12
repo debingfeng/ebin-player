@@ -292,23 +292,25 @@ export class UIConfigManager {
    * 深度合并配置
    */
   private mergeConfig(target: UIConfig, source: Partial<UIConfig>): UIConfig {
-    const result = { ...target };
+    const result = { ...target } as Record<string, unknown>;
     
     for (const key in source) {
       if (source.hasOwnProperty(key)) {
         const value = source[key as keyof UIConfig];
         if (value && typeof value === 'object' && !Array.isArray(value)) {
-          result[key as keyof UIConfig] = {
-            ...(target[key as keyof UIConfig] as any),
-            ...(value as any),
-          } as any;
+          const targetValue = target[key as keyof UIConfig] as Record<string, unknown>;
+          const sourceValue = value as Record<string, unknown>;
+          result[key] = {
+            ...targetValue,
+            ...sourceValue,
+          };
         } else {
-          result[key as keyof UIConfig] = value as any;
+          result[key] = value;
         }
       }
     }
     
-    return result;
+    return result as unknown as UIConfig;
   }
 
   /**

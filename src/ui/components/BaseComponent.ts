@@ -163,19 +163,22 @@ export abstract class BaseComponent {
    * 添加事件监听器
    */
   protected addEventListener(
-    element: HTMLElement,
+    element: HTMLElement | Document,
     event: string,
     handler: EventListener,
     options?: AddEventListenerOptions
   ): void {
     element.addEventListener(event, handler, options);
-    this.eventListeners.push({ element, event, handler });
+    // 只对 HTMLElement 类型的事件监听器进行跟踪
+    if (element instanceof HTMLElement) {
+      this.eventListeners.push({ element, event, handler });
+    }
   }
 
   /**
    * 错误处理
    */
-  protected handleError(error: any): void {
+  protected handleError(error: unknown): void {
     this.logger.error('Component error', error);
     
     // 创建错误提示元素

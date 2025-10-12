@@ -50,7 +50,7 @@ export { UIConfigManager } from './ui/config/UIConfig';
 
 // 工具函数
 export const createPlayer = (container: HTMLElement, options: import('./types').PlayerOptions) => {
-  const { PlayerInstance } = require('./core/Player');
+  // 直接使用已导入的 PlayerInstance，避免循环依赖
   return new PlayerInstance(container, options);
 };
 

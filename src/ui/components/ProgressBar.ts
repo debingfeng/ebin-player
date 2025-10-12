@@ -75,19 +75,19 @@ export class ProgressBar extends BaseComponent {
     // 点击跳转
     if (config.clickToSeek) {
       this.addEventListener(this.progressContainer, 'click', (e) => {
-        this.handleSeek(e);
+        this.handleSeek(e as MouseEvent);
       });
     }
 
     // 拖拽功能
     if (this.progressThumb) {
       this.addEventListener(this.progressThumb, 'mousedown', (e) => {
-        this.startDrag(e);
+        this.startDrag(e as MouseEvent);
       });
 
       this.addEventListener(document, 'mousemove', (e) => {
         if (this.isDragging) {
-          this.handleDrag(e);
+          this.handleDrag(e as MouseEvent);
         }
       });
 
@@ -99,13 +99,15 @@ export class ProgressBar extends BaseComponent {
 
       // 触摸支持
       this.addEventListener(this.progressThumb, 'touchstart', (e) => {
-        this.startDrag(e.touches[0]);
+        const touchEvent = e as TouchEvent;
+        this.startDrag(touchEvent.touches[0]);
       });
 
       this.addEventListener(document, 'touchmove', (e) => {
         if (this.isDragging) {
-          e.preventDefault();
-          this.handleDrag(e.touches[0]);
+          const touchEvent = e as TouchEvent;
+          touchEvent.preventDefault();
+          this.handleDrag(touchEvent.touches[0]);
         }
       });
 
@@ -119,7 +121,7 @@ export class ProgressBar extends BaseComponent {
     // 键盘控制
     if (config.keyboardSeek) {
       this.addEventListener(this.progressContainer, 'keydown', (e) => {
-        this.handleKeyboardSeek(e);
+        this.handleKeyboardSeek(e as KeyboardEvent);
       });
     }
 
