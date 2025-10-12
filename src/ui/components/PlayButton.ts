@@ -31,9 +31,13 @@ export class PlayButton extends BaseComponent {
     this.buttonElement.innerHTML = '▶';
     this.buttonElement.setAttribute('aria-label', '播放/暂停');
     this.buttonElement.setAttribute('type', 'button');
+    this.buttonElement.setAttribute('role', 'button');
     
     this.applyTheme();
     this.element = this.buttonElement;
+    
+    // 将按钮添加到容器中
+    this.container.appendChild(this.buttonElement);
 
     // 创建播放覆盖层（如果启用）
     if ((this.config as PlayButtonConfig).showOverlay) {
