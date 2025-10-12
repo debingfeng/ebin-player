@@ -424,5 +424,6 @@ export class VolumeControl extends BaseComponent {
     });
 
     // 主题对滑块的附加效果由创建时样式控制
+    this.element = this.volumeContainer;
   }
 }

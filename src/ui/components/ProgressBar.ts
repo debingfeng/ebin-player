@@ -369,5 +369,7 @@ export class ProgressBar extends BaseComponent {
     this.progressContainer.addEventListener('blur', () => {
       this.progressContainer!.style.outline = 'none';
     });
+
+    this.element = this.progressContainer;
   }
 }

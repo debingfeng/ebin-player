@@ -71,7 +71,9 @@ class PlaybackRatePluginImpl extends BasePlugin<RateConfig, RateExports> {
   commands = {
     bump: (_args: unknown, _ctx: PluginContext) => {
       const cur = this.ctx.player.getPlaybackRate();
-      this.ctx.player.setPlaybackRate(Math.min(cur + 0.25, 3));
+      const config = this.ctx.getConfig<RateConfig>();
+      const maxRate = Math.max(...config.options.map(o => o.value));
+      this.ctx.player.setPlaybackRate(Math.min(cur + 0.25, maxRate));
     }
   } as PluginDefinition<RateConfig, RateExports>['commands'];
 
