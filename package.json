@@ -21,11 +21,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/your-username/ebin-player.git"
+    "url": "git+https://github.com/fengdebing/ebin-player.git"
   },
-  "homepage": "https://github.com/your-username/ebin-player#readme",
+  "homepage": "https://github.com/fengdebing/ebin-player#readme",
   "bugs": {
-    "url": "https://github.com/your-username/ebin-player/issues"
+    "url": "https://github.com/fengdebing/ebin-player/issues"
   },
   "scripts": {
     "build": "npm run clean && npm run build:css:prod && rollup -c --bundleConfigAsCjs",
@@ -54,7 +54,12 @@
     "docs:serve": "http-server docs-api -p 8090",
     "docs:dev": "pnpm run docs:build && pnpm run docs:serve",
     "prepublishOnly": "pnpm run build",
-    "prepack": "pnpm run build"
+    "prepack": "pnpm run build",
+    "prepublish": "pnpm run build",
+    "publish:patch": "pnpm run version:patch && pnpm run build && pnpm publish",
+    "publish:minor": "pnpm run version:minor && pnpm run build && pnpm publish",
+    "publish:major": "pnpm run version:major && pnpm run build && pnpm publish",
+    "publish:dry": "pnpm run build && pnpm publish --dry-run"
   },
   "keywords": [
     "video-player",
