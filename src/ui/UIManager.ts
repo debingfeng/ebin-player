@@ -2,13 +2,17 @@
  * UI管理器
  * 统一管理所有UI组件的创建、更新和销毁
  */
-import { PlayerInstance, PlayerState, Logger } from '../types';
-import { BaseComponent, ComponentConfig, ComponentTheme } from './components/BaseComponent';
-import { UIConfig, UIConfigManager } from './config/UIConfig';
-import { PlayButton, PlayButtonConfig } from './components/PlayButton';
-import { ProgressBar, ProgressBarConfig } from './components/ProgressBar';
-import { VolumeControl, VolumeControlConfig } from './components/VolumeControl';
-import { TimeDisplay, TimeDisplayConfig } from './components/TimeDisplay';
+import { PlayerInstance, PlayerState, Logger } from "../types";
+import {
+  BaseComponent,
+  ComponentConfig,
+  ComponentTheme,
+} from "./components/BaseComponent";
+import { UIConfig, UIConfigManager } from "./config/UIConfig";
+import { PlayButton, PlayButtonConfig } from "./components/PlayButton";
+import { ProgressBar, ProgressBarConfig } from "./components/ProgressBar";
+import { VolumeControl, VolumeControlConfig } from "./components/VolumeControl";
+import { TimeDisplay, TimeDisplayConfig } from "./components/TimeDisplay";
 
 export interface UIManagerOptions {
   player: PlayerInstance;
@@ -36,10 +40,14 @@ export class UIManager {
     this.container = options.container;
     this.configManager = new UIConfigManager(options.config);
     this.theme = options.theme || {};
-    
+
     // 从PlayerInstance获取Logger实例
     const playerLogger = this.player.getLogger ? this.player.getLogger() : null;
-    if (playerLogger && typeof playerLogger === 'object' && 'setEnabled' in playerLogger) {
+    if (
+      playerLogger &&
+      typeof playerLogger === "object" &&
+      "setEnabled" in playerLogger
+    ) {
       this.logger = playerLogger;
     } else {
       // 如果PlayerInstance没有提供Logger或返回的是Console，使用console
@@ -58,42 +66,42 @@ export class UIManager {
 
   private async init(): Promise<void> {
     try {
-      this.logger.debug('Initializing UI Manager');
-      
+      this.logger.debug("Initializing UI Manager");
+
       // 设置容器样式
       this.setupContainer();
-      
+
       // 创建基础UI元素
       this.createControlBar();
       this.createPlayOverlay();
       this.createLoadingIndicator();
-      
+
       // 注册默认组件
       this.registerDefaultComponents();
-      
+
       // 创建组件
       await this.createComponents();
-      
+
       // 设置事件监听器
       this.setupEventListeners();
-      
+
       // 设置响应式监听
       this.setupResponsiveListener();
-      
+
       // 监听配置变化
       this.configManager.onConfigChange((config) => {
         this.handleConfigChange(config);
       });
-      
-      this.logger.debug('UI Manager initialized successfully');
+
+      this.logger.debug("UI Manager initialized successfully");
     } catch (error) {
-      this.logger.error('Failed to initialize UI Manager', error);
+      this.logger.error("Failed to initialize UI Manager", error);
       throw error;
     }
   }
 
   private setupContainer(): void {
-    this.container.className = 'ebin-player';
+    this.container.className = "ebin-player";
     this.container.style.cssText = `
       position: relative;
       width: 100%;
@@ -106,9 +114,9 @@ export class UIManager {
 
   private createControlBar(): void {
     const config = this.configManager.getConfig();
-    
-    this.controlBar = document.createElement('div');
-    this.controlBar.className = 'ebin-control-bar';
+
+    this.controlBar = document.createElement("div");
+    this.controlBar.className = "ebin-control-bar";
     this.controlBar.style.cssText = `
       position: absolute;
       ${config.controlBar.position}: 0;
@@ -116,7 +124,7 @@ export class UIManager {
       right: 0;
       height: ${config.controlBar.height}px;
       background-color: ${config.controlBar.backgroundColor};
-      ${config.controlBar.backdropFilter ? 'backdrop-filter: blur(4px);' : ''}
+      ${config.controlBar.backdropFilter ? "backdrop-filter: blur(4px);" : ""}
       display: flex;
       align-items: center;
       padding: 0 0.75rem;
@@ -130,11 +138,11 @@ export class UIManager {
 
   private createPlayOverlay(): void {
     const config = this.configManager.getConfig();
-    
+
     if (!config.playOverlay.enabled) return;
 
-    this.playOverlay = document.createElement('div');
-    this.playOverlay.className = 'ebin-play-overlay';
+    this.playOverlay = document.createElement("div");
+    this.playOverlay.className = "ebin-play-overlay";
     this.playOverlay.style.cssText = `
       position: absolute;
       top: 50%;
@@ -153,9 +161,9 @@ export class UIManager {
       z-index: 50;
     `;
 
-    const playIcon = document.createElement('div');
-    playIcon.className = 'ebin-play-overlay-icon';
-    playIcon.innerHTML = '▶';
+    const playIcon = document.createElement("div");
+    playIcon.className = "ebin-play-overlay-icon";
+    playIcon.innerHTML = "▶";
     playIcon.style.cssText = `
       color: #ffffff;
       font-size: ${config.playOverlay.iconSize}px;
@@ -168,11 +176,11 @@ export class UIManager {
 
   private createLoadingIndicator(): void {
     const config = this.configManager.getConfig();
-    
+
     if (!config.loadingIndicator.enabled) return;
 
-    this.loadingIndicator = document.createElement('div');
-    this.loadingIndicator.className = 'ebin-loading-indicator';
+    this.loadingIndicator = document.createElement("div");
+    this.loadingIndicator.className = "ebin-loading-indicator";
     this.loadingIndicator.style.cssText = `
       position: absolute;
       top: 50%;
@@ -194,67 +202,67 @@ export class UIManager {
   private registerDefaultComponents(): void {
     const defaultComponents: ComponentConfig[] = [
       {
-        id: 'playButton',
-        name: '播放按钮',
+        id: "playButton",
+        name: "播放按钮",
         enabled: true,
         order: 1,
-        platforms: ['mobile', 'desktop', 'tv'],
+        platforms: ["mobile", "desktop", "tv"],
         a11y: {
-          keyboard: 'Space / Enter',
+          keyboard: "Space / Enter",
           ariaLabel: true,
         },
       },
       {
-        id: 'progressBar',
-        name: '进度条',
+        id: "progressBar",
+        name: "进度条",
         enabled: true,
         order: 2,
-        platforms: ['mobile', 'desktop', 'tv'],
+        platforms: ["mobile", "desktop", "tv"],
         showThumb: true,
         showBuffered: true,
         clickToSeek: true,
         keyboardSeek: true,
         seekStep: 5,
         a11y: {
-          keyboard: 'Arrow keys to seek',
+          keyboard: "Arrow keys to seek",
           ariaLabel: true,
         },
       },
       {
-        id: 'timeDisplay',
-        name: '时间显示',
+        id: "timeDisplay",
+        name: "时间显示",
         enabled: true,
         order: 3,
-        platforms: ['mobile', 'desktop', 'tv'],
+        platforms: ["mobile", "desktop", "tv"],
         a11y: {
-          ariaLive: 'polite',
+          ariaLive: "polite",
         },
       },
       {
-        id: 'volumeControl',
-        name: '音量控制',
+        id: "volumeControl",
+        name: "音量控制",
         enabled: true,
         order: 4,
-        platforms: ['desktop', 'tv'],
+        platforms: ["desktop", "tv"],
         a11y: {
-          keyboard: 'Up / Down arrows',
+          keyboard: "Up / Down arrows",
           ariaLabel: true,
         },
       },
       {
-        id: 'fullscreenButton',
-        name: '全屏按钮',
+        id: "fullscreenButton",
+        name: "全屏按钮",
         enabled: true,
         order: 5,
-        platforms: ['mobile', 'desktop', 'tv'],
+        platforms: ["mobile", "desktop", "tv"],
         a11y: {
-          keyboard: 'F key',
+          keyboard: "F key",
           ariaLabel: true,
         },
       },
     ];
 
-    defaultComponents.forEach(componentConfig => {
+    defaultComponents.forEach((componentConfig) => {
       this.configManager.addComponent(componentConfig);
     });
   }
@@ -262,59 +270,64 @@ export class UIManager {
   private async createComponents(): Promise<void> {
     const config = this.configManager.getConfig();
     const visibleComponents = this.configManager.getVisibleComponents();
-    
+
     // 按顺序创建组件
     const sortedComponents = config.components
-      .filter(component => visibleComponents.includes(component.id))
+      .filter((component) => visibleComponents.includes(component.id))
       .sort((a, b) => a.order - b.order);
 
     for (const componentConfig of sortedComponents) {
       try {
         await this.createComponent(componentConfig);
       } catch (error) {
-        this.logger.error(`Failed to create component ${componentConfig.id}`, error);
+        this.logger.error(
+          `Failed to create component ${componentConfig.id}`,
+          error,
+        );
       }
     }
   }
 
-  private async createComponent(componentConfig: ComponentConfig): Promise<void> {
+  private async createComponent(
+    componentConfig: ComponentConfig,
+  ): Promise<void> {
     let component: BaseComponent;
 
     switch (componentConfig.id) {
-      case 'playButton':
+      case "playButton":
         component = new PlayButton(
           this.player,
           this.controlBar!,
           componentConfig as PlayButtonConfig,
           this.theme,
-          this.logger
+          this.logger,
         );
         break;
-      case 'progressBar':
+      case "progressBar":
         component = new ProgressBar(
           this.player,
           this.controlBar!,
           componentConfig as ProgressBarConfig,
           this.theme,
-          this.logger
+          this.logger,
         );
         break;
-      case 'timeDisplay':
+      case "timeDisplay":
         component = new TimeDisplay(
           this.player,
           this.controlBar!,
           componentConfig as TimeDisplayConfig,
           this.theme,
-          this.logger
+          this.logger,
         );
         break;
-      case 'volumeControl':
+      case "volumeControl":
         component = new VolumeControl(
           this.player,
           this.controlBar!,
           componentConfig as VolumeControlConfig,
           this.theme,
-          this.logger
+          this.logger,
         );
         break;
       default:
@@ -324,7 +337,7 @@ export class UIManager {
 
     await component.init();
     this.components.set(componentConfig.id, component);
-    
+
     // 将组件元素添加到控制栏
     const element = component.getElement();
     if (element && this.controlBar) {
@@ -334,34 +347,34 @@ export class UIManager {
 
   private setupEventListeners(): void {
     // 鼠标悬停控制栏显示/隐藏
-    this.container.addEventListener('mouseenter', () => {
+    this.container.addEventListener("mouseenter", () => {
       this.showControlBar();
     });
 
-    this.container.addEventListener('mouseleave', () => {
+    this.container.addEventListener("mouseleave", () => {
       this.hideControlBar();
     });
 
     // 播放器状态变化
-    this.player.on('timeupdate', () => {
+    this.player.on("timeupdate", () => {
       this.updateComponents();
     });
 
-    this.player.on('play', () => {
+    this.player.on("play", () => {
       this.updateComponents();
     });
 
-    this.player.on('pause', () => {
+    this.player.on("pause", () => {
       this.updateComponents();
     });
 
-    this.player.on('volumechange', () => {
+    this.player.on("volumechange", () => {
       this.updateComponents();
     });
 
     // 播放覆盖层点击
     if (this.playOverlay) {
-      this.playOverlay.addEventListener('click', () => {
+      this.playOverlay.addEventListener("click", () => {
         this.togglePlayPause();
       });
     }
@@ -382,20 +395,20 @@ export class UIManager {
 
   private updateComponentVisibility(): void {
     const visibleComponents = this.configManager.getVisibleComponents();
-    
+
     this.components.forEach((component, componentId) => {
       const shouldBeVisible = visibleComponents.includes(componentId);
       const element = component.getElement();
-      
+
       if (element) {
-        element.style.display = shouldBeVisible ? 'block' : 'none';
+        element.style.display = shouldBeVisible ? "block" : "none";
       }
     });
   }
 
   private handleConfigChange(config: UIConfig): void {
-    this.logger.debug('Config changed, updating UI');
-    
+    this.logger.debug("Config changed, updating UI");
+
     // 更新控制栏样式
     if (this.controlBar) {
       this.controlBar.style.height = `${config.controlBar.height}px`;
@@ -410,8 +423,8 @@ export class UIManager {
     if (this.isDestroyed) return;
 
     const state = this.player.getState();
-    
-    this.components.forEach(component => {
+
+    this.components.forEach((component) => {
       component.update(state);
     });
   }
@@ -424,7 +437,7 @@ export class UIManager {
         this.player.pause();
       }
     } catch (error) {
-      this.logger.error('Failed to toggle play/pause', error);
+      this.logger.error("Failed to toggle play/pause", error);
     }
   }
 
@@ -432,9 +445,9 @@ export class UIManager {
     if (!this.controlBar) return;
 
     const config = this.configManager.getConfig();
-    
-    this.controlBar.style.opacity = '1';
-    
+
+    this.controlBar.style.opacity = "1";
+
     if (config.controlBar.autoHide) {
       this.clearAutoHideTimer();
       this.autoHideTimer = window.setTimeout(() => {
@@ -447,10 +460,10 @@ export class UIManager {
     if (!this.controlBar) return;
 
     const config = this.configManager.getConfig();
-    
+
     if (!config.controlBar.autoHide) return;
 
-    this.controlBar.style.opacity = '0';
+    this.controlBar.style.opacity = "0";
     this.clearAutoHideTimer();
   }
 
@@ -466,7 +479,7 @@ export class UIManager {
    */
   updateConfig(updates: Partial<UIConfig>): void {
     this.configManager.updateConfig(updates);
-    
+
     // 如果更新了组件配置，需要重新创建组件
     if (updates.components) {
       this.recreateComponents();
@@ -478,25 +491,25 @@ export class UIManager {
    */
   private async recreateComponents(): Promise<void> {
     try {
-      this.logger.debug('Recreating components');
-      
+      this.logger.debug("Recreating components");
+
       // 销毁现有组件
-      this.components.forEach(component => {
+      this.components.forEach((component) => {
         component.destroy();
       });
       this.components.clear();
-      
+
       // 清空控制栏
       if (this.controlBar) {
-        this.controlBar.innerHTML = '';
+        this.controlBar.innerHTML = "";
       }
-      
+
       // 重新创建组件
       await this.createComponents();
-      
-      this.logger.debug('Components recreated successfully');
+
+      this.logger.debug("Components recreated successfully");
     } catch (error) {
-      this.logger.error('Failed to recreate components', error);
+      this.logger.error("Failed to recreate components", error);
     }
   }
 
@@ -505,8 +518,8 @@ export class UIManager {
    */
   updateTheme(theme: Partial<ComponentTheme>): void {
     this.theme = { ...this.theme, ...theme };
-    
-    this.components.forEach(component => {
+
+    this.components.forEach((component) => {
       component.updateTheme(this.theme);
     });
   }
@@ -528,7 +541,7 @@ export class UIManager {
       component.destroy();
       this.components.delete(componentId);
     }
-    
+
     this.configManager.removeComponent(componentId);
   }
 
@@ -544,7 +557,7 @@ export class UIManager {
    */
   showLoading(): void {
     if (this.loadingIndicator) {
-      this.loadingIndicator.style.display = 'block';
+      this.loadingIndicator.style.display = "block";
     }
   }
 
@@ -553,7 +566,7 @@ export class UIManager {
    */
   hideLoading(): void {
     if (this.loadingIndicator) {
-      this.loadingIndicator.style.display = 'none';
+      this.loadingIndicator.style.display = "none";
     }
   }
 
@@ -563,7 +576,7 @@ export class UIManager {
   destroy(): void {
     if (this.isDestroyed) return;
 
-    this.logger.debug('Destroying UI Manager');
+    this.logger.debug("Destroying UI Manager");
     this.isDestroyed = true;
 
     // 清理定时器
@@ -576,7 +589,7 @@ export class UIManager {
     }
 
     // 销毁所有组件
-    this.components.forEach(component => {
+    this.components.forEach((component) => {
       component.destroy();
     });
     this.components.clear();

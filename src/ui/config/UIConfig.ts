@@ -2,14 +2,20 @@
  * UI配置系统
  * 支持灵活的组件配置和布局管理
  */
-import { ComponentConfig } from '../components/BaseComponent';
+import { ComponentConfig } from "../components/BaseComponent";
 
 export interface LayoutConfig {
-  type: 'flex' | 'grid' | 'absolute';
-  direction?: 'row' | 'column';
-  wrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
-  justify?: 'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
-  align?: 'flex-start' | 'flex-end' | 'center' | 'baseline' | 'stretch';
+  type: "flex" | "grid" | "absolute";
+  direction?: "row" | "column";
+  wrap?: "nowrap" | "wrap" | "wrap-reverse";
+  justify?:
+    | "flex-start"
+    | "flex-end"
+    | "center"
+    | "space-between"
+    | "space-around"
+    | "space-evenly";
+  align?: "flex-start" | "flex-end" | "center" | "baseline" | "stretch";
   gap?: number | string;
   padding?: number | string;
   margin?: number | string;
@@ -39,21 +45,21 @@ export interface UIConfig {
   theme: string;
   layout: LayoutConfig;
   responsive: ResponsiveConfig;
-  
+
   // 组件配置
   components: ComponentConfig[];
-  
+
   // 控制栏配置
   controlBar: {
     enabled: boolean;
     autoHide: boolean;
     autoHideDelay: number;
-    position: 'bottom' | 'top';
+    position: "bottom" | "top";
     height: number;
     backgroundColor: string;
     backdropFilter: boolean;
   };
-  
+
   // 播放覆盖层配置
   playOverlay: {
     enabled: boolean;
@@ -63,15 +69,15 @@ export interface UIConfig {
     autoHide: boolean;
     autoHideDelay: number;
   };
-  
+
   // 加载指示器配置
   loadingIndicator: {
     enabled: boolean;
-    type: 'spinner' | 'dots' | 'pulse';
+    type: "spinner" | "dots" | "pulse";
     size: number;
     color: string;
   };
-  
+
   // 无障碍配置
   accessibility: {
     enabled: boolean;
@@ -81,7 +87,7 @@ export interface UIConfig {
     keyboardNavigation: boolean;
     screenReaderSupport: boolean;
   };
-  
+
   // 动画配置
   animations: {
     enabled: boolean;
@@ -93,14 +99,14 @@ export interface UIConfig {
 
 export const DEFAULT_UI_CONFIG: UIConfig = {
   enabled: true,
-  theme: 'default',
+  theme: "default",
   layout: {
-    type: 'flex',
-    direction: 'row',
-    justify: 'space-between',
-    align: 'center',
-    gap: '0.75rem',
-    padding: '0.75rem',
+    type: "flex",
+    direction: "row",
+    justify: "space-between",
+    align: "center",
+    gap: "0.75rem",
+    padding: "0.75rem",
   },
   responsive: {
     breakpoints: {
@@ -110,28 +116,47 @@ export const DEFAULT_UI_CONFIG: UIConfig = {
     },
     layouts: {
       mobile: {
-        type: 'flex',
-        direction: 'column',
-        gap: '0.5rem',
-        padding: '0.5rem',
+        type: "flex",
+        direction: "column",
+        gap: "0.5rem",
+        padding: "0.5rem",
       },
       tablet: {
-        type: 'flex',
-        direction: 'row',
-        gap: '0.75rem',
-        padding: '0.75rem',
+        type: "flex",
+        direction: "row",
+        gap: "0.75rem",
+        padding: "0.75rem",
       },
       desktop: {
-        type: 'flex',
-        direction: 'row',
-        gap: '1rem',
-        padding: '1rem',
+        type: "flex",
+        direction: "row",
+        gap: "1rem",
+        padding: "1rem",
       },
     },
     componentVisibility: {
-      mobile: ['playButton', 'progressBar', 'timeDisplay', 'volumeButton', 'fullscreenButton'],
-      tablet: ['playButton', 'progressBar', 'timeDisplay', 'volumeControl', 'fullscreenButton'],
-      desktop: ['playButton', 'progressBar', 'timeDisplay', 'volumeControl', 'playbackRate', 'fullscreenButton'],
+      mobile: [
+        "playButton",
+        "progressBar",
+        "timeDisplay",
+        "volumeButton",
+        "fullscreenButton",
+      ],
+      tablet: [
+        "playButton",
+        "progressBar",
+        "timeDisplay",
+        "volumeControl",
+        "fullscreenButton",
+      ],
+      desktop: [
+        "playButton",
+        "progressBar",
+        "timeDisplay",
+        "volumeControl",
+        "playbackRate",
+        "fullscreenButton",
+      ],
     },
   },
   components: [],
@@ -139,24 +164,24 @@ export const DEFAULT_UI_CONFIG: UIConfig = {
     enabled: true,
     autoHide: true,
     autoHideDelay: 3000,
-    position: 'bottom',
+    position: "bottom",
     height: 50,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
     backdropFilter: true,
   },
   playOverlay: {
     enabled: true,
     size: 80,
     iconSize: 30,
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
     autoHide: true,
     autoHideDelay: 2000,
   },
   loadingIndicator: {
     enabled: true,
-    type: 'spinner',
+    type: "spinner",
     size: 48,
-    color: '#ffffff',
+    color: "#ffffff",
   },
   accessibility: {
     enabled: false,
@@ -169,7 +194,7 @@ export const DEFAULT_UI_CONFIG: UIConfig = {
   animations: {
     enabled: true,
     duration: 300,
-    easing: 'ease-in-out',
+    easing: "ease-in-out",
     reduceMotion: false,
   },
 };
@@ -200,8 +225,13 @@ export class UIConfigManager {
   /**
    * 更新组件配置
    */
-  updateComponentConfig(componentId: string, updates: Partial<ComponentConfig>): void {
-    const componentIndex = this.config.components.findIndex(c => c.id === componentId);
+  updateComponentConfig(
+    componentId: string,
+    updates: Partial<ComponentConfig>,
+  ): void {
+    const componentIndex = this.config.components.findIndex(
+      (c) => c.id === componentId,
+    );
     if (componentIndex >= 0) {
       this.config.components[componentIndex] = {
         ...this.config.components[componentIndex],
@@ -215,7 +245,9 @@ export class UIConfigManager {
    * 添加组件配置
    */
   addComponent(componentConfig: ComponentConfig): void {
-    const existingIndex = this.config.components.findIndex(c => c.id === componentConfig.id);
+    const existingIndex = this.config.components.findIndex(
+      (c) => c.id === componentConfig.id,
+    );
     if (existingIndex >= 0) {
       this.config.components[existingIndex] = componentConfig;
     } else {
@@ -228,20 +260,22 @@ export class UIConfigManager {
    * 移除组件配置
    */
   removeComponent(componentId: string): void {
-    this.config.components = this.config.components.filter(c => c.id !== componentId);
+    this.config.components = this.config.components.filter(
+      (c) => c.id !== componentId,
+    );
     this.notifyListeners();
   }
 
   /**
    * 获取当前屏幕尺寸类型
    */
-  getCurrentScreenType(): 'mobile' | 'tablet' | 'desktop' {
+  getCurrentScreenType(): "mobile" | "tablet" | "desktop" {
     const width = window.innerWidth;
     const { breakpoints } = this.config.responsive;
-    
-    if (width < breakpoints.mobile) return 'mobile';
-    if (width < breakpoints.tablet) return 'tablet';
-    return 'desktop';
+
+    if (width < breakpoints.mobile) return "mobile";
+    if (width < breakpoints.tablet) return "tablet";
+    return "desktop";
   }
 
   /**
@@ -272,7 +306,7 @@ export class UIConfigManager {
    * 获取组件配置
    */
   getComponentConfig(componentId: string): ComponentConfig | undefined {
-    return this.config.components.find(c => c.id === componentId);
+    return this.config.components.find((c) => c.id === componentId);
   }
 
   /**
@@ -293,12 +327,15 @@ export class UIConfigManager {
    */
   private mergeConfig(target: UIConfig, source: Partial<UIConfig>): UIConfig {
     const result = { ...target } as Record<string, unknown>;
-    
+
     for (const key in source) {
       if (source.hasOwnProperty(key)) {
         const value = source[key as keyof UIConfig];
-        if (value && typeof value === 'object' && !Array.isArray(value)) {
-          const targetValue = target[key as keyof UIConfig] as Record<string, unknown>;
+        if (value && typeof value === "object" && !Array.isArray(value)) {
+          const targetValue = target[key as keyof UIConfig] as Record<
+            string,
+            unknown
+          >;
           const sourceValue = value as Record<string, unknown>;
           result[key] = {
             ...targetValue,
@@ -309,7 +346,7 @@ export class UIConfigManager {
         }
       }
     }
-    
+
     return result as unknown as UIConfig;
   }
 
@@ -317,11 +354,11 @@ export class UIConfigManager {
    * 通知监听器
    */
   private notifyListeners(): void {
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       try {
         listener(this.config);
       } catch (error) {
-        console.error('Error in config change listener:', error);
+        console.error("Error in config change listener:", error);
       }
     });
   }

@@ -2,18 +2,18 @@
  * UI组件基类
  * 提供统一的组件生命周期管理和错误处理
  */
-import { PlayerInstance, PlayerState, Logger } from '../../types';
+import { PlayerInstance, PlayerState, Logger } from "../../types";
 
 export interface ComponentConfig {
   id: string;
   name: string;
   enabled: boolean;
   order: number;
-  platforms: ('mobile' | 'desktop' | 'tv')[];
+  platforms: ("mobile" | "desktop" | "tv")[];
   a11y?: {
     keyboard?: string;
     ariaLabel?: boolean;
-    ariaLive?: 'polite' | 'assertive' | 'off';
+    ariaLive?: "polite" | "assertive" | "off";
     essentialFor?: string;
   };
   // ProgressBar specific options
@@ -58,14 +58,18 @@ export abstract class BaseComponent {
   // 组件是否已销毁
   protected isDestroyed = false;
   // 事件监听器列表
-  protected eventListeners: Array<{ element: HTMLElement; event: string; handler: EventListener }> = [];
+  protected eventListeners: Array<{
+    element: HTMLElement;
+    event: string;
+    handler: EventListener;
+  }> = [];
 
   constructor(
     player: PlayerInstance,
     container: HTMLElement,
     config: ComponentConfig,
     theme: ComponentTheme = {},
-    logger: Logger
+    logger: Logger,
   ) {
     this.player = player;
     this.container = container;
@@ -79,26 +83,26 @@ export abstract class BaseComponent {
    */
   async init(): Promise<void> {
     try {
-      this.logger.debug('Initializing component', { config: this.config });
-      
+      this.logger.debug("Initializing component", { config: this.config });
+
       if (!this.config.enabled) {
-        this.logger.debug('Component disabled, skipping initialization');
+        this.logger.debug("Component disabled, skipping initialization");
         return;
       }
 
       // 检查平台支持
       if (!this.isPlatformSupported()) {
-        this.logger.debug('Platform not supported, skipping initialization');
+        this.logger.debug("Platform not supported, skipping initialization");
         return;
       }
 
       await this.createElement();
       this.setupEventListeners();
       this.setupAccessibility();
-      
-      this.logger.debug('Component initialized successfully');
+
+      this.logger.debug("Component initialized successfully");
     } catch (error) {
-      this.logger.error('Failed to initialize component', error);
+      this.logger.error("Failed to initialize component", error);
       this.handleError(error);
     }
   }
@@ -120,11 +124,11 @@ export abstract class BaseComponent {
     if (!this.element) return;
 
     if (this.config.a11y?.ariaLabel) {
-      this.element.setAttribute('aria-label', this.config.name);
+      this.element.setAttribute("aria-label", this.config.name);
     }
 
     if (this.config.a11y?.ariaLive) {
-      this.element.setAttribute('aria-live', this.config.a11y.ariaLive);
+      this.element.setAttribute("aria-live", this.config.a11y.ariaLive);
     }
   }
 
@@ -137,7 +141,7 @@ export abstract class BaseComponent {
     try {
       this.onStateUpdate(state);
     } catch (error) {
-      this.logger.error('Failed to update component state', error);
+      this.logger.error("Failed to update component state", error);
       this.handleError(error);
     }
   }
@@ -152,10 +156,13 @@ export abstract class BaseComponent {
    */
   protected isPlatformSupported(): boolean {
     const userAgent = navigator.userAgent.toLowerCase();
-    const isMobile = /mobile|android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+    const isMobile =
+      /mobile|android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+        userAgent,
+      );
     const isTV = /tv|smart-tv|smarttv|appletv|roku|chromecast/i.test(userAgent);
-    
-    const currentPlatform = isMobile ? 'mobile' : isTV ? 'tv' : 'desktop';
+
+    const currentPlatform = isMobile ? "mobile" : isTV ? "tv" : "desktop";
     return this.config.platforms.includes(currentPlatform as any);
   }
 
@@ -166,7 +173,7 @@ export abstract class BaseComponent {
     element: HTMLElement | Document,
     event: string,
     handler: EventListener,
-    options?: AddEventListenerOptions
+    options?: AddEventListenerOptions,
   ): void {
     element.addEventListener(event, handler, options);
     // 只对 HTMLElement 类型的事件监听器进行跟踪
@@ -179,8 +186,8 @@ export abstract class BaseComponent {
    * 错误处理
    */
   protected handleError(error: unknown): void {
-    this.logger.error('Component error', error);
-    
+    this.logger.error("Component error", error);
+
     // 创建错误提示元素
     if (this.element) {
       this.element.innerHTML = `
@@ -217,7 +224,7 @@ export abstract class BaseComponent {
    */
   updateConfig(newConfig: Partial<ComponentConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    this.logger.debug('Config updated', { config: this.config });
+    this.logger.debug("Config updated", { config: this.config });
   }
 
   /**
@@ -226,7 +233,7 @@ export abstract class BaseComponent {
   updateTheme(newTheme: Partial<ComponentTheme>): void {
     this.theme = { ...this.theme, ...newTheme };
     this.applyTheme();
-    this.logger.debug('Theme updated', { theme: this.theme });
+    this.logger.debug("Theme updated", { theme: this.theme });
   }
 
   /**
@@ -248,13 +255,13 @@ export abstract class BaseComponent {
    */
   protected getThemeStyles(): Record<string, string> {
     return {
-      '--primary-color': this.theme.primaryColor || '#3b82f6',
-      '--secondary-color': this.theme.secondaryColor || '#6c757d',
-      '--background-color': this.theme.backgroundColor || 'rgba(0, 0, 0, 0.8)',
-      '--text-color': this.theme.textColor || '#ffffff',
-      '--border-radius': `${this.theme.borderRadius || 4}px`,
-      '--font-size': this.theme.fontSize || '0.875rem',
-      '--spacing': `${this.theme.spacing || 8}px`,
+      "--primary-color": this.theme.primaryColor || "#3b82f6",
+      "--secondary-color": this.theme.secondaryColor || "#6c757d",
+      "--background-color": this.theme.backgroundColor || "rgba(0, 0, 0, 0.8)",
+      "--text-color": this.theme.textColor || "#ffffff",
+      "--border-radius": `${this.theme.borderRadius || 4}px`,
+      "--font-size": this.theme.fontSize || "0.875rem",
+      "--spacing": `${this.theme.spacing || 8}px`,
     };
   }
 
@@ -264,7 +271,7 @@ export abstract class BaseComponent {
   destroy(): void {
     if (this.isDestroyed) return;
 
-    this.logger.debug('Destroying component');
+    this.logger.debug("Destroying component");
     this.isDestroyed = true;
 
     // 清理事件监听器

@@ -2,7 +2,7 @@
  * 响应式管理器
  * 处理不同屏幕尺寸下的UI适配
  */
-import { UIConfig, LayoutConfig } from '../config/UIConfig';
+import { UIConfig, LayoutConfig } from "../config/UIConfig";
 
 export interface BreakpointConfig {
   mobile: number;
@@ -12,10 +12,10 @@ export interface BreakpointConfig {
 }
 
 export interface ResponsiveState {
-  screenType: 'mobile' | 'tablet' | 'desktop' | 'large';
+  screenType: "mobile" | "tablet" | "desktop" | "large";
   width: number;
   height: number;
-  orientation: 'portrait' | 'landscape';
+  orientation: "portrait" | "landscape";
   isTouch: boolean;
   pixelRatio: number;
 }
@@ -50,7 +50,7 @@ export class ResponsiveManager {
   /**
    * 获取当前屏幕类型
    */
-  getCurrentScreenType(): ResponsiveState['screenType'] {
+  getCurrentScreenType(): ResponsiveState["screenType"] {
     return this.currentState.screenType;
   }
 
@@ -58,21 +58,24 @@ export class ResponsiveManager {
    * 检查是否为移动设备
    */
   isMobile(): boolean {
-    return this.currentState.screenType === 'mobile';
+    return this.currentState.screenType === "mobile";
   }
 
   /**
    * 检查是否为平板设备
    */
   isTablet(): boolean {
-    return this.currentState.screenType === 'tablet';
+    return this.currentState.screenType === "tablet";
   }
 
   /**
    * 检查是否为桌面设备
    */
   isDesktop(): boolean {
-    return this.currentState.screenType === 'desktop' || this.currentState.screenType === 'large';
+    return (
+      this.currentState.screenType === "desktop" ||
+      this.currentState.screenType === "large"
+    );
   }
 
   /**
@@ -93,7 +96,9 @@ export class ResponsiveManager {
   /**
    * 获取适合当前屏幕的组件可见性配置
    */
-  getVisibleComponentsForScreen(visibility: Record<string, string[]>): string[] {
+  getVisibleComponentsForScreen(
+    visibility: Record<string, string[]>,
+  ): string[] {
     const screenType = this.currentState.screenType;
     return visibility[screenType] || visibility.desktop || visibility.mobile;
   }
@@ -103,15 +108,15 @@ export class ResponsiveManager {
    */
   getResponsiveSpacing(baseSpacing: number): number {
     const { screenType, width } = this.currentState;
-    
+
     switch (screenType) {
-      case 'mobile':
+      case "mobile":
         return Math.max(4, baseSpacing * 0.75);
-      case 'tablet':
+      case "tablet":
         return Math.max(6, baseSpacing * 0.875);
-      case 'desktop':
+      case "desktop":
         return baseSpacing;
-      case 'large':
+      case "large":
         return Math.min(32, baseSpacing * 1.25);
       default:
         return baseSpacing;
@@ -123,7 +128,7 @@ export class ResponsiveManager {
    */
   getResponsiveFontSize(baseSize: number): number {
     const { screenType, width } = this.currentState;
-    
+
     // 基于屏幕宽度和类型的字体缩放
     const scaleFactor = this.getFontScaleFactor();
     return Math.max(12, Math.round(baseSize * scaleFactor));
@@ -134,15 +139,15 @@ export class ResponsiveManager {
    */
   private getFontScaleFactor(): number {
     const { screenType, width } = this.currentState;
-    
+
     switch (screenType) {
-      case 'mobile':
+      case "mobile":
         return width < 360 ? 0.875 : 0.9;
-      case 'tablet':
+      case "tablet":
         return 0.95;
-      case 'desktop':
+      case "desktop":
         return 1.0;
-      case 'large':
+      case "large":
         return 1.1;
       default:
         return 1.0;
@@ -153,7 +158,9 @@ export class ResponsiveManager {
    * 检查是否应该显示某个组件
    */
   shouldShowComponent(componentId: string, config: UIConfig): boolean {
-    const visibleComponents = this.getVisibleComponentsForScreen(config.responsive.componentVisibility);
+    const visibleComponents = this.getVisibleComponentsForScreen(
+      config.responsive.componentVisibility,
+    );
     return visibleComponents.includes(componentId);
   }
 
@@ -162,27 +169,27 @@ export class ResponsiveManager {
    */
   getComponentConfigForScreen(componentId: string, config: UIConfig): any {
     const screenType = this.currentState.screenType;
-    
+
     // 根据屏幕类型调整组件配置
     switch (componentId) {
-      case 'progressBar':
+      case "progressBar":
         return {
           showThumb: !this.isMobile(),
           clickToSeek: true,
           keyboardSeek: !this.isMobile(),
         };
-      case 'volumeControl':
+      case "volumeControl":
         return {
           showSlider: !this.isMobile(),
           showButton: true,
           sliderWidth: this.isMobile() ? 60 : 80,
         };
-      case 'timeDisplay':
+      case "timeDisplay":
         return {
-          format: this.isMobile() ? 'current' : 'current/total',
+          format: this.isMobile() ? "current" : "current/total",
           showMilliseconds: false,
         };
-      case 'playButton':
+      case "playButton":
         return {
           showOverlay: true,
           overlaySize: this.isMobile() ? 60 : 80,
@@ -219,8 +226,8 @@ export class ResponsiveManager {
     }
 
     // 监听窗口大小变化
-    window.addEventListener('resize', this.handleResize);
-    window.addEventListener('orientationchange', this.handleOrientationChange);
+    window.addEventListener("resize", this.handleResize);
+    window.addEventListener("orientationchange", this.handleOrientationChange);
   }
 
   /**
@@ -232,8 +239,11 @@ export class ResponsiveManager {
       this.resizeObserver = null;
     }
 
-    window.removeEventListener('resize', this.handleResize);
-    window.removeEventListener('orientationchange', this.handleOrientationChange);
+    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener(
+      "orientationchange",
+      this.handleOrientationChange,
+    );
   }
 
   /**
@@ -249,7 +259,7 @@ export class ResponsiveManager {
       screenType: this.getScreenType(width),
       width,
       height,
-      orientation: width > height ? 'landscape' : 'portrait',
+      orientation: width > height ? "landscape" : "portrait",
       isTouch,
       pixelRatio,
     };
@@ -258,11 +268,11 @@ export class ResponsiveManager {
   /**
    * 获取屏幕类型
    */
-  private getScreenType(width: number): ResponsiveState['screenType'] {
-    if (width < this.breakpoints.mobile) return 'mobile';
-    if (width < this.breakpoints.tablet) return 'tablet';
-    if (width < this.breakpoints.desktop) return 'desktop';
-    return 'large';
+  private getScreenType(width: number): ResponsiveState["screenType"] {
+    if (width < this.breakpoints.mobile) return "mobile";
+    if (width < this.breakpoints.tablet) return "tablet";
+    if (width < this.breakpoints.desktop) return "desktop";
+    return "large";
   }
 
   /**
@@ -270,7 +280,7 @@ export class ResponsiveManager {
    */
   private detectTouchDevice(): boolean {
     return (
-      'ontouchstart' in window ||
+      "ontouchstart" in window ||
       navigator.maxTouchPoints > 0 ||
       (navigator as any).msMaxTouchPoints > 0
     );
@@ -289,9 +299,9 @@ export class ResponsiveManager {
       `(min-width: ${this.breakpoints.desktop}px)`,
     ];
 
-    queries.forEach(query => {
+    queries.forEach((query) => {
       const mediaQueryList = window.matchMedia(query);
-      mediaQueryList.addEventListener('change', this.handleMediaQueryChange);
+      mediaQueryList.addEventListener("change", this.handleMediaQueryChange);
       this.mediaQueryLists.push(mediaQueryList);
     });
   }
@@ -326,7 +336,7 @@ export class ResponsiveManager {
   private updateState(): void {
     const newState = this.detectCurrentState();
     const hasChanged = this.hasStateChanged(newState);
-    
+
     if (hasChanged) {
       this.currentState = newState;
       this.notifyListeners();
@@ -349,11 +359,11 @@ export class ResponsiveManager {
    * 通知监听器
    */
   private notifyListeners(): void {
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       try {
         listener(this.currentState);
       } catch (error) {
-        console.error('Error in responsive state listener:', error);
+        console.error("Error in responsive state listener:", error);
       }
     });
   }
@@ -363,12 +373,12 @@ export class ResponsiveManager {
    */
   destroy(): void {
     this.stopWatching();
-    
-    this.mediaQueryLists.forEach(mediaQueryList => {
-      mediaQueryList.removeEventListener('change', this.handleMediaQueryChange);
+
+    this.mediaQueryLists.forEach((mediaQueryList) => {
+      mediaQueryList.removeEventListener("change", this.handleMediaQueryChange);
     });
     this.mediaQueryLists = [];
-    
+
     this.listeners = [];
   }
 }

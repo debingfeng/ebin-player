@@ -2,11 +2,11 @@
  * 错误处理器
  * 提供统一的错误处理和恢复机制
  */
-import { Logger } from '../../types';
+import { Logger } from "../../types";
 
 export interface ErrorInfo {
   id: string;
-  type: 'component' | 'ui' | 'config' | 'theme' | 'responsive';
+  type: "component" | "ui" | "config" | "theme" | "responsive";
   message: string;
   stack?: string;
   timestamp: number;
@@ -15,7 +15,7 @@ export interface ErrorInfo {
 }
 
 export interface ErrorRecoveryStrategy {
-  type: 'retry' | 'fallback' | 'disable' | 'reset';
+  type: "retry" | "fallback" | "disable" | "reset";
   maxRetries?: number;
   retryDelay?: number;
   fallbackComponent?: string;
@@ -30,7 +30,7 @@ export class ErrorHandler {
   private listeners: Array<(error: ErrorInfo) => void> = [];
 
   constructor(logger: Logger) {
-    this.logger = logger.child('ErrorHandler');
+    this.logger = logger.child("ErrorHandler");
     this.setupDefaultRecoveryStrategies();
   }
 
@@ -39,9 +39,9 @@ export class ErrorHandler {
    */
   handleError(
     error: Error,
-    type: ErrorInfo['type'],
+    type: ErrorInfo["type"],
     context: Record<string, any> = {},
-    recoverable = true
+    recoverable = true,
   ): void {
     const errorInfo: ErrorInfo = {
       id: this.generateErrorId(),
@@ -53,7 +53,7 @@ export class ErrorHandler {
       recoverable,
     };
 
-    this.logger.error('Error occurred', errorInfo);
+    this.logger.error("Error occurred", errorInfo);
     this.errors.set(errorInfo.id, errorInfo);
 
     // 尝试恢复
@@ -71,23 +71,23 @@ export class ErrorHandler {
   private attemptRecovery(errorInfo: ErrorInfo): void {
     const strategy = this.getRecoveryStrategy(errorInfo.type);
     if (!strategy) {
-      this.logger.warn('No recovery strategy found', { type: errorInfo.type });
+      this.logger.warn("No recovery strategy found", { type: errorInfo.type });
       return;
     }
 
     const retryCount = this.retryCounts.get(errorInfo.id) || 0;
-    
+
     switch (strategy.type) {
-      case 'retry':
+      case "retry":
         this.handleRetryStrategy(errorInfo, strategy, retryCount);
         break;
-      case 'fallback':
+      case "fallback":
         this.handleFallbackStrategy(errorInfo, strategy);
         break;
-      case 'disable':
+      case "disable":
         this.handleDisableStrategy(errorInfo, strategy);
         break;
-      case 'reset':
+      case "reset":
         this.handleResetStrategy(errorInfo, strategy);
         break;
     }
@@ -99,23 +99,23 @@ export class ErrorHandler {
   private handleRetryStrategy(
     errorInfo: ErrorInfo,
     strategy: ErrorRecoveryStrategy,
-    retryCount: number
+    retryCount: number,
   ): void {
     const maxRetries = strategy.maxRetries || 3;
-    
+
     if (retryCount < maxRetries) {
       this.retryCounts.set(errorInfo.id, retryCount + 1);
-      
+
       const delay = strategy.retryDelay || 1000;
       setTimeout(() => {
-        this.logger.debug('Retrying after error', { 
-          errorId: errorInfo.id, 
-          retryCount: retryCount + 1 
+        this.logger.debug("Retrying after error", {
+          errorId: errorInfo.id,
+          retryCount: retryCount + 1,
         });
         this.retryError(errorInfo);
       }, delay);
     } else {
-      this.logger.error('Max retries exceeded', { errorId: errorInfo.id });
+      this.logger.error("Max retries exceeded", { errorId: errorInfo.id });
       this.handleFallbackStrategy(errorInfo, strategy);
     }
   }
@@ -125,13 +125,13 @@ export class ErrorHandler {
    */
   private handleFallbackStrategy(
     errorInfo: ErrorInfo,
-    strategy: ErrorRecoveryStrategy
+    strategy: ErrorRecoveryStrategy,
   ): void {
-    this.logger.info('Applying fallback strategy', { 
+    this.logger.info("Applying fallback strategy", {
       errorId: errorInfo.id,
-      fallbackComponent: strategy.fallbackComponent 
+      fallbackComponent: strategy.fallbackComponent,
     });
-    
+
     // 这里可以触发降级到备用组件
     this.triggerFallback(errorInfo, strategy.fallbackComponent);
   }
@@ -141,10 +141,12 @@ export class ErrorHandler {
    */
   private handleDisableStrategy(
     errorInfo: ErrorInfo,
-    strategy: ErrorRecoveryStrategy
+    strategy: ErrorRecoveryStrategy,
   ): void {
-    this.logger.info('Disabling component due to error', { errorId: errorInfo.id });
-    
+    this.logger.info("Disabling component due to error", {
+      errorId: errorInfo.id,
+    });
+
     // 这里可以禁用出错的组件
     this.triggerDisable(errorInfo);
   }
@@ -154,10 +156,12 @@ export class ErrorHandler {
    */
   private handleResetStrategy(
     errorInfo: ErrorInfo,
-    strategy: ErrorRecoveryStrategy
+    strategy: ErrorRecoveryStrategy,
   ): void {
-    this.logger.info('Resetting to default due to error', { errorId: errorInfo.id });
-    
+    this.logger.info("Resetting to default due to error", {
+      errorId: errorInfo.id,
+    });
+
     // 这里可以重置到默认状态
     this.triggerReset(errorInfo, strategy.resetToDefault);
   }
@@ -165,15 +169,20 @@ export class ErrorHandler {
   /**
    * 设置恢复策略
    */
-  setRecoveryStrategy(type: ErrorInfo['type'], strategy: ErrorRecoveryStrategy): void {
+  setRecoveryStrategy(
+    type: ErrorInfo["type"],
+    strategy: ErrorRecoveryStrategy,
+  ): void {
     this.recoveryStrategies.set(type, strategy);
-    this.logger.debug('Recovery strategy set', { type, strategy });
+    this.logger.debug("Recovery strategy set", { type, strategy });
   }
 
   /**
    * 获取恢复策略
    */
-  private getRecoveryStrategy(type: ErrorInfo['type']): ErrorRecoveryStrategy | undefined {
+  private getRecoveryStrategy(
+    type: ErrorInfo["type"],
+  ): ErrorRecoveryStrategy | undefined {
     return this.recoveryStrategies.get(type);
   }
 
@@ -182,36 +191,36 @@ export class ErrorHandler {
    */
   private setupDefaultRecoveryStrategies(): void {
     // 组件错误：重试3次，然后降级
-    this.setRecoveryStrategy('component', {
-      type: 'retry',
+    this.setRecoveryStrategy("component", {
+      type: "retry",
       maxRetries: 3,
       retryDelay: 1000,
-      fallbackComponent: 'fallback',
+      fallbackComponent: "fallback",
     });
 
     // UI错误：重试2次，然后重置
-    this.setRecoveryStrategy('ui', {
-      type: 'retry',
+    this.setRecoveryStrategy("ui", {
+      type: "retry",
       maxRetries: 2,
       retryDelay: 500,
       resetToDefault: true,
     });
 
     // 配置错误：直接重置
-    this.setRecoveryStrategy('config', {
-      type: 'reset',
+    this.setRecoveryStrategy("config", {
+      type: "reset",
       resetToDefault: true,
     });
 
     // 主题错误：降级到默认主题
-    this.setRecoveryStrategy('theme', {
-      type: 'fallback',
-      fallbackComponent: 'defaultTheme',
+    this.setRecoveryStrategy("theme", {
+      type: "fallback",
+      fallbackComponent: "defaultTheme",
     });
 
     // 响应式错误：禁用响应式功能
-    this.setRecoveryStrategy('responsive', {
-      type: 'disable',
+    this.setRecoveryStrategy("responsive", {
+      type: "disable",
     });
   }
 
@@ -220,8 +229,8 @@ export class ErrorHandler {
    */
   private retryError(errorInfo: ErrorInfo): void {
     // 这里应该重新执行导致错误的操作
-    this.logger.debug('Retrying error', { errorId: errorInfo.id });
-    
+    this.logger.debug("Retrying error", { errorId: errorInfo.id });
+
     // 触发重试事件
     this.triggerRetry(errorInfo);
   }
@@ -229,11 +238,14 @@ export class ErrorHandler {
   /**
    * 触发降级
    */
-  private triggerFallback(errorInfo: ErrorInfo, fallbackComponent?: string): void {
+  private triggerFallback(
+    errorInfo: ErrorInfo,
+    fallbackComponent?: string,
+  ): void {
     // 这里应该实现具体的降级逻辑
-    this.logger.debug('Triggering fallback', { 
-      errorId: errorInfo.id, 
-      fallbackComponent 
+    this.logger.debug("Triggering fallback", {
+      errorId: errorInfo.id,
+      fallbackComponent,
     });
   }
 
@@ -242,7 +254,7 @@ export class ErrorHandler {
    */
   private triggerDisable(errorInfo: ErrorInfo): void {
     // 这里应该实现具体的禁用逻辑
-    this.logger.debug('Triggering disable', { errorId: errorInfo.id });
+    this.logger.debug("Triggering disable", { errorId: errorInfo.id });
   }
 
   /**
@@ -250,9 +262,9 @@ export class ErrorHandler {
    */
   private triggerReset(errorInfo: ErrorInfo, resetToDefault?: boolean): void {
     // 这里应该实现具体的重置逻辑
-    this.logger.debug('Triggering reset', { 
-      errorId: errorInfo.id, 
-      resetToDefault 
+    this.logger.debug("Triggering reset", {
+      errorId: errorInfo.id,
+      resetToDefault,
     });
   }
 
@@ -261,7 +273,7 @@ export class ErrorHandler {
    */
   private triggerRetry(errorInfo: ErrorInfo): void {
     // 这里应该实现具体的重试逻辑
-    this.logger.debug('Triggering retry', { errorId: errorInfo.id });
+    this.logger.debug("Triggering retry", { errorId: errorInfo.id });
   }
 
   /**
@@ -284,7 +296,7 @@ export class ErrorHandler {
   clearError(errorId: string): void {
     this.errors.delete(errorId);
     this.retryCounts.delete(errorId);
-    this.logger.debug('Error cleared', { errorId });
+    this.logger.debug("Error cleared", { errorId });
   }
 
   /**
@@ -293,7 +305,7 @@ export class ErrorHandler {
   clearAllErrors(): void {
     this.errors.clear();
     this.retryCounts.clear();
-    this.logger.debug('All errors cleared');
+    this.logger.debug("All errors cleared");
   }
 
   /**
@@ -313,11 +325,11 @@ export class ErrorHandler {
    * 通知监听器
    */
   private notifyListeners(errorInfo: ErrorInfo): void {
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       try {
         listener(errorInfo);
       } catch (error) {
-        this.logger.error('Error in error listener', error);
+        this.logger.error("Error in error listener", error);
       }
     });
   }
@@ -333,7 +345,7 @@ export class ErrorHandler {
    * 检查是否有未恢复的错误
    */
   hasUnrecoveredErrors(): boolean {
-    return Array.from(this.errors.values()).some(error => error.recoverable);
+    return Array.from(this.errors.values()).some((error) => error.recoverable);
   }
 
   /**
@@ -347,16 +359,16 @@ export class ErrorHandler {
   } {
     const errors = Array.from(this.errors.values());
     const byType: Record<string, number> = {};
-    
-    errors.forEach(error => {
+
+    errors.forEach((error) => {
       byType[error.type] = (byType[error.type] || 0) + 1;
     });
 
     return {
       total: errors.length,
       byType,
-      recoverable: errors.filter(e => e.recoverable).length,
-      unrecoverable: errors.filter(e => !e.recoverable).length,
+      recoverable: errors.filter((e) => e.recoverable).length,
+      unrecoverable: errors.filter((e) => !e.recoverable).length,
     };
   }
 }

@@ -2,13 +2,25 @@
  * 播放器主类
  * 整合核心功能、状态管理和插件系统
  */
-import { PlayerCore } from './PlayerCore';
-import { PlayerStore } from './PlayerStore';
-import { PlayerOptions, PlayerState, PlayerEventType, PlayerEvent, PluginDefinition, UIMode, ControlBarConfig, PlayerTheme, MEDIA_EVENTS, EventPayloadMap, PlayerEventBase } from '../types';
-import { PluginManager } from '../plugin/PluginManager';
-import { chainable, chainableAsync, logMethod } from './decorators';
-import { Logger as CoreLogger } from './Logger';
-import type { Logger as LoggerType } from '../types';
+import { PlayerCore } from "./PlayerCore";
+import { PlayerStore } from "./PlayerStore";
+import {
+  PlayerOptions,
+  PlayerState,
+  PlayerEventType,
+  PlayerEvent,
+  PluginDefinition,
+  UIMode,
+  ControlBarConfig,
+  PlayerTheme,
+  MEDIA_EVENTS,
+  EventPayloadMap,
+  PlayerEventBase,
+} from "../types";
+import { PluginManager } from "../plugin/PluginManager";
+import { chainable, chainableAsync, logMethod } from "./decorators";
+import { Logger as CoreLogger } from "./Logger";
+import type { Logger as LoggerType } from "../types";
 
 export class PlayerInstance {
   public core: PlayerCore;
@@ -22,31 +34,31 @@ export class PlayerInstance {
 
   constructor(container: HTMLElement, options: PlayerOptions) {
     // 初始化日志（可外部注入，否则创建默认实例）
-    this.logger = options.logger || new CoreLogger('Player');
+    this.logger = options.logger || new CoreLogger("Player");
     this.logger.setEnabled(!!options.debug);
-    this.logger.info('construct', { options: { ...options, src: !!options.src ? '***' : options.src } });
+    this.logger.info("construct", {
+      options: { ...options, src: !!options.src ? "***" : options.src },
+    });
 
     // 初始化核心播放器（复用同一 logger）
     // 这里传入的 logger 是 types.Logger，但 PlayerCore 内部只以结构化使用，保持兼容
     this.core = new PlayerCore(container, { ...options, logger: this.logger });
-    
+
     // 先初始化状态管理器，确保 UI 在构建时可以订阅到 Store
     this.store = new PlayerStore(this.core.getState(), this.logger);
-    
+
     // 初始化插件管理器
     this.pluginManager = new PluginManager(this, this.logger);
-    
+
     // 设置状态变化监听与事件转发（依赖 store 已就绪）
     this.setupStateSync();
     this.setupEventForwarding();
-    
+
     this.core.initializeUI();
     // 交由插件管理器根据配置初始化内置/外部插件
     // 插件管理器初始化
     this.pluginManager.updateFromOptions(options);
   }
-
-
 
   /**
    * 设置状态同步
@@ -64,23 +76,24 @@ export class PlayerInstance {
       if (this.isDestroyed) return;
       if (this.syncScheduled) return;
       this.syncScheduled = true;
-      this.rafId = (typeof requestAnimationFrame !== 'undefined'
+      this.rafId = (typeof requestAnimationFrame !== "undefined"
         ? requestAnimationFrame
-        : (cb: FrameRequestCallback) => setTimeout(() => cb(Date.now()), 16)
-      )(() => {
-        this.syncScheduled = false;
-        immediateSync();
-      }) as unknown as number;
+        : (cb: FrameRequestCallback) => setTimeout(() => cb(Date.now()), 16))(
+        () => {
+          this.syncScheduled = false;
+          immediateSync();
+        },
+      ) as unknown as number;
     };
 
     // 监听关键事件来同步状态
     // 复用集中管理的媒体事件列表
     const events: PlayerEventType[] = MEDIA_EVENTS;
 
-    events.forEach(eventType => {
+    events.forEach((eventType) => {
       this.core.on(eventType, () => {
         // 对高频事件进行合帧，其余事件即时同步
-        if (eventType === 'timeupdate' || eventType === 'progress') {
+        if (eventType === "timeupdate" || eventType === "progress") {
           scheduleSync();
         } else {
           immediateSync();
@@ -95,22 +108,39 @@ export class PlayerInstance {
   private setupEventForwarding(): void {
     // 将核心播放器的事件转发到状态管理器
     const events: PlayerEventType[] = [
-      'loadstart', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough',
-      'play', 'pause', 'ended', 'error', 'timeupdate', 'volumechange', 'ratechange',
-      'seeking', 'seeked', 'waiting', 'stalled', 'progress', 'durationchange',
-      'fullscreenchange', 'enterpictureinpicture', 'leavepictureinpicture'
+      "loadstart",
+      "loadedmetadata",
+      "loadeddata",
+      "canplay",
+      "canplaythrough",
+      "play",
+      "pause",
+      "ended",
+      "error",
+      "timeupdate",
+      "volumechange",
+      "ratechange",
+      "seeking",
+      "seeked",
+      "waiting",
+      "stalled",
+      "progress",
+      "durationchange",
+      "fullscreenchange",
+      "enterpictureinpicture",
+      "leavepictureinpicture",
     ];
 
-    events.forEach(eventType => {
+    events.forEach((eventType) => {
       this.core.on(eventType, (event) => {
         if (this.isDestroyed) return;
-        
+
         // 更新事件目标为当前播放器实例
         const playerEvent: PlayerEvent = {
           ...event,
-          target: this
+          target: this,
         };
-        
+
         // 转发到状态管理器
         this.store.notifyEvent(playerEvent);
       });
@@ -215,8 +245,6 @@ export class PlayerInstance {
   @chainable
   @logMethod({ includeArgs: true })
   setState(state: Partial<PlayerState>): void {
-
-    
     // 仅更新核心播放器状态，随后以 Core 的完整状态同步到 Store，保持单向数据流
     this.core.setState(state);
     const syncedState = this.core.getState();
@@ -224,12 +252,18 @@ export class PlayerInstance {
   }
 
   // 事件系统方法
-  on<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): () => void {
+  on<T extends PlayerEventType>(
+    event: T,
+    callback: (event: PlayerEventBase<T>) => void,
+  ): () => void {
     if (this.isDestroyed) return () => {};
-    this.logger.info('on', event);
+    this.logger.info("on", event);
     // 同时监听核心播放器和状态管理器的事件，并返回统一退订函数
     this.core.on(event, callback);
-    const unsubscribeStore = this.store.subscribeEvent(event, callback as (event: PlayerEvent) => void);
+    const unsubscribeStore = this.store.subscribeEvent(
+      event,
+      callback as (event: PlayerEvent) => void,
+    );
 
     return () => {
       this.core.off(event, callback);
@@ -237,17 +271,26 @@ export class PlayerInstance {
     };
   }
 
-  off<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): void {
+  off<T extends PlayerEventType>(
+    event: T,
+    callback: (event: PlayerEventBase<T>) => void,
+  ): void {
     if (this.isDestroyed) return;
     this.core.off(event, callback);
     // 尝试从 Store 侧移除（防止使用者未保存取消函数时的泄漏）
     // 由于 Store 需要取消函数，这里提供兜底方案：临时订阅后立刻退订以触发 delete
-    const tmpUnsub = this.store.subscribeEvent(event, callback as (event: PlayerEvent) => void);
+    const tmpUnsub = this.store.subscribeEvent(
+      event,
+      callback as (event: PlayerEvent) => void,
+    );
     tmpUnsub();
   }
   @logMethod({ includeArgs: true })
   @chainable
-  emit<T extends PlayerEventType>(event: T, data?: EventPayloadMap[T]): PlayerInstance {
+  emit<T extends PlayerEventType>(
+    event: T,
+    data?: EventPayloadMap[T],
+  ): PlayerInstance {
     this.core.emit(event, data);
     return this;
   }
@@ -298,7 +341,7 @@ export class PlayerInstance {
 
   // 画中画方法
   async requestPictureInPicture(): Promise<PictureInPictureWindow> {
-    if (this.isDestroyed) throw new Error('播放器已销毁');
+    if (this.isDestroyed) throw new Error("播放器已销毁");
     return await this.core.requestPictureInPicture();
   }
 
@@ -315,17 +358,17 @@ export class PlayerInstance {
   // 状态订阅方法
   subscribe(
     callback: (state: PlayerState) => void,
-    keys?: (keyof PlayerState)[]
+    keys?: (keyof PlayerState)[],
   ): () => void {
     if (this.isDestroyed) return () => {};
-    this.logger.info('subscribe', keys);
+    this.logger.info("subscribe", keys);
     return this.store.subscribe(callback, keys);
   }
 
   // UI管理方法
   @chainable
   updateUIMode(uiMode: UIMode): PlayerInstance {
-    this.logger.info('updateUIMode', uiMode);
+    this.logger.info("updateUIMode", uiMode);
     this.core.updateUIMode(uiMode);
     return this;
   }
@@ -356,11 +399,12 @@ export class PlayerInstance {
     uiMode: UIMode;
   } {
     return {
-      version: (typeof __VERSION__ !== 'undefined' ? String(__VERSION__) : '0.0.0'),
+      version:
+        typeof __VERSION__ !== "undefined" ? String(__VERSION__) : "0.0.0",
       lifecycle: this.core.getLifecycle(),
       plugins: this.pluginManager.getPluginIds(),
       state: this.getState(),
-      uiMode: this.getUIMode()
+      uiMode: this.getUIMode(),
     };
   }
 
@@ -371,21 +415,21 @@ export class PlayerInstance {
     this.isDestroyed = true;
     // 取消可能存在的帧同步
     if (this.rafId !== null) {
-      const cancel = (typeof cancelAnimationFrame !== 'undefined' 
-        ? cancelAnimationFrame 
-        : (id: number) => clearTimeout(id)
-      );
+      const cancel =
+        typeof cancelAnimationFrame !== "undefined"
+          ? cancelAnimationFrame
+          : (id: number) => clearTimeout(id);
       cancel(this.rafId);
       this.rafId = null;
       this.syncScheduled = false;
     }
-    
+
     // 销毁插件
     this.pluginManager.destroy();
-    
+
     // 销毁状态管理器
     this.store.destroy();
-    
+
     // 销毁核心播放器
     this.core.destroy();
   }

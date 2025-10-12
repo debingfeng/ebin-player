@@ -18,26 +18,24 @@ export class Logger {
   debug(...args: any[]): void {
     if (!this.enabled) return;
     // eslint-disable-next-line no-console
-    console.debug('[EbinPlayer]', `[${this.namespace}]`, ...args);
+    console.debug("[EbinPlayer]", `[${this.namespace}]`, ...args);
   }
 
   info(...args: any[]): void {
     if (!this.enabled) return;
     // eslint-disable-next-line no-console
-    console.info('[EbinPlayer]', `[${this.namespace}]`, ...args);
+    console.info("[EbinPlayer]", `[${this.namespace}]`, ...args);
   }
 
   warn(...args: any[]): void {
     if (!this.enabled) return;
     // eslint-disable-next-line no-console
-    console.warn('[EbinPlayer]', `[${this.namespace}]`, ...args);
+    console.warn("[EbinPlayer]", `[${this.namespace}]`, ...args);
   }
 
   error(...args: any[]): void {
     // 错误日志即使在关闭调试时也输出
     // eslint-disable-next-line no-console
-    console.error('[EbinPlayer]', `[${this.namespace}]`, ...args);
+    console.error("[EbinPlayer]", `[${this.namespace}]`, ...args);
   }
 }
-
-

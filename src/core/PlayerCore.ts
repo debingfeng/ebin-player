@@ -1,7 +1,18 @@
-import { PlayerOptions, PlayerState, PlayerEventType, PlayerEvent, PlayerLifecycle, UIMode, ControlBarConfig, PlayerTheme, EventPayloadMap, PlayerEventBase } from '../types';
-import { Logger as CoreLogger } from './Logger';
-import type { Logger as LoggerType } from '../types';
-import { logMethod } from './decorators';
+import {
+  PlayerOptions,
+  PlayerState,
+  PlayerEventType,
+  PlayerEvent,
+  PlayerLifecycle,
+  UIMode,
+  ControlBarConfig,
+  PlayerTheme,
+  EventPayloadMap,
+  PlayerEventBase,
+} from "../types";
+import { Logger as CoreLogger } from "./Logger";
+import type { Logger as LoggerType } from "../types";
+import { logMethod } from "./decorators";
 
 /**
  * PlayerCore 类是视频播放器的核心实现类，负责管理视频播放的基本功能、状态和生命周期。
@@ -17,7 +28,10 @@ export class PlayerCore {
   // 播放器生命周期状态
   private lifecycle: PlayerLifecycle = PlayerLifecycle.INITIALIZING;
   // 事件监听器映射表，存储不同类型事件的回调函数集合
-  private eventListeners: Map<PlayerEventType, Set<(event: PlayerEvent) => void>> = new Map();
+  private eventListeners: Map<
+    PlayerEventType,
+    Set<(event: PlayerEvent) => void>
+  > = new Map();
   // 播放器状态对象
   private state: PlayerState;
   // 标记播放器是否已销毁
@@ -27,8 +41,12 @@ export class PlayerCore {
   // 日志记录器
   private logger: LoggerType;
   // DOM 事件处理器引用，便于销毁时解绑
-  private mediaEventHandlers: Map<PlayerEventType, (event: Event) => void> = new Map();
-  private lifecycleEventHandlers: Array<{ type: string; handler: (event: Event) => void }> = [];
+  private mediaEventHandlers: Map<PlayerEventType, (event: Event) => void> =
+    new Map();
+  private lifecycleEventHandlers: Array<{
+    type: string;
+    handler: (event: Event) => void;
+  }> = [];
   private fullscreenChangeHandler?: () => void;
   private webkitFullscreenChangeHandler?: () => void;
   private mozFullscreenChangeHandler?: () => void;
@@ -48,29 +66,28 @@ export class PlayerCore {
     this.container = container;
     this.options = options;
     this.state = this.createInitialState();
-    this.logger = options?.logger || new CoreLogger('Core');
+    this.logger = options?.logger || new CoreLogger("Core");
 
-    
     // 确定UI模式
     this.uiMode = this.determineUIMode();
-    
+
     // 初始化视频元素、事件监听器和生命周期管理
     this.initializeVideoElement();
     this.setupEventListeners();
     this.setupLifecycle();
-    this.logger.info('initialized');
+    this.logger.info("initialized");
   }
 
   /**
    * 初始化视频元素，创建video标签并设置基本属性
    */
   private initializeVideoElement(): void {
-    this.logger.debug('initializeVideoElement');
-    this.videoElement = document.createElement('video');
-    this.videoElement.style.width = '100%';
-    this.videoElement.style.height = '100%';
-    this.videoElement.style.objectFit = 'contain';
-    
+    this.logger.debug("initializeVideoElement");
+    this.videoElement = document.createElement("video");
+    this.videoElement.style.width = "100%";
+    this.videoElement.style.height = "100%";
+    this.videoElement.style.objectFit = "contain";
+
     // 设置基础属性
     this.videoElement.src = this.options.src;
     this.videoElement.autoplay = this.options.autoplay || false;
@@ -79,46 +96,63 @@ export class PlayerCore {
     this.videoElement.playbackRate = this.options.playbackRate || 1;
     this.videoElement.controls = this.uiMode === UIMode.NATIVE; // 只有原生模式才显示控制条
     this.videoElement.loop = this.options.loop || false;
-    this.videoElement.preload = this.options.preload || 'metadata';
+    this.videoElement.preload = this.options.preload || "metadata";
     this.videoElement.playsInline = this.options.playsInline !== false;
-    
+
     if (this.options.poster) {
       this.videoElement.poster = this.options.poster;
     }
-    
+
     if (this.options.crossOrigin) {
       this.videoElement.crossOrigin = this.options.crossOrigin;
     }
-    
+
     // 设置容器尺寸
     if (this.options.width) {
-      this.container.style.width = typeof this.options.width === 'number' 
-        ? `${this.options.width}px` 
-        : this.options.width;
+      this.container.style.width =
+        typeof this.options.width === "number"
+          ? `${this.options.width}px`
+          : this.options.width;
     }
-    
+
     if (this.options.height) {
-      this.container.style.height = typeof this.options.height === 'number' 
-        ? `${this.options.height}px` 
-        : this.options.height;
+      this.container.style.height =
+        typeof this.options.height === "number"
+          ? `${this.options.height}px`
+          : this.options.height;
     }
-    
+
     this.container.appendChild(this.videoElement);
-    this.logger.debug('video element appended');
+    this.logger.debug("video element appended");
   }
 
   /**
    * 设置事件监听器，包括媒体事件、全屏事件和画中画事件
    */
   private setupEventListeners(): void {
-    this.logger.debug('setupEventListeners');
+    this.logger.debug("setupEventListeners");
     const mediaEvents: PlayerEventType[] = [
-      'loadstart', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough',
-      'play', 'pause', 'ended', 'error', 'timeupdate', 'volumechange', 'ratechange',
-      'seeking', 'seeked', 'waiting', 'stalled', 'progress', 'durationchange'
+      "loadstart",
+      "loadedmetadata",
+      "loadeddata",
+      "canplay",
+      "canplaythrough",
+      "play",
+      "pause",
+      "ended",
+      "error",
+      "timeupdate",
+      "volumechange",
+      "ratechange",
+      "seeking",
+      "seeked",
+      "waiting",
+      "stalled",
+      "progress",
+      "durationchange",
     ];
 
-    mediaEvents.forEach(eventType => {
+    mediaEvents.forEach((eventType) => {
       const handler = (event: Event) => {
         this.handleMediaEvent(eventType, event);
       };
@@ -128,28 +162,45 @@ export class PlayerCore {
 
     // 监听全屏变化
     this.fullscreenChangeHandler = () => {
-      this.emit('fullscreenchange', { isFullscreen: this.isFullscreen() });
-      this.logger.debug('fullscreenchange', { isFullscreen: this.isFullscreen() });
+      this.emit("fullscreenchange", { isFullscreen: this.isFullscreen() });
+      this.logger.debug("fullscreenchange", {
+        isFullscreen: this.isFullscreen(),
+      });
     };
-    document.addEventListener('fullscreenchange', this.fullscreenChangeHandler);
+    document.addEventListener("fullscreenchange", this.fullscreenChangeHandler);
     // 兼容前缀事件
     this.webkitFullscreenChangeHandler = this.fullscreenChangeHandler;
     this.mozFullscreenChangeHandler = this.fullscreenChangeHandler;
     this.msFullscreenChangeHandler = this.fullscreenChangeHandler;
-    (document as any).addEventListener?.('webkitfullscreenchange', this.webkitFullscreenChangeHandler);
-    (document as any).addEventListener?.('mozfullscreenchange', this.mozFullscreenChangeHandler);
-    (document as any).addEventListener?.('MSFullscreenChange', this.msFullscreenChangeHandler);
+    (document as any).addEventListener?.(
+      "webkitfullscreenchange",
+      this.webkitFullscreenChangeHandler,
+    );
+    (document as any).addEventListener?.(
+      "mozfullscreenchange",
+      this.mozFullscreenChangeHandler,
+    );
+    (document as any).addEventListener?.(
+      "MSFullscreenChange",
+      this.msFullscreenChangeHandler,
+    );
 
     // 监听画中画变化
     this.pipEnterHandler = () => {
-      this.emit('enterpictureinpicture', {});
+      this.emit("enterpictureinpicture", {});
     };
-    this.videoElement.addEventListener('enterpictureinpicture', this.pipEnterHandler);
+    this.videoElement.addEventListener(
+      "enterpictureinpicture",
+      this.pipEnterHandler,
+    );
 
     this.pipLeaveHandler = () => {
-      this.emit('leavepictureinpicture', {});
+      this.emit("leavepictureinpicture", {});
     };
-    this.videoElement.addEventListener('leavepictureinpicture', this.pipLeaveHandler);
+    this.videoElement.addEventListener(
+      "leavepictureinpicture",
+      this.pipLeaveHandler,
+    );
   }
 
   /**
@@ -158,17 +209,17 @@ export class PlayerCore {
   private handleMediaEvent(eventType: PlayerEventType, event: Event): void {
     this.updateState();
     this.emit(eventType, event);
-    if (eventType === 'error') {
-      this.logger.error('media error', this.videoElement.error);
+    if (eventType === "error") {
+      this.logger.error("media error", this.videoElement.error);
     } else {
       const now = Date.now();
       const last = this.lastDebugAt[eventType] || 0;
       if (now - last >= this.debugThrottleMs) {
         this.lastDebugAt[eventType] = now;
-        this.logger.debug('media event', eventType, {
+        this.logger.debug("media event", eventType, {
           currentTime: this.videoElement.currentTime,
           duration: this.videoElement.duration,
-          paused: this.videoElement.paused
+          paused: this.videoElement.paused,
         });
       }
     }
@@ -183,34 +234,34 @@ export class PlayerCore {
       this.videoElement.addEventListener(type, handler);
     };
 
-    bind('loadstart', () => {
+    bind("loadstart", () => {
       this.setLifecycle(PlayerLifecycle.INITIALIZING);
-      this.logger.debug('lifecycle', 'INITIALIZING');
+      this.logger.debug("lifecycle", "INITIALIZING");
     });
 
-    bind('canplay', () => {
+    bind("canplay", () => {
       this.setLifecycle(PlayerLifecycle.READY);
-      this.logger.debug('lifecycle', 'READY');
+      this.logger.debug("lifecycle", "READY");
     });
 
-    bind('play', () => {
+    bind("play", () => {
       this.setLifecycle(PlayerLifecycle.PLAYING);
-      this.logger.debug('lifecycle', 'PLAYING');
+      this.logger.debug("lifecycle", "PLAYING");
     });
 
-    bind('pause', () => {
+    bind("pause", () => {
       this.setLifecycle(PlayerLifecycle.PAUSED);
-      this.logger.debug('lifecycle', 'PAUSED');
+      this.logger.debug("lifecycle", "PAUSED");
     });
 
-    bind('ended', () => {
+    bind("ended", () => {
       this.setLifecycle(PlayerLifecycle.ENDED);
-      this.logger.debug('lifecycle', 'ENDED');
+      this.logger.debug("lifecycle", "ENDED");
     });
 
-    bind('error', () => {
+    bind("error", () => {
       this.setLifecycle(PlayerLifecycle.ERROR);
-      this.logger.error('lifecycle', 'ERROR', this.videoElement.error);
+      this.logger.error("lifecycle", "ERROR", this.videoElement.error);
     });
   }
 
@@ -236,8 +287,8 @@ export class PlayerCore {
       videoHeight: 0,
       buffered: null,
       seekable: null,
-      quality: 'auto',
-      bitrate: 0
+      quality: "auto",
+      bitrate: 0,
     };
   }
 
@@ -264,17 +315,17 @@ export class PlayerCore {
       videoWidth: this.videoElement.videoWidth,
       videoHeight: this.videoElement.videoHeight,
       buffered: this.videoElement.buffered,
-      seekable: this.videoElement.seekable
+      seekable: this.videoElement.seekable,
     };
     const now = Date.now();
-    const eventType = 'state:update';
+    const eventType = "state:update";
     const last = this.lastDebugAt[eventType] || 0;
     if (now - last >= this.debugThrottleMs) {
       this.lastDebugAt[eventType] = now;
-      this.logger.debug('state updated', {
+      this.logger.debug("state updated", {
         currentTime: this.state.currentTime,
         duration: this.state.duration,
-        paused: this.state.paused
+        paused: this.state.paused,
       });
     }
   }
@@ -284,7 +335,7 @@ export class PlayerCore {
    */
   private setLifecycle(lifecycle: PlayerLifecycle): void {
     this.lifecycle = lifecycle;
-    this.emit('lifecyclechange', { lifecycle });
+    this.emit("lifecyclechange", { lifecycle });
   }
 
   /**
@@ -293,13 +344,13 @@ export class PlayerCore {
   @logMethod({ includeArgs: false })
   async play(): Promise<void> {
     if (this.isDestroyed) return;
-    
+
     try {
-      this.logger.debug('video.play()');
+      this.logger.debug("video.play()");
       await this.videoElement.play();
     } catch (error) {
-      console.error('播放失败:', error);
-      this.logger.error('play failed', error);
+      console.error("播放失败:", error);
+      this.logger.error("play failed", error);
       throw error;
     }
   }
@@ -310,7 +361,7 @@ export class PlayerCore {
   @logMethod({ includeArgs: false })
   pause(): void {
     if (this.isDestroyed) return;
-    this.logger.debug('video.pause()');
+    this.logger.debug("video.pause()");
     this.videoElement.pause();
   }
 
@@ -437,10 +488,10 @@ export class PlayerCore {
    */
   setState(state: Partial<PlayerState>): void {
     if (this.isDestroyed) return;
-    
+
     this.state = { ...this.state, ...state };
-    this.logger.debug('setState', state);
-    
+    this.logger.debug("setState", state);
+
     // 同步到视频元素
     if (state.volume !== undefined) {
       this.setVolume(state.volume);
@@ -457,7 +508,7 @@ export class PlayerCore {
 
     // 更新内部状态快照并对外通知
     this.updateState();
-    this.emit('statechange', { state: { ...this.state } });
+    this.emit("statechange", { state: { ...this.state } });
   }
 
   /**
@@ -472,7 +523,10 @@ export class PlayerCore {
   /**
    * 事件监听
    */
-  on<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): () => void {
+  on<T extends PlayerEventType>(
+    event: T,
+    callback: (event: PlayerEventBase<T>) => void,
+  ): () => void {
     if (!this.eventListeners.has(event)) {
       this.eventListeners.set(event, new Set());
     }
@@ -483,7 +537,10 @@ export class PlayerCore {
   /**
    * 移除事件监听
    */
-  off<T extends PlayerEventType>(event: T, callback: (event: PlayerEventBase<T>) => void): void {
+  off<T extends PlayerEventType>(
+    event: T,
+    callback: (event: PlayerEventBase<T>) => void,
+  ): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
       listeners.delete(callback as any);
@@ -500,16 +557,18 @@ export class PlayerCore {
         type: event,
         target: this as any, // 这里会被PlayerInstance包装
         data,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
-      
-      (listeners as Set<(e: PlayerEventBase<T>) => void>).forEach(callback => {
-        try {
-          callback(playerEvent);
-        } catch (error) {
-          console.error(`事件处理器错误 (${event}):`, error);
-        }
-      });
+
+      (listeners as Set<(e: PlayerEventBase<T>) => void>).forEach(
+        (callback) => {
+          try {
+            callback(playerEvent);
+          } catch (error) {
+            console.error(`事件处理器错误 (${event}):`, error);
+          }
+        },
+      );
     }
   }
 
@@ -532,7 +591,7 @@ export class PlayerCore {
    */
   async requestFullscreen(): Promise<void> {
     if (this.isDestroyed) return;
-    
+
     const el: any = this.videoElement as any;
     if (this.videoElement.requestFullscreen) {
       await this.videoElement.requestFullscreen();
@@ -551,7 +610,7 @@ export class PlayerCore {
       return;
     }
     // iOS Safari 专用的内联视频进入原生全屏
-    if (typeof el.webkitEnterFullscreen === 'function') {
+    if (typeof el.webkitEnterFullscreen === "function") {
       el.webkitEnterFullscreen();
       return;
     }
@@ -569,7 +628,7 @@ export class PlayerCore {
    */
   async exitFullscreen(): Promise<void> {
     if (this.isDestroyed) return;
-    
+
     const doc: any = document as any;
     if (document.fullscreenElement && document.exitFullscreen) {
       await document.exitFullscreen();
@@ -590,11 +649,11 @@ export class PlayerCore {
     // iOS Safari 退出视频原生全屏
     const el: any = this.videoElement as any;
     try {
-      if (typeof el.webkitExitFullscreen === 'function') {
+      if (typeof el.webkitExitFullscreen === "function") {
         el.webkitExitFullscreen();
       }
     } catch (err) {
-      this.logger.warn('webkitExitFullscreen failed', err);
+      this.logger.warn("webkitExitFullscreen failed", err);
     }
   }
 
@@ -614,14 +673,18 @@ export class PlayerCore {
    * 请求画中画
    */
   async requestPictureInPicture(): Promise<PictureInPictureWindow> {
-    if (this.isDestroyed) throw new Error('播放器已销毁');
-    
+    if (this.isDestroyed) throw new Error("播放器已销毁");
+
     const anyDoc: any = document as any;
     const anyVideo: any = this.videoElement as any;
-    if (anyVideo.requestPictureInPicture && anyDoc.pictureInPictureEnabled && !anyVideo.disablePictureInPicture) {
+    if (
+      anyVideo.requestPictureInPicture &&
+      anyDoc.pictureInPictureEnabled &&
+      !anyVideo.disablePictureInPicture
+    ) {
       return await anyVideo.requestPictureInPicture();
     }
-    throw new Error('浏览器不支持画中画功能');
+    throw new Error("浏览器不支持画中画功能");
   }
 
   /**
@@ -629,13 +692,13 @@ export class PlayerCore {
    */
   async exitPictureInPicture(): Promise<void> {
     if (this.isDestroyed) return;
-    
+
     const anyDoc: any = document as any;
     if (anyDoc.pictureInPictureElement && anyDoc.exitPictureInPicture) {
       await anyDoc.exitPictureInPicture();
       return;
     }
-    throw new Error('浏览器不支持画中画功能');
+    throw new Error("浏览器不支持画中画功能");
   }
 
   /**
@@ -660,12 +723,12 @@ export class PlayerCore {
     if (this.options.uiMode) {
       return this.options.uiMode;
     }
-    
+
     // 兼容旧的controls配置
     if (this.options.controls === false) {
       return UIMode.CUSTOM;
     }
-    
+
     // 默认使用原生UI
     return UIMode.NATIVE;
   }
@@ -680,7 +743,7 @@ export class PlayerCore {
     } else if (this.uiMode === UIMode.NATIVE) {
       this.videoElement.controls = true;
     }
-    this.logger.debug('UI initialized', this.uiMode);
+    this.logger.debug("UI initialized", this.uiMode);
   }
 
   /**
@@ -688,8 +751,8 @@ export class PlayerCore {
    */
   private initializeCustomUI(): void {
     // 创建控制栏容器
-    const controlBar = document.createElement('div');
-    controlBar.className = 'ebin-player-control-bar';
+    const controlBar = document.createElement("div");
+    controlBar.className = "ebin-player-control-bar";
     controlBar.style.cssText = `
       position: absolute;
       bottom: 0;
@@ -706,8 +769,8 @@ export class PlayerCore {
     `;
 
     // 播放/暂停按钮
-    const playButton = document.createElement('button');
-    playButton.innerHTML = '▶';
+    const playButton = document.createElement("button");
+    playButton.innerHTML = "▶";
     playButton.style.cssText = `
       background: none;
       border: none;
@@ -716,7 +779,7 @@ export class PlayerCore {
       cursor: pointer;
       padding: 5px;
     `;
-    playButton.addEventListener('click', () => {
+    playButton.addEventListener("click", () => {
       if (this.videoElement.paused) {
         this.play();
       } else {
@@ -725,8 +788,8 @@ export class PlayerCore {
     });
 
     // 时间显示
-    const timeDisplay = document.createElement('span');
-    timeDisplay.className = 'ebin-player-time';
+    const timeDisplay = document.createElement("span");
+    timeDisplay.className = "ebin-player-time";
     timeDisplay.style.cssText = `
       color: white;
       font-size: 12px;
@@ -734,8 +797,8 @@ export class PlayerCore {
     `;
 
     // 进度条
-    const progressBar = document.createElement('div');
-    progressBar.className = 'ebin-player-progress';
+    const progressBar = document.createElement("div");
+    progressBar.className = "ebin-player-progress";
     progressBar.style.cssText = `
       flex: 1;
       height: 4px;
@@ -745,8 +808,8 @@ export class PlayerCore {
       position: relative;
     `;
 
-    const progressFill = document.createElement('div');
-    progressFill.className = 'ebin-player-progress-fill';
+    const progressFill = document.createElement("div");
+    progressFill.className = "ebin-player-progress-fill";
     progressFill.style.cssText = `
       height: 100%;
       background: #ff6b6b;
@@ -757,23 +820,23 @@ export class PlayerCore {
     progressBar.appendChild(progressFill);
 
     // 音量控制
-    const volumeControl = document.createElement('input');
-    volumeControl.type = 'range';
-    volumeControl.min = '0';
-    volumeControl.max = '1';
-    volumeControl.step = '0.1';
+    const volumeControl = document.createElement("input");
+    volumeControl.type = "range";
+    volumeControl.min = "0";
+    volumeControl.max = "1";
+    volumeControl.step = "0.1";
     volumeControl.value = String(this.videoElement.volume);
     volumeControl.style.cssText = `
       width: 60px;
     `;
-    volumeControl.addEventListener('input', (e) => {
+    volumeControl.addEventListener("input", (e) => {
       const target = e.target as HTMLInputElement;
       this.videoElement.volume = parseFloat(target.value);
     });
 
     // 全屏按钮
-    const fullscreenButton = document.createElement('button');
-    fullscreenButton.innerHTML = '⛶';
+    const fullscreenButton = document.createElement("button");
+    fullscreenButton.innerHTML = "⛶";
     fullscreenButton.style.cssText = `
       background: none;
       border: none;
@@ -782,7 +845,7 @@ export class PlayerCore {
       cursor: pointer;
       padding: 5px;
     `;
-    fullscreenButton.addEventListener('click', () => {
+    fullscreenButton.addEventListener("click", () => {
       this.requestFullscreen();
     });
 
@@ -798,18 +861,18 @@ export class PlayerCore {
 
     // 显示/隐藏控制栏
     const showControls = () => {
-      controlBar.style.opacity = '1';
+      controlBar.style.opacity = "1";
     };
     const hideControls = () => {
-      controlBar.style.opacity = '0';
+      controlBar.style.opacity = "0";
     };
 
-    this.container.addEventListener('mouseenter', showControls);
-    this.container.addEventListener('mouseleave', hideControls);
+    this.container.addEventListener("mouseenter", showControls);
+    this.container.addEventListener("mouseleave", hideControls);
 
     // 更新播放状态
     const updatePlayButton = () => {
-      playButton.innerHTML = this.videoElement.paused ? '▶' : '⏸';
+      playButton.innerHTML = this.videoElement.paused ? "▶" : "⏸";
     };
 
     // 更新时间显示
@@ -821,12 +884,14 @@ export class PlayerCore {
 
     // 更新进度条
     const updateProgress = () => {
-      const progress = this.videoElement.duration ? (this.videoElement.currentTime / this.videoElement.duration) * 100 : 0;
+      const progress = this.videoElement.duration
+        ? (this.videoElement.currentTime / this.videoElement.duration) * 100
+        : 0;
       progressFill.style.width = `${progress}%`;
     };
 
     // 进度条点击
-    progressBar.addEventListener('click', (e) => {
+    progressBar.addEventListener("click", (e) => {
       const rect = progressBar.getBoundingClientRect();
       const clickX = e.clientX - rect.left;
       const percentage = clickX / rect.width;
@@ -834,13 +899,13 @@ export class PlayerCore {
     });
 
     // 绑定事件
-    this.videoElement.addEventListener('play', updatePlayButton);
-    this.videoElement.addEventListener('pause', updatePlayButton);
-    this.videoElement.addEventListener('timeupdate', () => {
+    this.videoElement.addEventListener("play", updatePlayButton);
+    this.videoElement.addEventListener("pause", updatePlayButton);
+    this.videoElement.addEventListener("timeupdate", () => {
       updateTime();
       updateProgress();
     });
-    this.videoElement.addEventListener('loadedmetadata', updateTime);
+    this.videoElement.addEventListener("loadedmetadata", updateTime);
 
     // 初始状态
     updatePlayButton();
@@ -854,25 +919,25 @@ export class PlayerCore {
   private formatTime(seconds: number): string {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   }
-
-
 
   /**
    * 更新UI模式 - 现在只处理原生模式
    */
   updateUIMode(uiMode: UIMode): void {
     if (this.isDestroyed) return;
-    
+
     this.uiMode = uiMode;
-    this.logger.info('updateUIMode', uiMode);
-    
+    this.logger.info("updateUIMode", uiMode);
+
     // 更新视频元素的controls属性
     this.videoElement.controls = uiMode === UIMode.NATIVE;
-    
+
     // 其他UI模式现在由外部UI系统处理
-    this.logger.debug('UI mode updated, external UI system should handle the change');
+    this.logger.debug(
+      "UI mode updated, external UI system should handle the change",
+    );
   }
 
   /**
@@ -880,12 +945,14 @@ export class PlayerCore {
    */
   updateUIConfig(config: ControlBarConfig): void {
     if (this.isDestroyed) return;
-    
+
     this.options.uiConfig = { ...this.options.uiConfig, ...config };
-    this.logger.info('updateUIConfig', config);
-    
+    this.logger.info("updateUIConfig", config);
+
     // UI配置更新现在由外部UI系统处理
-    this.logger.debug('UI config updated, external UI system should handle the change');
+    this.logger.debug(
+      "UI config updated, external UI system should handle the change",
+    );
   }
 
   /**
@@ -893,12 +960,14 @@ export class PlayerCore {
    */
   updateUITheme(theme: PlayerTheme): void {
     if (this.isDestroyed) return;
-    
+
     this.options.theme = { ...this.options.theme, ...theme };
-    this.logger.info('updateUITheme', theme);
-    
+    this.logger.info("updateUITheme", theme);
+
     // UI主题更新现在由外部UI系统处理
-    this.logger.debug('UI theme updated, external UI system should handle the change');
+    this.logger.debug(
+      "UI theme updated, external UI system should handle the change",
+    );
   }
 
   /**
@@ -911,7 +980,9 @@ export class PlayerCore {
   setDebug(enabled: boolean): void {
     this.logger.setEnabled(enabled);
     // UI调试现在由外部UI系统处理
-    this.logger.debug('Debug mode updated, external UI system should handle the change');
+    this.logger.debug(
+      "Debug mode updated, external UI system should handle the change",
+    );
   }
 
   /**
@@ -919,13 +990,15 @@ export class PlayerCore {
    */
   destroy(): void {
     if (this.isDestroyed) return;
-    
+
     this.isDestroyed = true;
     this.setLifecycle(PlayerLifecycle.DESTROYED);
-    
+
     // UI销毁现在由外部UI系统处理
-    this.logger.debug('Player destroyed, external UI system should handle cleanup');
-    
+    this.logger.debug(
+      "Player destroyed, external UI system should handle cleanup",
+    );
+
     // 清理自建事件监听器集合
     this.eventListeners.clear();
     // 解绑媒体事件
@@ -940,35 +1013,53 @@ export class PlayerCore {
     this.lifecycleEventHandlers = [];
     // 解绑全屏与画中画事件
     if (this.fullscreenChangeHandler) {
-      document.removeEventListener('fullscreenchange', this.fullscreenChangeHandler);
+      document.removeEventListener(
+        "fullscreenchange",
+        this.fullscreenChangeHandler,
+      );
       this.fullscreenChangeHandler = undefined;
     }
     if (this.webkitFullscreenChangeHandler) {
-      (document as any).removeEventListener?.('webkitfullscreenchange', this.webkitFullscreenChangeHandler);
+      (document as any).removeEventListener?.(
+        "webkitfullscreenchange",
+        this.webkitFullscreenChangeHandler,
+      );
       this.webkitFullscreenChangeHandler = undefined;
     }
     if (this.mozFullscreenChangeHandler) {
-      (document as any).removeEventListener?.('mozfullscreenchange', this.mozFullscreenChangeHandler);
+      (document as any).removeEventListener?.(
+        "mozfullscreenchange",
+        this.mozFullscreenChangeHandler,
+      );
       this.mozFullscreenChangeHandler = undefined;
     }
     if (this.msFullscreenChangeHandler) {
-      (document as any).removeEventListener?.('MSFullscreenChange', this.msFullscreenChangeHandler);
+      (document as any).removeEventListener?.(
+        "MSFullscreenChange",
+        this.msFullscreenChangeHandler,
+      );
       this.msFullscreenChangeHandler = undefined;
     }
     if (this.pipEnterHandler) {
-      this.videoElement.removeEventListener('enterpictureinpicture', this.pipEnterHandler);
+      this.videoElement.removeEventListener(
+        "enterpictureinpicture",
+        this.pipEnterHandler,
+      );
       this.pipEnterHandler = undefined;
     }
     if (this.pipLeaveHandler) {
-      this.videoElement.removeEventListener('leavepictureinpicture', this.pipLeaveHandler);
+      this.videoElement.removeEventListener(
+        "leavepictureinpicture",
+        this.pipLeaveHandler,
+      );
       this.pipLeaveHandler = undefined;
     }
-    
+
     // 移除视频元素
     if (this.videoElement && this.videoElement.parentNode) {
       this.videoElement.parentNode.removeChild(this.videoElement);
     }
-    
+
     // 清理状态
     this.state = this.createInitialState();
   }
@@ -976,14 +1067,19 @@ export class PlayerCore {
   /**
    * 切换媒体源
    */
-  setSource(options: { src: string; poster?: string; autoplay?: boolean; preload?: 'none' | 'metadata' | 'auto' }): void {
+  setSource(options: {
+    src: string;
+    poster?: string;
+    autoplay?: boolean;
+    preload?: "none" | "metadata" | "auto";
+  }): void {
     if (this.isDestroyed) return;
     const { src, poster, autoplay, preload } = options;
     this.options.src = src;
     if (poster !== undefined) this.options.poster = poster;
     if (preload !== undefined) this.options.preload = preload;
     this.videoElement.src = src;
-    if (poster !== undefined) this.videoElement.poster = poster || '';
+    if (poster !== undefined) this.videoElement.poster = poster || "";
     if (preload !== undefined) this.videoElement.preload = preload;
     // 同步内部状态中的 src，避免外部立即读取到旧值
     this.state = { ...this.state, src };
@@ -992,7 +1088,7 @@ export class PlayerCore {
     if (autoplay) {
       // 尝试自动播放
       this.play().catch((e) => {
-        this.logger.warn('autoplay failed on setSource, fallback to load()', e);
+        this.logger.warn("autoplay failed on setSource, fallback to load()", e);
         this.videoElement.load();
       });
     } else {

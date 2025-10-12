@@ -1,19 +1,29 @@
-import type { PluginDefinition, PluginContext, PlayerEventType, PlayerEventBase, PlayerEvent } from '../types';
+import type {
+  PluginDefinition,
+  PluginContext,
+  PlayerEventType,
+  PlayerEventBase,
+  PlayerEvent,
+} from "../types";
 
 type Disposer = () => void;
 
-export abstract class BasePlugin<Config = unknown, Exports = unknown> implements PluginDefinition<Config, Exports> {
-  abstract meta: PluginDefinition<Config, Exports>['meta'];
+export abstract class BasePlugin<Config = unknown, Exports = unknown>
+  implements PluginDefinition<Config, Exports>
+{
+  abstract meta: PluginDefinition<Config, Exports>["meta"];
   defaultConfig?: Config;
   configVersion?: number;
-  migrations?: PluginDefinition<Config, Exports>['migrations'];
-  commands?: PluginDefinition<Config, Exports>['commands'];
-  validateConfig?: PluginDefinition<Config, Exports>['validateConfig'];
+  migrations?: PluginDefinition<Config, Exports>["migrations"];
+  commands?: PluginDefinition<Config, Exports>["commands"];
+  validateConfig?: PluginDefinition<Config, Exports>["validateConfig"];
 
   protected ctx!: PluginContext;
   private disposers: Disposer[] = [];
 
-  protected addDisposer(d: Disposer) { this.disposers.push(d); }
+  protected addDisposer(d: Disposer) {
+    this.disposers.push(d);
+  }
 
   protected onAny(cb: (e: PlayerEvent) => void) {
     const off = this.ctx.onAnyPlayerEvent?.(cb) || (() => {});
@@ -21,7 +31,10 @@ export abstract class BasePlugin<Config = unknown, Exports = unknown> implements
     return off;
   }
 
-  protected on<T extends PlayerEventType>(event: T, cb: (e: PlayerEventBase<T>) => void) {
+  protected on<T extends PlayerEventType>(
+    event: T,
+    cb: (e: PlayerEventBase<T>) => void,
+  ) {
     const off = this.ctx.on(event, cb as any);
     this.addDisposer(off);
     return off;
@@ -47,9 +60,9 @@ export abstract class BasePlugin<Config = unknown, Exports = unknown> implements
   onDestroy(_ctx: PluginContext): void | Promise<void> {
     // 统一执行资源清理
     for (const d of this.disposers.splice(0)) {
-      try { d(); } catch {}
+      try {
+        d();
+      } catch {}
     }
   }
 }
-
-

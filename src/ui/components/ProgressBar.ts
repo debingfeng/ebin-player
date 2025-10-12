@@ -1,8 +1,12 @@
 /**
  * 进度条组件
  */
-import { BaseComponent, ComponentConfig, ComponentTheme } from './BaseComponent';
-import { PlayerInstance, PlayerState, Logger } from '../../types';
+import {
+  BaseComponent,
+  ComponentConfig,
+  ComponentTheme,
+} from "./BaseComponent";
+import { PlayerInstance, PlayerState, Logger } from "../../types";
 
 export interface ProgressBarConfig extends ComponentConfig {
   showThumb?: boolean;
@@ -27,39 +31,39 @@ export class ProgressBar extends BaseComponent {
     container: HTMLElement,
     config: ProgressBarConfig,
     theme: ComponentTheme = {},
-    logger: Logger
+    logger: Logger,
   ) {
     super(player, container, config, theme, logger);
   }
 
   protected async createElement(): Promise<void> {
     const config = this.config as ProgressBarConfig;
-    
+
     // 创建进度条容器
-    this.progressContainer = document.createElement('div');
-    this.progressContainer.className = 'ebin-progress-container';
-    this.progressContainer.setAttribute('role', 'slider');
-    this.progressContainer.setAttribute('aria-label', '播放进度');
-    this.progressContainer.setAttribute('tabindex', '0');
-    this.progressContainer.setAttribute('aria-valuemin', '0');
-    this.progressContainer.setAttribute('aria-valuemax', '100');
+    this.progressContainer = document.createElement("div");
+    this.progressContainer.className = "ebin-progress-container";
+    this.progressContainer.setAttribute("role", "slider");
+    this.progressContainer.setAttribute("aria-label", "播放进度");
+    this.progressContainer.setAttribute("tabindex", "0");
+    this.progressContainer.setAttribute("aria-valuemin", "0");
+    this.progressContainer.setAttribute("aria-valuemax", "100");
 
     // 创建缓冲进度条
     if (config.showBuffered) {
-      this.bufferedBar = document.createElement('div');
-      this.bufferedBar.className = 'ebin-buffered-bar';
+      this.bufferedBar = document.createElement("div");
+      this.bufferedBar.className = "ebin-buffered-bar";
       this.progressContainer.appendChild(this.bufferedBar);
     }
 
     // 创建播放进度条
-    this.progressBar = document.createElement('div');
-    this.progressBar.className = 'ebin-progress-bar';
+    this.progressBar = document.createElement("div");
+    this.progressBar.className = "ebin-progress-bar";
     this.progressContainer.appendChild(this.progressBar);
 
     // 创建拖拽点
     if (config.showThumb) {
-      this.progressThumb = document.createElement('div');
-      this.progressThumb.className = 'ebin-progress-thumb';
+      this.progressThumb = document.createElement("div");
+      this.progressThumb.className = "ebin-progress-thumb";
       this.progressContainer.appendChild(this.progressThumb);
     }
 
@@ -74,36 +78,36 @@ export class ProgressBar extends BaseComponent {
 
     // 点击跳转
     if (config.clickToSeek) {
-      this.addEventListener(this.progressContainer, 'click', (e) => {
+      this.addEventListener(this.progressContainer, "click", (e) => {
         this.handleSeek(e as MouseEvent);
       });
     }
 
     // 拖拽功能
     if (this.progressThumb) {
-      this.addEventListener(this.progressThumb, 'mousedown', (e) => {
+      this.addEventListener(this.progressThumb, "mousedown", (e) => {
         this.startDrag(e as MouseEvent);
       });
 
-      this.addEventListener(document, 'mousemove', (e) => {
+      this.addEventListener(document, "mousemove", (e) => {
         if (this.isDragging) {
           this.handleDrag(e as MouseEvent);
         }
       });
 
-      this.addEventListener(document, 'mouseup', () => {
+      this.addEventListener(document, "mouseup", () => {
         if (this.isDragging) {
           this.endDrag();
         }
       });
 
       // 触摸支持
-      this.addEventListener(this.progressThumb, 'touchstart', (e) => {
+      this.addEventListener(this.progressThumb, "touchstart", (e) => {
         const touchEvent = e as TouchEvent;
         this.startDrag(touchEvent.touches[0]);
       });
 
-      this.addEventListener(document, 'touchmove', (e) => {
+      this.addEventListener(document, "touchmove", (e) => {
         if (this.isDragging) {
           const touchEvent = e as TouchEvent;
           touchEvent.preventDefault();
@@ -111,7 +115,7 @@ export class ProgressBar extends BaseComponent {
         }
       });
 
-      this.addEventListener(document, 'touchend', () => {
+      this.addEventListener(document, "touchend", () => {
         if (this.isDragging) {
           this.endDrag();
         }
@@ -120,25 +124,25 @@ export class ProgressBar extends BaseComponent {
 
     // 键盘控制
     if (config.keyboardSeek) {
-      this.addEventListener(this.progressContainer, 'keydown', (e) => {
+      this.addEventListener(this.progressContainer, "keydown", (e) => {
         this.handleKeyboardSeek(e as KeyboardEvent);
       });
     }
 
     // 悬停显示拖拽点
-    this.addEventListener(this.progressContainer, 'mouseenter', () => {
+    this.addEventListener(this.progressContainer, "mouseenter", () => {
       if (this.progressThumb && !this.isDragging) {
-        this.progressThumb.style.opacity = '1';
-        this.progressThumb.style.pointerEvents = 'auto';
-        this.logger.debug('Progress thumb shown on hover');
+        this.progressThumb.style.opacity = "1";
+        this.progressThumb.style.pointerEvents = "auto";
+        this.logger.debug("Progress thumb shown on hover");
       }
     });
 
-    this.addEventListener(this.progressContainer, 'mouseleave', () => {
+    this.addEventListener(this.progressContainer, "mouseleave", () => {
       if (this.progressThumb && !this.isDragging) {
-        this.progressThumb.style.opacity = '0';
-        this.progressThumb.style.pointerEvents = 'none';
-        this.logger.debug('Progress thumb hidden on leave');
+        this.progressThumb.style.opacity = "0";
+        this.progressThumb.style.pointerEvents = "none";
+        this.logger.debug("Progress thumb hidden on leave");
       }
     });
   }
@@ -152,7 +156,7 @@ export class ProgressBar extends BaseComponent {
     const duration = this.player.getDuration();
     const newTime = percentage * duration;
 
-    this.logger.debug('Seeking to', { newTime, percentage });
+    this.logger.debug("Seeking to", { newTime, percentage });
     this.player.setCurrentTime(newTime);
   }
 
@@ -161,13 +165,13 @@ export class ProgressBar extends BaseComponent {
     this.dragStartX = e.clientX;
     this.currentDragX = e.clientX;
     this.dragStartTime = this.player.getCurrentTime();
-    
+
     if (this.progressThumb) {
-      this.progressThumb.style.opacity = '1';
-      this.progressThumb.style.pointerEvents = 'auto';
+      this.progressThumb.style.opacity = "1";
+      this.progressThumb.style.pointerEvents = "auto";
     }
 
-    this.logger.debug('Start dragging');
+    this.logger.debug("Start dragging");
   }
 
   private handleDrag(e: MouseEvent | Touch): void {
@@ -184,14 +188,14 @@ export class ProgressBar extends BaseComponent {
     this.updateProgressDisplay(percentage);
 
     // 实时预览（不实际跳转）
-    this.logger.debug('Dragging to', { newTime, percentage });
+    this.logger.debug("Dragging to", { newTime, percentage });
   }
 
   private endDrag(): void {
     if (!this.progressContainer || !this.isDragging) return;
 
     this.isDragging = false;
-    
+
     // 获取当前拖拽位置
     const rect = this.progressContainer.getBoundingClientRect();
     const currentX = this.currentDragX - rect.left;
@@ -199,12 +203,12 @@ export class ProgressBar extends BaseComponent {
     const duration = this.player.getDuration();
     const newTime = percentage * duration;
 
-    this.logger.debug('End dragging, seeking to', { newTime });
+    this.logger.debug("End dragging, seeking to", { newTime });
     this.player.setCurrentTime(newTime);
 
     if (this.progressThumb) {
-      this.progressThumb.style.opacity = '0';
-      this.progressThumb.style.pointerEvents = 'none';
+      this.progressThumb.style.opacity = "0";
+      this.progressThumb.style.pointerEvents = "none";
     }
   }
 
@@ -217,19 +221,19 @@ export class ProgressBar extends BaseComponent {
     let newTime = currentTime;
 
     switch (e.key) {
-      case 'ArrowLeft':
+      case "ArrowLeft":
         e.preventDefault();
         newTime = Math.max(0, currentTime - seekStep);
         break;
-      case 'ArrowRight':
+      case "ArrowRight":
         e.preventDefault();
         newTime = Math.min(duration, currentTime + seekStep);
         break;
-      case 'Home':
+      case "Home":
         e.preventDefault();
         newTime = 0;
         break;
-      case 'End':
+      case "End":
         e.preventDefault();
         newTime = duration;
         break;
@@ -237,15 +241,16 @@ export class ProgressBar extends BaseComponent {
         return;
     }
 
-    this.logger.debug('Keyboard seek', { from: currentTime, to: newTime });
+    this.logger.debug("Keyboard seek", { from: currentTime, to: newTime });
     this.player.setCurrentTime(newTime);
   }
 
   protected onStateUpdate(state: PlayerState): void {
     if (!this.progressContainer || !this.progressBar) return;
 
-    const percentage = state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0;
-    
+    const percentage =
+      state.duration > 0 ? (state.currentTime / state.duration) * 100 : 0;
+
     // 更新播放进度
     this.updateProgressDisplay(percentage / 100);
 
@@ -255,7 +260,7 @@ export class ProgressBar extends BaseComponent {
     }
 
     // 更新ARIA属性
-    this.progressContainer.setAttribute('aria-valuenow', percentage.toString());
+    this.progressContainer.setAttribute("aria-valuenow", percentage.toString());
   }
 
   private updateProgressDisplay(percentage: number): void {
@@ -285,9 +290,9 @@ export class ProgressBar extends BaseComponent {
   protected getThemeStyles(): Record<string, string> {
     return {
       ...super.getThemeStyles(),
-      '--progress-height': '0.25rem',
-      '--thumb-size': '0.75rem',
-      '--thumb-offset': '-0.375rem',
+      "--progress-height": "0.25rem",
+      "--thumb-size": "0.75rem",
+      "--thumb-offset": "-0.375rem",
     };
   }
 
@@ -295,7 +300,7 @@ export class ProgressBar extends BaseComponent {
     if (!this.progressContainer) return;
 
     const styles = this.getThemeStyles();
-    
+
     this.progressContainer.style.cssText = `
       flex: 1;
       height: var(--progress-height, 0.25rem);
@@ -349,25 +354,26 @@ export class ProgressBar extends BaseComponent {
         pointer-events: none;
       `;
 
-      this.progressThumb.addEventListener('mousedown', () => {
-        this.progressThumb!.style.cursor = 'grabbing';
+      this.progressThumb.addEventListener("mousedown", () => {
+        this.progressThumb!.style.cursor = "grabbing";
       });
 
-      this.addEventListener(document, 'mouseup', () => {
+      this.addEventListener(document, "mouseup", () => {
         if (this.progressThumb) {
-          this.progressThumb.style.cursor = 'grab';
+          this.progressThumb.style.cursor = "grab";
         }
       });
     }
 
     // 焦点样式
-    this.progressContainer.addEventListener('focus', () => {
-      this.progressContainer!.style.outline = '2px solid var(--primary-color, #3b82f6)';
-      this.progressContainer!.style.outlineOffset = '2px';
+    this.progressContainer.addEventListener("focus", () => {
+      this.progressContainer!.style.outline =
+        "2px solid var(--primary-color, #3b82f6)";
+      this.progressContainer!.style.outlineOffset = "2px";
     });
 
-    this.progressContainer.addEventListener('blur', () => {
-      this.progressContainer!.style.outline = 'none';
+    this.progressContainer.addEventListener("blur", () => {
+      this.progressContainer!.style.outline = "none";
     });
 
     this.element = this.progressContainer;

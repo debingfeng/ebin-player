@@ -2,7 +2,7 @@
  * 主题管理器
  * 支持多种主题和动态主题切换
  */
-import { ComponentTheme } from '../components/BaseComponent';
+import { ComponentTheme } from "../components/BaseComponent";
 
 export interface Theme {
   id: string;
@@ -70,28 +70,28 @@ export interface Theme {
 
 export const DEFAULT_THEMES: Record<string, Theme> = {
   default: {
-    id: 'default',
-    name: '默认主题',
+    id: "default",
+    name: "默认主题",
     colors: {
-      primary: '#3b82f6',
-      secondary: '#6c757d',
-      background: 'rgba(0, 0, 0, 0.8)',
-      surface: 'rgba(255, 255, 255, 0.1)',
-      text: '#ffffff',
-      textSecondary: 'rgba(255, 255, 255, 0.7)',
-      border: 'rgba(255, 255, 255, 0.2)',
-      success: '#10b981',
-      warning: '#f59e0b',
-      error: '#ef4444',
+      primary: "#3b82f6",
+      secondary: "#6c757d",
+      background: "rgba(0, 0, 0, 0.8)",
+      surface: "rgba(255, 255, 255, 0.1)",
+      text: "#ffffff",
+      textSecondary: "rgba(255, 255, 255, 0.7)",
+      border: "rgba(255, 255, 255, 0.2)",
+      success: "#10b981",
+      warning: "#f59e0b",
+      error: "#ef4444",
     },
     typography: {
-      fontFamily: 'system-ui, -apple-system, sans-serif',
+      fontFamily: "system-ui, -apple-system, sans-serif",
       fontSize: {
-        xs: '0.75rem',
-        sm: '0.875rem',
-        base: '1rem',
-        lg: '1.125rem',
-        xl: '1.25rem',
+        xs: "0.75rem",
+        sm: "0.875rem",
+        base: "1rem",
+        lg: "1.125rem",
+        xl: "1.25rem",
       },
       fontWeight: {
         normal: 400,
@@ -114,9 +114,9 @@ export const DEFAULT_THEMES: Record<string, Theme> = {
       full: 9999,
     },
     shadows: {
-      sm: '0 1px 2px rgba(0, 0, 0, 0.1)',
-      md: '0 4px 6px rgba(0, 0, 0, 0.1)',
-      lg: '0 10px 15px rgba(0, 0, 0, 0.1)',
+      sm: "0 1px 2px rgba(0, 0, 0, 0.1)",
+      md: "0 4px 6px rgba(0, 0, 0, 0.1)",
+      lg: "0 10px 15px rgba(0, 0, 0, 0.1)",
     },
     animations: {
       duration: {
@@ -125,36 +125,36 @@ export const DEFAULT_THEMES: Record<string, Theme> = {
         slow: 500,
       },
       easing: {
-        linear: 'linear',
-        easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
-        easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
-        easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        linear: "linear",
+        easeIn: "cubic-bezier(0.4, 0, 1, 1)",
+        easeOut: "cubic-bezier(0, 0, 0.2, 1)",
+        easeInOut: "cubic-bezier(0.4, 0, 0.2, 1)",
       },
     },
   },
   dark: {
-    id: 'dark',
-    name: '深色主题',
+    id: "dark",
+    name: "深色主题",
     colors: {
-      primary: '#60a5fa',
-      secondary: '#9ca3af',
-      background: 'rgba(0, 0, 0, 0.9)',
-      surface: 'rgba(255, 255, 255, 0.05)',
-      text: '#f9fafb',
-      textSecondary: 'rgba(249, 250, 251, 0.6)',
-      border: 'rgba(255, 255, 255, 0.1)',
-      success: '#34d399',
-      warning: '#fbbf24',
-      error: '#f87171',
+      primary: "#60a5fa",
+      secondary: "#9ca3af",
+      background: "rgba(0, 0, 0, 0.9)",
+      surface: "rgba(255, 255, 255, 0.05)",
+      text: "#f9fafb",
+      textSecondary: "rgba(249, 250, 251, 0.6)",
+      border: "rgba(255, 255, 255, 0.1)",
+      success: "#34d399",
+      warning: "#fbbf24",
+      error: "#f87171",
     },
     typography: {
-      fontFamily: 'system-ui, -apple-system, sans-serif',
+      fontFamily: "system-ui, -apple-system, sans-serif",
       fontSize: {
-        xs: '0.75rem',
-        sm: '0.875rem',
-        base: '1rem',
-        lg: '1.125rem',
-        xl: '1.25rem',
+        xs: "0.75rem",
+        sm: "0.875rem",
+        base: "1rem",
+        lg: "1.125rem",
+        xl: "1.25rem",
       },
       fontWeight: {
         normal: 400,
@@ -177,9 +177,9 @@ export const DEFAULT_THEMES: Record<string, Theme> = {
       full: 9999,
     },
     shadows: {
-      sm: '0 1px 2px rgba(0, 0, 0, 0.3)',
-      md: '0 4px 6px rgba(0, 0, 0, 0.3)',
-      lg: '0 10px 15px rgba(0, 0, 0, 0.3)',
+      sm: "0 1px 2px rgba(0, 0, 0, 0.3)",
+      md: "0 4px 6px rgba(0, 0, 0, 0.3)",
+      lg: "0 10px 15px rgba(0, 0, 0, 0.3)",
     },
     animations: {
       duration: {
@@ -188,36 +188,36 @@ export const DEFAULT_THEMES: Record<string, Theme> = {
         slow: 500,
       },
       easing: {
-        linear: 'linear',
-        easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
-        easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
-        easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        linear: "linear",
+        easeIn: "cubic-bezier(0.4, 0, 1, 1)",
+        easeOut: "cubic-bezier(0, 0, 0.2, 1)",
+        easeInOut: "cubic-bezier(0.4, 0, 0.2, 1)",
       },
     },
   },
   light: {
-    id: 'light',
-    name: '浅色主题',
+    id: "light",
+    name: "浅色主题",
     colors: {
-      primary: '#2563eb',
-      secondary: '#64748b',
-      background: 'rgba(255, 255, 255, 0.95)',
-      surface: 'rgba(0, 0, 0, 0.05)',
-      text: '#1f2937',
-      textSecondary: 'rgba(31, 41, 55, 0.7)',
-      border: 'rgba(0, 0, 0, 0.1)',
-      success: '#059669',
-      warning: '#d97706',
-      error: '#dc2626',
+      primary: "#2563eb",
+      secondary: "#64748b",
+      background: "rgba(255, 255, 255, 0.95)",
+      surface: "rgba(0, 0, 0, 0.05)",
+      text: "#1f2937",
+      textSecondary: "rgba(31, 41, 55, 0.7)",
+      border: "rgba(0, 0, 0, 0.1)",
+      success: "#059669",
+      warning: "#d97706",
+      error: "#dc2626",
     },
     typography: {
-      fontFamily: 'system-ui, -apple-system, sans-serif',
+      fontFamily: "system-ui, -apple-system, sans-serif",
       fontSize: {
-        xs: '0.75rem',
-        sm: '0.875rem',
-        base: '1rem',
-        lg: '1.125rem',
-        xl: '1.25rem',
+        xs: "0.75rem",
+        sm: "0.875rem",
+        base: "1rem",
+        lg: "1.125rem",
+        xl: "1.25rem",
       },
       fontWeight: {
         normal: 400,
@@ -240,9 +240,9 @@ export const DEFAULT_THEMES: Record<string, Theme> = {
       full: 9999,
     },
     shadows: {
-      sm: '0 1px 2px rgba(0, 0, 0, 0.05)',
-      md: '0 4px 6px rgba(0, 0, 0, 0.05)',
-      lg: '0 10px 15px rgba(0, 0, 0, 0.05)',
+      sm: "0 1px 2px rgba(0, 0, 0, 0.05)",
+      md: "0 4px 6px rgba(0, 0, 0, 0.05)",
+      lg: "0 10px 15px rgba(0, 0, 0, 0.05)",
     },
     animations: {
       duration: {
@@ -251,36 +251,36 @@ export const DEFAULT_THEMES: Record<string, Theme> = {
         slow: 500,
       },
       easing: {
-        linear: 'linear',
-        easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
-        easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
-        easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        linear: "linear",
+        easeIn: "cubic-bezier(0.4, 0, 1, 1)",
+        easeOut: "cubic-bezier(0, 0, 0.2, 1)",
+        easeInOut: "cubic-bezier(0.4, 0, 0.2, 1)",
       },
     },
   },
   highContrast: {
-    id: 'highContrast',
-    name: '高对比度主题',
+    id: "highContrast",
+    name: "高对比度主题",
     colors: {
-      primary: '#ffff00',
-      secondary: '#ffffff',
-      background: '#000000',
-      surface: '#333333',
-      text: '#ffffff',
-      textSecondary: '#cccccc',
-      border: '#ffffff',
-      success: '#00ff00',
-      warning: '#ffaa00',
-      error: '#ff0000',
+      primary: "#ffff00",
+      secondary: "#ffffff",
+      background: "#000000",
+      surface: "#333333",
+      text: "#ffffff",
+      textSecondary: "#cccccc",
+      border: "#ffffff",
+      success: "#00ff00",
+      warning: "#ffaa00",
+      error: "#ff0000",
     },
     typography: {
-      fontFamily: 'Arial, sans-serif',
+      fontFamily: "Arial, sans-serif",
       fontSize: {
-        xs: '0.875rem',
-        sm: '1rem',
-        base: '1.125rem',
-        lg: '1.25rem',
-        xl: '1.5rem',
+        xs: "0.875rem",
+        sm: "1rem",
+        base: "1.125rem",
+        lg: "1.25rem",
+        xl: "1.5rem",
       },
       fontWeight: {
         normal: 400,
@@ -303,9 +303,9 @@ export const DEFAULT_THEMES: Record<string, Theme> = {
       full: 9999,
     },
     shadows: {
-      sm: '0 0 0 2px #ffffff',
-      md: '0 0 0 3px #ffffff',
-      lg: '0 0 0 4px #ffffff',
+      sm: "0 0 0 2px #ffffff",
+      md: "0 0 0 3px #ffffff",
+      lg: "0 0 0 4px #ffffff",
     },
     animations: {
       duration: {
@@ -314,10 +314,10 @@ export const DEFAULT_THEMES: Record<string, Theme> = {
         slow: 0,
       },
       easing: {
-        linear: 'linear',
-        easeIn: 'linear',
-        easeOut: 'linear',
-        easeInOut: 'linear',
+        linear: "linear",
+        easeIn: "linear",
+        easeOut: "linear",
+        easeInOut: "linear",
       },
     },
   },
@@ -328,13 +328,14 @@ export class ThemeManager {
   private themes: Map<string, Theme> = new Map();
   private listeners: Array<(theme: Theme) => void> = [];
 
-  constructor(initialThemeId: string = 'default') {
+  constructor(initialThemeId: string = "default") {
     // 注册默认主题
-    Object.values(DEFAULT_THEMES).forEach(theme => {
+    Object.values(DEFAULT_THEMES).forEach((theme) => {
       this.themes.set(theme.id, theme);
     });
 
-    this.currentTheme = this.themes.get(initialThemeId) || DEFAULT_THEMES.default;
+    this.currentTheme =
+      this.themes.get(initialThemeId) || DEFAULT_THEMES.default;
     this.applyTheme();
   }
 
@@ -378,54 +379,54 @@ export class ThemeManager {
    */
   getThemeCSSVariables(): Record<string, string> {
     const theme = this.currentTheme;
-    
+
     return {
-      '--color-primary': theme.colors.primary,
-      '--color-secondary': theme.colors.secondary,
-      '--color-background': theme.colors.background,
-      '--color-surface': theme.colors.surface,
-      '--color-text': theme.colors.text,
-      '--color-text-secondary': theme.colors.textSecondary,
-      '--color-border': theme.colors.border,
-      '--color-success': theme.colors.success,
-      '--color-warning': theme.colors.warning,
-      '--color-error': theme.colors.error,
-      
-      '--font-family': theme.typography.fontFamily,
-      '--font-size-xs': theme.typography.fontSize.xs,
-      '--font-size-sm': theme.typography.fontSize.sm,
-      '--font-size-base': theme.typography.fontSize.base,
-      '--font-size-lg': theme.typography.fontSize.lg,
-      '--font-size-xl': theme.typography.fontSize.xl,
-      
-      '--font-weight-normal': theme.typography.fontWeight.normal.toString(),
-      '--font-weight-medium': theme.typography.fontWeight.medium.toString(),
-      '--font-weight-semibold': theme.typography.fontWeight.semibold.toString(),
-      '--font-weight-bold': theme.typography.fontWeight.bold.toString(),
-      
-      '--spacing-xs': `${theme.spacing.xs}px`,
-      '--spacing-sm': `${theme.spacing.sm}px`,
-      '--spacing-md': `${theme.spacing.md}px`,
-      '--spacing-lg': `${theme.spacing.lg}px`,
-      '--spacing-xl': `${theme.spacing.xl}px`,
-      
-      '--border-radius-sm': `${theme.borderRadius.sm}px`,
-      '--border-radius-md': `${theme.borderRadius.md}px`,
-      '--border-radius-lg': `${theme.borderRadius.lg}px`,
-      '--border-radius-full': `${theme.borderRadius.full}px`,
-      
-      '--shadow-sm': theme.shadows.sm,
-      '--shadow-md': theme.shadows.md,
-      '--shadow-lg': theme.shadows.lg,
-      
-      '--duration-fast': `${theme.animations.duration.fast}ms`,
-      '--duration-normal': `${theme.animations.duration.normal}ms`,
-      '--duration-slow': `${theme.animations.duration.slow}ms`,
-      
-      '--easing-linear': theme.animations.easing.linear,
-      '--easing-ease-in': theme.animations.easing.easeIn,
-      '--easing-ease-out': theme.animations.easing.easeOut,
-      '--easing-ease-in-out': theme.animations.easing.easeInOut,
+      "--color-primary": theme.colors.primary,
+      "--color-secondary": theme.colors.secondary,
+      "--color-background": theme.colors.background,
+      "--color-surface": theme.colors.surface,
+      "--color-text": theme.colors.text,
+      "--color-text-secondary": theme.colors.textSecondary,
+      "--color-border": theme.colors.border,
+      "--color-success": theme.colors.success,
+      "--color-warning": theme.colors.warning,
+      "--color-error": theme.colors.error,
+
+      "--font-family": theme.typography.fontFamily,
+      "--font-size-xs": theme.typography.fontSize.xs,
+      "--font-size-sm": theme.typography.fontSize.sm,
+      "--font-size-base": theme.typography.fontSize.base,
+      "--font-size-lg": theme.typography.fontSize.lg,
+      "--font-size-xl": theme.typography.fontSize.xl,
+
+      "--font-weight-normal": theme.typography.fontWeight.normal.toString(),
+      "--font-weight-medium": theme.typography.fontWeight.medium.toString(),
+      "--font-weight-semibold": theme.typography.fontWeight.semibold.toString(),
+      "--font-weight-bold": theme.typography.fontWeight.bold.toString(),
+
+      "--spacing-xs": `${theme.spacing.xs}px`,
+      "--spacing-sm": `${theme.spacing.sm}px`,
+      "--spacing-md": `${theme.spacing.md}px`,
+      "--spacing-lg": `${theme.spacing.lg}px`,
+      "--spacing-xl": `${theme.spacing.xl}px`,
+
+      "--border-radius-sm": `${theme.borderRadius.sm}px`,
+      "--border-radius-md": `${theme.borderRadius.md}px`,
+      "--border-radius-lg": `${theme.borderRadius.lg}px`,
+      "--border-radius-full": `${theme.borderRadius.full}px`,
+
+      "--shadow-sm": theme.shadows.sm,
+      "--shadow-md": theme.shadows.md,
+      "--shadow-lg": theme.shadows.lg,
+
+      "--duration-fast": `${theme.animations.duration.fast}ms`,
+      "--duration-normal": `${theme.animations.duration.normal}ms`,
+      "--duration-slow": `${theme.animations.duration.slow}ms`,
+
+      "--easing-linear": theme.animations.easing.linear,
+      "--easing-ease-in": theme.animations.easing.easeIn,
+      "--easing-ease-out": theme.animations.easing.easeOut,
+      "--easing-ease-in-out": theme.animations.easing.easeInOut,
     };
   }
 
@@ -434,7 +435,7 @@ export class ThemeManager {
    */
   toComponentTheme(): ComponentTheme {
     const theme = this.currentTheme;
-    
+
     return {
       primaryColor: theme.colors.primary,
       secondaryColor: theme.colors.secondary,
@@ -451,7 +452,7 @@ export class ThemeManager {
    */
   private applyTheme(): void {
     const variables = this.getThemeCSSVariables();
-    
+
     // 应用CSS变量到根元素
     const root = document.documentElement;
     Object.entries(variables).forEach(([property, value]) => {
@@ -460,7 +461,7 @@ export class ThemeManager {
 
     // 添加主题类名
     document.body.className = document.body.className
-      .replace(/ebin-theme-\w+/g, '')
+      .replace(/ebin-theme-\w+/g, "")
       .trim();
     document.body.classList.add(`ebin-theme-${this.currentTheme.id}`);
   }
@@ -482,11 +483,11 @@ export class ThemeManager {
    * 通知监听器
    */
   private notifyListeners(): void {
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       try {
         listener(this.currentTheme);
       } catch (error) {
-        console.error('Error in theme change listener:', error);
+        console.error("Error in theme change listener:", error);
       }
     });
   }
@@ -495,10 +496,13 @@ export class ThemeManager {
    * 检测系统主题偏好
    */
   detectSystemTheme(): string {
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
+    if (
+      window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+    ) {
+      return "dark";
     }
-    return 'light';
+    return "light";
   }
 
   /**
@@ -509,18 +513,18 @@ export class ThemeManager {
       return () => {};
     }
 
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = (e: MediaQueryListEvent) => {
-      const themeId = e.matches ? 'dark' : 'light';
+      const themeId = e.matches ? "dark" : "light";
       if (this.themes.has(themeId)) {
         this.setTheme(themeId);
       }
     };
 
-    mediaQuery.addEventListener('change', handler);
-    
+    mediaQuery.addEventListener("change", handler);
+
     return () => {
-      mediaQuery.removeEventListener('change', handler);
+      mediaQuery.removeEventListener("change", handler);
     };
   }
 }

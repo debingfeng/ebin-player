@@ -1,8 +1,12 @@
 /**
  * 播放/暂停按钮组件
  */
-import { BaseComponent, ComponentConfig, ComponentTheme } from './BaseComponent';
-import { PlayerInstance, PlayerState, Logger } from '../../types';
+import {
+  BaseComponent,
+  ComponentConfig,
+  ComponentTheme,
+} from "./BaseComponent";
+import { PlayerInstance, PlayerState, Logger } from "../../types";
 
 export interface PlayButtonConfig extends ComponentConfig {
   showOverlay?: boolean;
@@ -19,23 +23,23 @@ export class PlayButton extends BaseComponent {
     container: HTMLElement,
     config: PlayButtonConfig,
     theme: ComponentTheme = {},
-    logger: Logger
+    logger: Logger,
   ) {
     super(player, container, config, theme, logger);
   }
 
   protected async createElement(): Promise<void> {
     // 创建控制栏中的播放按钮
-    this.buttonElement = document.createElement('button');
-    this.buttonElement.className = 'ebin-play-button';
-    this.buttonElement.innerHTML = '▶';
-    this.buttonElement.setAttribute('aria-label', '播放/暂停');
-    this.buttonElement.setAttribute('type', 'button');
-    this.buttonElement.setAttribute('role', 'button');
-    
+    this.buttonElement = document.createElement("button");
+    this.buttonElement.className = "ebin-play-button";
+    this.buttonElement.innerHTML = "▶";
+    this.buttonElement.setAttribute("aria-label", "播放/暂停");
+    this.buttonElement.setAttribute("type", "button");
+    this.buttonElement.setAttribute("role", "button");
+
     this.applyTheme();
     this.element = this.buttonElement;
-    
+
     // 将按钮添加到容器中
     this.container.appendChild(this.buttonElement);
 
@@ -50,9 +54,9 @@ export class PlayButton extends BaseComponent {
     const overlaySize = config.overlaySize || 80;
     const iconSize = config.iconSize || 30;
 
-    this.overlayElement = document.createElement('div');
-    this.overlayElement.className = 'ebin-play-overlay';
-    this.overlayElement.setAttribute('aria-label', '播放视频');
+    this.overlayElement = document.createElement("div");
+    this.overlayElement.className = "ebin-play-overlay";
+    this.overlayElement.setAttribute("aria-label", "播放视频");
     this.overlayElement.style.cssText = `
       position: absolute;
       top: 50%;
@@ -72,9 +76,9 @@ export class PlayButton extends BaseComponent {
       pointer-events: none;
     `;
 
-    const playIcon = document.createElement('div');
-    playIcon.className = 'ebin-play-overlay-icon';
-    playIcon.innerHTML = '▶';
+    const playIcon = document.createElement("div");
+    playIcon.className = "ebin-play-overlay-icon";
+    playIcon.innerHTML = "▶";
     playIcon.style.cssText = `
       color: var(--text-color, #ffffff);
       font-size: ${iconSize}px;
@@ -82,14 +86,15 @@ export class PlayButton extends BaseComponent {
     `;
 
     this.overlayElement.appendChild(playIcon);
-    
+
     // 将覆盖层添加到视频容器而不是控制栏
     const videoContainer = this.player.getVideoElement()?.parentElement;
     if (videoContainer) {
       videoContainer.appendChild(this.overlayElement);
     } else {
       // 如果找不到视频容器，添加到播放器容器
-      const playerContainer = this.container.closest('.ebin-player') || this.container.parentElement;
+      const playerContainer =
+        this.container.closest(".ebin-player") || this.container.parentElement;
       if (playerContainer) {
         playerContainer.appendChild(this.overlayElement);
       }
@@ -98,23 +103,23 @@ export class PlayButton extends BaseComponent {
 
   protected setupEventListeners(): void {
     if (this.buttonElement) {
-      this.addEventListener(this.buttonElement, 'click', () => {
-        this.logger.debug('Play button clicked');
+      this.addEventListener(this.buttonElement, "click", () => {
+        this.logger.debug("Play button clicked");
         this.togglePlayPause();
       });
     }
 
     if (this.overlayElement) {
-      this.addEventListener(this.overlayElement, 'click', () => {
-        this.logger.debug('Play overlay clicked');
+      this.addEventListener(this.overlayElement, "click", () => {
+        this.logger.debug("Play overlay clicked");
         this.togglePlayPause();
       });
     }
 
     // 键盘快捷键
-    this.addEventListener(document.body, 'keydown', (e) => {
+    this.addEventListener(document.body, "keydown", (e) => {
       const keyboardEvent = e as KeyboardEvent;
-      if (keyboardEvent.code === 'Space' || keyboardEvent.code === 'Enter') {
+      if (keyboardEvent.code === "Space" || keyboardEvent.code === "Enter") {
         e.preventDefault();
         this.togglePlayPause();
       }
@@ -129,7 +134,7 @@ export class PlayButton extends BaseComponent {
         this.player.pause();
       }
     } catch (error) {
-      this.logger.error('Failed to toggle play/pause', error);
+      this.logger.error("Failed to toggle play/pause", error);
     }
   }
 
@@ -137,23 +142,26 @@ export class PlayButton extends BaseComponent {
     if (!this.buttonElement) return;
 
     // 更新按钮图标
-    this.buttonElement.innerHTML = state.paused ? '▶' : '⏸';
-    
+    this.buttonElement.innerHTML = state.paused ? "▶" : "⏸";
+
     // 更新按钮状态
-    this.buttonElement.setAttribute('aria-pressed', state.paused ? 'false' : 'true');
+    this.buttonElement.setAttribute(
+      "aria-pressed",
+      state.paused ? "false" : "true",
+    );
 
     // 更新覆盖层显示状态
     if (this.overlayElement) {
       const shouldShow = state.paused && !state.ended;
-      this.overlayElement.style.opacity = shouldShow ? '1' : '0';
-      this.overlayElement.style.pointerEvents = shouldShow ? 'auto' : 'none';
-      this.overlayElement.classList.toggle('visible', shouldShow);
-      
-      this.logger.debug('Overlay visibility updated', { 
-        shouldShow, 
-        paused: state.paused, 
+      this.overlayElement.style.opacity = shouldShow ? "1" : "0";
+      this.overlayElement.style.pointerEvents = shouldShow ? "auto" : "none";
+      this.overlayElement.classList.toggle("visible", shouldShow);
+
+      this.logger.debug("Overlay visibility updated", {
+        shouldShow,
+        paused: state.paused,
         ended: state.ended,
-        opacity: this.overlayElement.style.opacity
+        opacity: this.overlayElement.style.opacity,
       });
     }
   }
@@ -161,8 +169,8 @@ export class PlayButton extends BaseComponent {
   protected getThemeStyles(): Record<string, string> {
     return {
       ...super.getThemeStyles(),
-      '--button-size': '2.5rem',
-      '--icon-size': '1.125rem',
+      "--button-size": "2.5rem",
+      "--icon-size": "1.125rem",
     };
   }
 
@@ -189,22 +197,23 @@ export class PlayButton extends BaseComponent {
     `;
 
     // 悬停效果
-    this.buttonElement.addEventListener('mouseenter', () => {
-      this.buttonElement!.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+    this.buttonElement.addEventListener("mouseenter", () => {
+      this.buttonElement!.style.backgroundColor = "rgba(255, 255, 255, 0.1)";
     });
 
-    this.buttonElement.addEventListener('mouseleave', () => {
-      this.buttonElement!.style.backgroundColor = 'transparent';
+    this.buttonElement.addEventListener("mouseleave", () => {
+      this.buttonElement!.style.backgroundColor = "transparent";
     });
 
     // 焦点效果
-    this.buttonElement.addEventListener('focus', () => {
-      this.buttonElement!.style.outline = '2px solid var(--primary-color, #3b82f6)';
-      this.buttonElement!.style.outlineOffset = '2px';
+    this.buttonElement.addEventListener("focus", () => {
+      this.buttonElement!.style.outline =
+        "2px solid var(--primary-color, #3b82f6)";
+      this.buttonElement!.style.outlineOffset = "2px";
     });
 
-    this.buttonElement.addEventListener('blur', () => {
-      this.buttonElement!.style.outline = 'none';
+    this.buttonElement.addEventListener("blur", () => {
+      this.buttonElement!.style.outline = "none";
     });
   }
 

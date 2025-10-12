@@ -3,8 +3,15 @@
  * 负责插件的注册、卸载、数据通信和生命周期管理
  */
 import type { PlayerInstance } from "../types";
-import { PlayerEventType, PlayerEvent, PluginDefinition, PluginContext, Logger as LoggerType, PlayerOptions } from "../types";
-import { PlaybackRatePlugin } from './built-in/PlaybackRatePlugin';
+import {
+  PlayerEventType,
+  PlayerEvent,
+  PluginDefinition,
+  PluginContext,
+  Logger as LoggerType,
+  PlayerOptions,
+} from "../types";
+import { PlaybackRatePlugin } from "./built-in/PlaybackRatePlugin";
 
 export interface IPluginManager {
   use(plugin: PluginDefinition): void;
@@ -17,17 +24,26 @@ export interface IPluginManager {
 export class PluginManager implements IPluginManager {
   private player: PlayerInstance;
   private logger: LoggerType | Console = console;
-  private anyPlayerEventListeners: Set<(event: PlayerEvent) => void> = new Set();
-  private permissionCheck: (pluginId: string, perm: string) => boolean = () => true; // 占位：默认允许
-  
+  private anyPlayerEventListeners: Set<(event: PlayerEvent) => void> =
+    new Set();
+  private permissionCheck: (pluginId: string, perm: string) => boolean = () =>
+    true; // 占位：默认允许
+
   // 现代插件架构：插件定义、配置、导出、命令、服务、插件间事件
-  private pluginDefs: Map<string, PluginDefinition<unknown, unknown>> = new Map();
+  private pluginDefs: Map<string, PluginDefinition<unknown, unknown>> =
+    new Map();
   private pluginExports: Map<string, unknown> = new Map();
   private pluginConfigs: Map<string, unknown> = new Map();
   private pluginConfigVersions: Map<string, number> = new Map();
   private services: Map<string, unknown> = new Map(); // 全局服务命名空间: "pluginId:name" 或全局名
-  private commands: Map<string, Map<string, (args: unknown, ctx: PluginContext) => unknown>> = new Map();
-  private interPluginEvents: Map<string, Map<string, Set<(data: unknown) => void>>> = new Map();
+  private commands: Map<
+    string,
+    Map<string, (args: unknown, ctx: PluginContext) => unknown>
+  > = new Map();
+  private interPluginEvents: Map<
+    string,
+    Map<string, Set<(data: unknown) => void>>
+  > = new Map();
   private pluginData: Map<string, Map<string, unknown>> = new Map();
 
   constructor(player: PlayerInstance, logger?: LoggerType) {
@@ -43,9 +59,10 @@ export class PluginManager implements IPluginManager {
     // 内置：播放速率
     if (builtins.playbackRate) {
       this.use(PlaybackRatePlugin);
-      const conf = typeof builtins.playbackRate === 'object' ? builtins.playbackRate : {};
+      const conf =
+        typeof builtins.playbackRate === "object" ? builtins.playbackRate : {};
       if (conf && Object.keys(conf).length > 0) {
-        this.updatePluginConfig('builtin.playback-rate', conf as any);
+        this.updatePluginConfig("builtin.playback-rate", conf as any);
       }
     }
     // 外部：预留 options.plugins（若存在基于 URL/模块名的动态导入，可在此实现）
@@ -75,7 +92,8 @@ export class PluginManager implements IPluginManager {
     }
 
     // 配置初始化与校验
-    const initialConfig = plugin.defaultConfig ?? {} as Record<string, unknown>;
+    const initialConfig =
+      plugin.defaultConfig ?? ({} as Record<string, unknown>);
     const targetVersion = plugin.configVersion ?? 1;
     // 配置迁移（首次安装仅记录目标版本）
     if (plugin.validateConfig) {
@@ -101,9 +119,11 @@ export class PluginManager implements IPluginManager {
       // onInit
       const exportsMaybe = plugin.onInit?.(ctx);
       if (exportsMaybe instanceof Promise) {
-        exportsMaybe.then((exp) => this.pluginExports.set(id, exp)).catch((err) => {
-          this.logger.error?.(`插件 ${id} onInit 异常:`, err);
-        });
+        exportsMaybe
+          .then((exp) => this.pluginExports.set(id, exp))
+          .catch((err) => {
+            this.logger.error?.(`插件 ${id} onInit 异常:`, err);
+          });
       } else if (exportsMaybe !== undefined) {
         this.pluginExports.set(id, exportsMaybe);
       }
@@ -121,12 +141,16 @@ export class PluginManager implements IPluginManager {
   private buildContext(id: string): PluginContext {
     const ctx: PluginContext = {
       player: this.player,
-      logger: (this.player.getLogger?.() as LoggerType) || (this.logger as LoggerType),
+      logger:
+        (this.player.getLogger?.() as LoggerType) ||
+        (this.logger as LoggerType),
       on: (event, cb) => this.player.on(event, cb),
       off: (event, cb) => this.player.off(event, cb),
-      emit: (event, data) => { this.player.emit(event, data); },
+      emit: (event, data) => {
+        this.player.emit(event, data);
+      },
       onAnyPlayerEvent: (cb) => {
-        if (!this.permissionCheck(id, 'events:any')) {
+        if (!this.permissionCheck(id, "events:any")) {
           this.logger.warn?.(`插件 ${id} 无权限订阅所有播放器事件`);
           return () => {};
         }
@@ -134,7 +158,8 @@ export class PluginManager implements IPluginManager {
         return () => this.anyPlayerEventListeners.delete(cb);
       },
       onPluginEvent: (pluginId, type, cb) => {
-        if (!this.interPluginEvents.has(pluginId)) this.interPluginEvents.set(pluginId, new Map());
+        if (!this.interPluginEvents.has(pluginId))
+          this.interPluginEvents.set(pluginId, new Map());
         const map = this.interPluginEvents.get(pluginId)!;
         if (!map.has(type)) map.set(type, new Set());
         map.get(type)!.add(cb);
@@ -144,13 +169,20 @@ export class PluginManager implements IPluginManager {
         const map = this.interPluginEvents.get(pluginId);
         const set = map?.get(type);
         set?.forEach((cb) => {
-          try { cb(data); } catch (e) { this.logger.error?.(`插件 ${pluginId} 事件 ${type} 回调异常:`, e); }
+          try {
+            cb(data);
+          } catch (e) {
+            this.logger.error?.(`插件 ${pluginId} 事件 ${type} 回调异常:`, e);
+          }
         });
       },
       registerService: (name, service) => {
         this.services.set(`${id}:${name}`, service);
       },
-      getService: <T>(name: string) => (this.services.get(name) ?? this.services.get(`${id}:${name}`)) as T | undefined,
+      getService: <T>(name: string) =>
+        (this.services.get(name) ?? this.services.get(`${id}:${name}`)) as
+          | T
+          | undefined,
       getConfig: <T = unknown>() => this.pluginConfigs.get(id) as T,
       setConfig: <T = unknown>(partial: Partial<T>) => {
         const cur = this.pluginConfigs.get(id) || {};
@@ -165,14 +197,16 @@ export class PluginManager implements IPluginManager {
           return this.deepClone(v) as T;
         },
         set: <T = unknown>(key: string, value: T) => {
-          if (!this.permissionCheck(id, 'storage:write')) {
+          if (!this.permissionCheck(id, "storage:write")) {
             this.logger.warn?.(`插件 ${id} 无权限写入存储`);
             return;
           }
           if (!this.pluginData.has(id)) this.pluginData.set(id, new Map());
           this.pluginData.get(id)!.set(key, this.deepClone(value));
         },
-        delete: (key: string) => { this.pluginData.get(id)?.delete(key); },
+        delete: (key: string) => {
+          this.pluginData.get(id)?.delete(key);
+        },
         keys: () => Array.from(this.pluginData.get(id)?.keys() || []),
       },
       hasPermission: (perm: string) => this.permissionCheck(id, perm),
@@ -191,10 +225,17 @@ export class PluginManager implements IPluginManager {
     if (currentVersion >= targetVersion) return;
     let conf = this.pluginConfigs.get(pluginId) ?? {};
     const route = def.migrations
-      .filter(m => m.from >= currentVersion && m.to <= targetVersion)
+      .filter((m) => m.from >= currentVersion && m.to <= targetVersion)
       .sort((a, b) => a.from - b.from);
     for (const step of route) {
-      try { conf = step.migrate(conf) as Record<string, unknown>; } catch (e) { this.logger.error?.(`迁移 ${pluginId} 配置 ${step.from}->${step.to} 失败:`, e); }
+      try {
+        conf = step.migrate(conf) as Record<string, unknown>;
+      } catch (e) {
+        this.logger.error?.(
+          `迁移 ${pluginId} 配置 ${step.from}->${step.to} 失败:`,
+          e,
+        );
+      }
     }
     this.pluginConfigs.set(pluginId, conf);
     this.pluginConfigVersions.set(pluginId, targetVersion);
@@ -245,7 +286,6 @@ export class PluginManager implements IPluginManager {
     return Array.from(this.pluginDefs.keys());
   }
 
-
   /**
    * 更新插件配置
    */
@@ -259,7 +299,11 @@ export class PluginManager implements IPluginManager {
   /**
    * 命令注册与调用
    */
-  registerCommand(pluginId: string, name: string, fn: (args: unknown, ctx: PluginContext) => unknown): void {
+  registerCommand(
+    pluginId: string,
+    name: string,
+    fn: (args: unknown, ctx: PluginContext) => unknown,
+  ): void {
     if (!this.commands.has(pluginId)) this.commands.set(pluginId, new Map());
     this.commands.get(pluginId)!.set(name, fn);
   }
@@ -303,7 +347,6 @@ export class PluginManager implements IPluginManager {
     };
   }
 
-
   /**
    * 检查插件冲突
    */
@@ -327,7 +370,11 @@ export class PluginManager implements IPluginManager {
   destroy(): void {
     // 新接口销毁
     this.pluginDefs.forEach((def, id) => {
-      try { def.onDestroy?.(this.buildContext(id)); } catch (e) { this.logger.error?.(`销毁插件 ${id} 时出错:`, e); }
+      try {
+        def.onDestroy?.(this.buildContext(id));
+      } catch (e) {
+        this.logger.error?.(`销毁插件 ${id} 时出错:`, e);
+      }
     });
 
     // 清理所有数据
@@ -363,7 +410,7 @@ export class PluginManager implements IPluginManager {
   private deepClone<T>(value: T): T {
     try {
       // @ts-ignore structuredClone 兼容性处理
-      if (typeof structuredClone === 'function') return structuredClone(value);
+      if (typeof structuredClone === "function") return structuredClone(value);
     } catch {}
     try {
       return JSON.parse(JSON.stringify(value));
