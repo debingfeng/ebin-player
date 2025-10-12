@@ -77,7 +77,7 @@ const { createPlayer, PlayerInstance } = require('ebin-player');
 ```html
 <script src="dist/ebin-player.umd.js"></script>
 <script>
-    const player = new PlayerInstance(container, options);
+    const player = new EbinPlayer(container, options);
 </script>
 ```
 
@@ -127,7 +127,7 @@ const player = createPlayer(container, options);
     <script src="node_modules/ebin-player/dist/ebin-player.umd.js"></script>
     <script>
         console.log('EbinPlayer version:', EbinPlayer.version);
-        const player = new PlayerInstance(document.getElementById('player'), {
+        const player = new EbinPlayer(document.getElementById('player'), {
             src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
         });
     </script>

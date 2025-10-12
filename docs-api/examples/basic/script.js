@@ -1,7 +1,7 @@
 // 基础播放器示例
 document.addEventListener('DOMContentLoaded', function() {
     // 初始化播放器
-    const player = new PlayerInstance(document.getElementById('basic-player'), {
+    const player = new EbinPlayer(document.getElementById('basic-player'), {
         src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
         width: 800,
         height: 450,

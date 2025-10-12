@@ -58,7 +58,7 @@ yarn add ebin-player
     <div id="player-container"></div>
     <script src="node_modules/ebin-player/dist/ebin-player.umd.js"></script>
     <script>
-        const player = new PlayerInstance(
+        const player = new EbinPlayer(
             document.getElementById('player-container'),
             {
                 src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
@@ -77,7 +77,7 @@ yarn add ebin-player
 import { PlayerInstance } from 'ebin-player';
 import 'ebin-player/styles';
 
-const player = new PlayerInstance(container, {
+const player = new EbinPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'advanced',
     debug: true
@@ -109,7 +109,7 @@ Ebin Player 提供四种UI模式，满足不同场景需求：
 使用浏览器原生HTML5控制条，性能最优：
 
 ```javascript
-const player = new PlayerInstance(container, {
+const player = new EbinPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'native'
 });
@@ -120,7 +120,7 @@ const player = new PlayerInstance(container, {
 基于 ImprovedDefaultUI 的现代化自定义界面：
 
 ```javascript
-const player = new PlayerInstance(container, {
+const player = new EbinPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'custom',
     uiConfig: {
@@ -145,7 +145,7 @@ const player = new PlayerInstance(container, {
 包含所有功能的完整UI界面：
 
 ```javascript
-const player = new PlayerInstance(container, {
+const player = new EbinPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'advanced',
     uiConfig: {
@@ -181,7 +181,7 @@ const player = new PlayerInstance(container, {
 纯播放器核心，适合自定义开发：
 
 ```javascript
-const player = new PlayerInstance(container, {
+const player = new EbinPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'none'
 });
@@ -217,7 +217,7 @@ player.subscribe(state => console.log('状态更新:', state));
 #### 构造函数
 
 ```typescript
-new PlayerInstance(container: HTMLElement, options: PlayerOptions)
+new EbinPlayer(container: HTMLElement, options: PlayerOptions)
 ```
 
 #### 核心方法
@@ -489,7 +489,7 @@ Ebin Player 采用全新的插件架构，基于 `PluginDefinition` 设计，提
 内置插件可通过配置选项自动启用：
 
 ```javascript
-const player = new PlayerInstance(container, {
+const player = new EbinPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'custom',
     builtinPlugins: {
@@ -668,7 +668,7 @@ player.use(PlaybackRatePlugin);
 
 ```typescript
 // 响应式配置
-const player = new PlayerInstance(container, {
+const player = new EbinPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'advanced',
     uiConfig: {
@@ -810,7 +810,7 @@ src/
 // 基础播放器
 import { PlayerInstance } from 'ebin-player';
 
-const player = new PlayerInstance(container, {
+const player = new EbinPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'advanced',
     debug: true
@@ -831,7 +831,7 @@ player.subscribe(state => {
 
 ```javascript
 // 使用内置插件
-const player = new PlayerInstance(container, {
+const player = new EbinPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'custom',
     builtinPlugins: {
