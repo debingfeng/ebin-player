@@ -1,6 +1,6 @@
 {
   "name": "ebin-player",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A modular, plugin-based web video player with modern architecture",
   "main": "dist/ebin-player.umd.js",
   "module": "dist/ebin-player.esm.js",
