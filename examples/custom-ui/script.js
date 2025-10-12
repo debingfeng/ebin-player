@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 初始化播放器
     const player = new EbinPlayer(document.getElementById('custom-player'), {
-        src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
         width: 800,
         height: 450,
         autoplay: false,
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 更新代码显示
     function updateCodeDisplay() {
         const code = `const player = new EbinPlayer(container, {
-    src: 'video.mp4',
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
     theme: {
         primaryColor: '${currentTheme.primaryColor}',
         controlBarHeight: ${currentTheme.controlBarHeight},

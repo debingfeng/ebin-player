@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function initPlayers() {
         // 基础播放器
         players.basic = new EbinPlayer(document.getElementById('basic-demo-player'), {
-            src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+            src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
             width: '100%',
             height: 400,
             autoplay: false,
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 自定义UI播放器
         players.customUI = new EbinPlayer(document.getElementById('custom-ui-demo-player'), {
-            src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+            src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
             width: '100%',
             height: 400,
             autoplay: false,
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 插件播放器
         players.plugins = new EbinPlayer(document.getElementById('plugins-demo-player'), {
-            src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+            src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
             width: '100%',
             height: 400,
             autoplay: false,
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 主题播放器
         players.themes = new EbinPlayer(document.getElementById('themes-demo-player'), {
-            src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+            src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
             width: '100%',
             height: 400,
             autoplay: false,
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 高级功能播放器
         players.advanced = new EbinPlayer(document.getElementById('advanced-demo-player'), {
-            src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+            src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
             width: '100%',
             height: 400,
             autoplay: false,

@@ -50,7 +50,7 @@ npm install ebin-player
     <script src="node_modules/ebin-player/dist/ebin-player.umd.js"></script>
     <script>
         const player = new EbinPlayer(document.getElementById('player'), {
-            src: 'your-video.mp4',
+            src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
             autoplay: false,
             controls: true
         });
@@ -65,7 +65,7 @@ npm install ebin-player
 import { createPlayer, PlaybackRatePlugin } from 'ebin-player';
 
 const player = createPlayer(container, {
-    src: 'video.mp4',
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',
     plugins: {
         playbackRate: {
             rates: [0.5, 1, 1.25, 1.5, 2]

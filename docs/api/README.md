@@ -34,7 +34,7 @@
 import { createPlayer } from 'ebin-player';
 
 const player = createPlayer(container, {
-    src: 'video.mp4',
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4',
     autoplay: false,
     controls: true
 });

@@ -8,22 +8,22 @@
 
 ## 安装方式
 
-### 1. NPM 安装 (推荐)
+### 1. PNPM 安装 (推荐)
+
+```bash
+pnpm add ebin-player
+```
+
+### 2. NPM 安装
 
 ```bash
 npm install ebin-player
 ```
 
-### 2. Yarn 安装
+### 3. Yarn 安装
 
 ```bash
 yarn add ebin-player
-```
-
-### 3. PNPM 安装
-
-```bash
-pnpm add ebin-player
 ```
 
 ### 4. CDN 引入
@@ -104,7 +104,7 @@ EbinPlayer 提供完整的 TypeScript 类型定义，无需额外安装类型包
 import { createPlayer, type PlayerOptions } from 'ebin-player';
 
 const options: PlayerOptions = {
-    src: 'video.mp4',
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4',
     autoplay: false,
     controls: true
 };

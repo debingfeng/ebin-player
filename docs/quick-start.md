@@ -64,7 +64,7 @@ EbinPlayer 提供了丰富的配置选项：
 ```javascript
 const player = new EbinPlayer(container, {
     // 视频源
-    src: 'video.mp4',
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
     
     // 播放器尺寸
     width: 800,
@@ -129,13 +129,13 @@ player.on('error', (event) => {
 ```javascript
 // 单个视频源
 const player = new EbinPlayer(container, {
-    src: 'video.mp4'
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4'
 });
 
 // 多个视频源（自动选择最佳格式）
 const player = new EbinPlayer(container, {
     src: [
-        { src: 'video.mp4', type: 'video/mp4' },
+        { src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4', type: 'video/mp4' },
         { src: 'video.webm', type: 'video/webm' },
         { src: 'video.ogv', type: 'video/ogg' }
     ]
@@ -147,7 +147,7 @@ const player = new EbinPlayer(container, {
 ```javascript
 const player = new EbinPlayer(container, {
     // 基础配置
-    src: 'video.mp4',
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
     width: 800,
     height: 450,
     

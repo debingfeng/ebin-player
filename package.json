@@ -51,10 +51,10 @@
     "docs:api": "typedoc",
     "docs:build": "node scripts/build-docs.js",
     "docs:copy": "cp -r examples demos docs-api/",
-    "docs:serve": "http-server docs-api -p 8080",
-    "docs:dev": "npm run docs:build && npm run docs:serve",
-    "prepublishOnly": "npm run build",
-    "prepack": "npm run build"
+    "docs:serve": "http-server docs-api -p 8090",
+    "docs:dev": "pnpm run docs:build && pnpm run docs:serve",
+    "prepublishOnly": "pnpm run build",
+    "prepack": "pnpm run build"
   },
   "keywords": [
     "video-player",

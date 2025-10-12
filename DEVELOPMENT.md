@@ -12,18 +12,18 @@
 
 ```bash
 # 格式化代码
-npm run format
+pnpm run format
 
 # 检查代码格式
-npm run format:check
+pnpm run format:check
 
 # 生成变更日志
-npm run changelog
+pnpm run changelog
 
 # 发布新版本
-npm run version:patch  # 修订版本
-npm run version:minor  # 次版本
-npm run version:major  # 主版本
+pnpm run version:patch  # 修订版本
+pnpm run version:minor  # 次版本
+pnpm run version:major  # 主版本
 ```
 
 

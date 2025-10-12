@@ -1,0 +1,33 @@
+# pnpm 配置文件
+# 启用严格模式
+strict-peer-dependencies=false
+
+# 自动安装 peer dependencies
+auto-install-peers=true
+
+# 使用符号链接而不是复制
+symlink=true
+
+# 启用 pnpm 的严格模式
+strict-peer-dependencies=false
+
+# 设置存储路径
+store-dir=node_modules/.pnpm
+
+# 启用 side-effects-cache
+side-effects-cache=true
+
+# 设置网络配置
+fetch-retries=3
+fetch-retry-factor=2
+fetch-retry-mintimeout=10000
+fetch-retry-maxtimeout=60000
+
+# 设置并发数
+network-concurrency=16
+
+# 启用进度条
+progress=true
+
+# 设置日志级别
+loglevel=info

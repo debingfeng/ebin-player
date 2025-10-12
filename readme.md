@@ -37,11 +37,11 @@
 ### 安装
 
 ```bash
+pnpm add ebin-player
+# 或
 npm install ebin-player
 # 或
 yarn add ebin-player
-# 或
-pnpm add ebin-player
 ```
 
 ### 基础使用
@@ -61,7 +61,7 @@ pnpm add ebin-player
         const player = new EbinPlayer.PlayerInstance(
             document.getElementById('player-container'),
             {
-                src: 'video.mp4',
+                src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
                 uiMode: 'advanced',
                 debug: true
             }
@@ -78,7 +78,7 @@ import { PlayerInstance } from 'ebin-player';
 import 'ebin-player/styles';
 
 const player = new PlayerInstance(container, {
-    src: 'video.mp4',
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'advanced',
     debug: true
 });
@@ -91,7 +91,7 @@ import { createPlayer } from 'ebin-player';
 import 'ebin-player/styles';
 
 const player = createPlayer(container, {
-    src: 'video.mp4',
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'custom',
     theme: {
         primaryColor: '#3b82f6',
@@ -110,7 +110,7 @@ Ebin Player 提供四种UI模式，满足不同场景需求：
 
 ```javascript
 const player = new PlayerInstance(container, {
-    src: 'video.mp4',
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'native'
 });
 ```
@@ -121,7 +121,7 @@ const player = new PlayerInstance(container, {
 
 ```javascript
 const player = new PlayerInstance(container, {
-    src: 'video.mp4',
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'custom',
     uiConfig: {
         playButton: true,
@@ -146,7 +146,7 @@ const player = new PlayerInstance(container, {
 
 ```javascript
 const player = new PlayerInstance(container, {
-    src: 'video.mp4',
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'advanced',
     uiConfig: {
         // 基础控制
@@ -182,7 +182,7 @@ const player = new PlayerInstance(container, {
 
 ```javascript
 const player = new PlayerInstance(container, {
-    src: 'video.mp4',
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'none'
 });
 
@@ -490,7 +490,7 @@ Ebin Player 采用全新的插件架构，基于 `PluginDefinition` 设计，提
 
 ```javascript
 const player = new PlayerInstance(container, {
-    src: 'video.mp4',
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'custom',
     builtinPlugins: {
         playbackRate: {
@@ -669,7 +669,7 @@ player.use(PlaybackRatePlugin);
 ```typescript
 // 响应式配置
 const player = new PlayerInstance(container, {
-    src: 'video.mp4',
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'advanced',
     uiConfig: {
         // 响应式控制栏配置
@@ -730,6 +730,9 @@ pnpm run build
 
 # 类型检查
 pnpm run type-check
+
+# 文档开发
+pnpm run docs:dev
 ```
 
 ### 构建脚本
@@ -746,6 +749,15 @@ pnpm run build
 
 # 清理构建文件
 pnpm run clean
+
+# 构建文档
+pnpm run docs:build
+
+# 启动文档服务器
+pnpm run docs:serve
+
+# 文档开发模式
+pnpm run docs:dev
 
 # 完整构建并启动演示服务器
 pnpm run demo
@@ -799,7 +811,7 @@ src/
 import { PlayerInstance } from 'ebin-player';
 
 const player = new PlayerInstance(container, {
-    src: 'video.mp4',
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'advanced',
     debug: true
 });
@@ -820,7 +832,7 @@ player.subscribe(state => {
 ```javascript
 // 使用内置插件
 const player = new PlayerInstance(container, {
-    src: 'video.mp4',
+    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'custom',
     builtinPlugins: {
         playbackRate: {
