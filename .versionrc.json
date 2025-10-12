@@ -1,0 +1,60 @@
+{
+  "types": {
+    "feat": {
+      "section": "Features"
+    },
+    "fix": {
+      "section": "Bug Fixes"
+    },
+    "chore": {
+      "section": "Maintenance",
+      "hidden": false
+    },
+    "docs": {
+      "section": "Documentation"
+    },
+    "style": {
+      "section": "Styles",
+      "hidden": false
+    },
+    "refactor": {
+      "section": "Code Refactoring"
+    },
+    "perf": {
+      "section": "Performance Improvements"
+    },
+    "test": {
+      "section": "Tests",
+      "hidden": false
+    },
+    "build": {
+      "section": "Build System",
+      "hidden": false
+    },
+    "ci": {
+      "section": "Continuous Integration",
+      "hidden": false
+    }
+  },
+  "commitUrlFormat": "https://github.com/your-username/ebin-player/commit/{{hash}}",
+  "compareUrlFormat": "https://github.com/your-username/ebin-player/compare/{{previousTag}}...{{currentTag}}",
+  "issueUrlFormat": "https://github.com/your-username/ebin-player/issues/{{id}}",
+  "userUrlFormat": "https://github.com/{{user}}",
+  "releaseCommitMessageFormat": "chore(release): {{currentTag}}",
+  "bumpFiles": [
+    {
+      "filename": "package.json",
+      "type": "json"
+    },
+    {
+      "filename": "package-lock.json",
+      "type": "json"
+    }
+  ],
+  "packageFiles": [
+    {
+      "filename": "package.json",
+      "type": "json"
+    }
+  ]
+}
