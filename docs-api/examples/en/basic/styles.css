@@ -1,0 +1,249 @@
+/* Basic Player Example Styles */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    font-weight: 300;
+}
+
+h2 {
+    color: #555;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    font-weight: 500;
+}
+
+h3 {
+    color: #666;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    font-weight: 500;
+}
+
+.player-section {
+    margin-bottom: 30px;
+}
+
+.player-container {
+    margin: 20px 0;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.controls-section {
+    margin-bottom: 30px;
+}
+
+.controls {
+    display: flex;
+    gap: 12px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.controls button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 80px;
+}
+
+.controls button:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+}
+
+.controls button:active {
+    transform: translateY(0);
+}
+
+.volume-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.volume-control label {
+    font-weight: 500;
+    color: #555;
+    min-width: 60px;
+}
+
+.volume-slider {
+    flex: 1;
+    max-width: 200px;
+    height: 6px;
+    border-radius: 3px;
+    background: #ddd;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.volume-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#volume-text {
+    font-weight: 500;
+    color: #007bff;
+    min-width: 40px;
+    text-align: center;
+}
+
+.info-section {
+    margin-bottom: 30px;
+}
+
+#player-info {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+#player-info p {
+    margin: 8px 0;
+    font-size: 14px;
+}
+
+#player-info span {
+    font-weight: 500;
+    color: #007bff;
+}
+
+.keyboard-section {
+    margin-bottom: 20px;
+}
+
+.keyboard-section ul {
+    list-style: none;
+    padding: 0;
+    margin: 15px 0;
+}
+
+.keyboard-section li {
+    margin: 8px 0;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 3px solid #28a745;
+}
+
+kbd {
+    display: inline-block;
+    padding: 3px 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #555;
+    background: #e9ecef;
+    border: 1px solid #adb5bd;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    margin-right: 8px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    h1 {
+        font-size: 2em;
+    }
+    
+    .controls {
+        gap: 8px;
+    }
+    
+    .controls button {
+        padding: 8px 14px;
+        font-size: 13px;
+        min-width: 70px;
+    }
+    
+    .volume-control {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    .volume-slider {
+        max-width: none;
+    }
+    
+    .keyboard-section li {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        padding: 15px;
+    }
+    
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .controls button {
+        width: 100%;
+        margin: 2px 0;
+    }
+}

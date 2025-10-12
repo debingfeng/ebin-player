@@ -6,9 +6,14 @@
     <title>EbinPlayer 文档</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background: #f5f5f5; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 60px 20px; text-align: center; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 60px 20px; text-align: center; position: relative; }
         .header h1 { font-size: 3rem; margin-bottom: 10px; }
         .header p { font-size: 1.2rem; opacity: 0.9; }
+        .language-switcher { position: absolute; top: 20px; right: 20px; }
+        .switcher-container { display: flex; background: white; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); overflow: hidden; }
+        .lang-btn { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border: none; background: transparent; cursor: pointer; transition: all 0.2s ease; font-size: 14px; color: #666; }
+        .lang-btn:hover { background: #f8f9fa; }
+        .lang-btn.active { background: #007bff; color: white; }
         .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
         .nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
         .nav-card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); text-align: center; transition: transform 0.2s; }
@@ -22,6 +27,18 @@
 </head>
 <body>
     <div class="header">
+        <div class="language-switcher">
+            <div class="switcher-container">
+                <button class="lang-btn active" data-lang="zh">
+                    <span>🇨🇳</span>
+                    <span>中文</span>
+                </button>
+                <button class="lang-btn" data-lang="en">
+                    <span>🇺🇸</span>
+                    <span>English</span>
+                </button>
+            </div>
+        </div>
         <h1>EbinPlayer</h1>
         <p>现代化的Web视频播放器</p>
     </div>
@@ -46,7 +63,17 @@
             <div class="nav-card">
                 <h3>🚀 快速开始</h3>
                 <p>5分钟快速上手EbinPlayer，从安装到第一个播放器。</p>
-                <a href="https://github.com/your-username/ebin-player#quick-start">开始使用</a>
+                <a href="https://github.com/fengdebing/ebin-player#quick-start">开始使用</a>
+            </div>
+            <div class="nav-card">
+                <h3>🌍 English Docs</h3>
+                <p>English documentation and examples for international users.</p>
+                <a href="en/README.html">View English Docs</a>
+            </div>
+            <div class="nav-card">
+                <h3>🎬 English Demo</h3>
+                <p>Interactive demo with English interface and examples.</p>
+                <a href="en/demos/index.html">Try English Demo</a>
             </div>
         </div>
     </div>
@@ -55,5 +82,7 @@
         <p>EbinPlayer - 现代化的Web视频播放器</p>
         <p>© 2024 EbinPlayer Team. All rights reserved.</p>
     </div>
+    
+    <script src="language-switcher.js"></script>
 </body>
 </html>

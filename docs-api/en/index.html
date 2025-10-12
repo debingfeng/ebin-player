@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EbinPlayer - Online Demo</title>
+    <link rel="stylesheet" href="../dist/styles.css">
+    <link rel="stylesheet" href="assets/styles/demo.css">
+</head>
+<body>
+    <div class="demo-container">
+        <header class="demo-header">
+            <h1>EbinPlayer Online Demo</h1>
+            <p>Experience the power of EbinPlayer with interactive examples</p>
+        </header>
+
+        <nav class="demo-nav">
+            <button class="nav-btn active" data-section="basic">Basic Player</button>
+            <button class="nav-btn" data-section="custom-ui">Custom UI</button>
+            <button class="nav-btn" data-section="plugins">Plugins</button>
+            <button class="nav-btn" data-section="themes">Themes</button>
+            <button class="nav-btn" data-section="advanced">Advanced</button>
+        </nav>
+
+        <main class="demo-content">
+            <!-- Basic Player Demo -->
+            <section id="basic-demo" class="demo-section active">
+                <h2>Basic Player</h2>
+                <p>Simple video player with essential controls</p>
+                <div class="player-demo">
+                    <div id="basic-demo-player" class="demo-player"></div>
+                </div>
+                <div class="demo-controls">
+                    <button id="basic-play">Play</button>
+                    <button id="basic-pause">Pause</button>
+                    <button id="basic-mute">Mute</button>
+                </div>
+            </section>
+
+            <!-- Custom UI Demo -->
+            <section id="custom-ui-demo" class="demo-section">
+                <h2>Custom UI</h2>
+                <p>Player with custom theme and styling</p>
+                <div class="player-demo">
+                    <div id="custom-ui-demo-player" class="demo-player"></div>
+                </div>
+                <div class="theme-controls">
+                    <label>Primary Color:</label>
+                    <input type="color" id="primary-color" value="#ff6b6b">
+                    <label>Control Height:</label>
+                    <input type="range" id="control-height" min="40" max="80" value="50">
+                </div>
+            </section>
+
+            <!-- Plugins Demo -->
+            <section id="plugins-demo" class="demo-section">
+                <h2>Plugin System</h2>
+                <p>Extend functionality with plugins</p>
+                <div class="player-demo">
+                    <div id="plugins-demo-player" class="demo-player"></div>
+                </div>
+                <div class="plugin-controls">
+                    <button id="toggle-playback-rate">Enable Playback Rate Plugin</button>
+                    <button id="toggle-custom-plugin">Enable Custom Plugin</button>
+                </div>
+            </section>
+
+            <!-- Themes Demo -->
+            <section id="themes-demo" class="demo-section">
+                <h2>Theme Customization</h2>
+                <p>Switch between different visual themes</p>
+                <div class="player-demo">
+                    <div id="themes-demo-player" class="demo-player"></div>
+                </div>
+                <div class="theme-selector">
+                    <button class="theme-btn active" data-theme="default">Default</button>
+                    <button class="theme-btn" data-theme="dark">Dark</button>
+                    <button class="theme-btn" data-theme="minimal">Minimal</button>
+                    <button class="theme-btn" data-theme="colorful">Colorful</button>
+                </div>
+            </section>
+
+            <!-- Advanced Demo -->
+            <section id="advanced-demo" class="demo-section">
+                <h2>Advanced Features</h2>
+                <p>Advanced player with multiple features</p>
+                <div class="player-demo">
+                    <div id="advanced-demo-player" class="demo-player"></div>
+                </div>
+                <div class="advanced-controls">
+                    <div class="control-group">
+                        <label>Playback Rate:</label>
+                        <select id="playback-rate-select">
+                            <option value="0.5">0.5x</option>
+                            <option value="0.75">0.75x</option>
+                            <option value="1" selected>1x</option>
+                            <option value="1.25">1.25x</option>
+                            <option value="1.5">1.5x</option>
+                            <option value="2">2x</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label>Quality:</label>
+                        <select id="quality-select">
+                            <option value="auto">Auto</option>
+                            <option value="720p">720p</option>
+                            <option value="480p">480p</option>
+                            <option value="360p">360p</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="demo-footer">
+            <p>EbinPlayer - A modern, modular video player for the web</p>
+            <div class="footer-links">
+                <a href="../docs/README.md">Documentation</a>
+                <a href="../examples/">Examples</a>
+                <a href="https://github.com/fengdebing/ebin-player">GitHub</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="../dist/ebin-player.umd.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
