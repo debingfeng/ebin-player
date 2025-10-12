@@ -21,11 +21,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fengdebing/ebin-player.git"
+    "url": "git+https://github.com/debingfeng/ebin-player.git"
   },
-  "homepage": "https://github.com/fengdebing/ebin-player#readme",
+  "homepage": "https://github.com/debingfeng/ebin-player#readme",
   "bugs": {
-    "url": "https://github.com/fengdebing/ebin-player/issues"
+    "url": "https://github.com/debingfeng/ebin-player/issues"
   },
   "scripts": {
     "build": "npm run clean && npm run build:css:prod && rollup -c --bundleConfigAsCjs",

@@ -291,6 +291,6 @@ export default {
 
 ### Getting Help
 
-- [GitHub Issues](https://github.com/fengdebing/ebin-player/issues)
-- [Documentation](https://github.com/fengdebing/ebin-player#readme)
-- [Examples](https://github.com/fengdebing/ebin-player/tree/main/examples)
+- [GitHub Issues](https://github.com/debingfeng/ebin-player/issues)
+- [Documentation](https://github.com/debingfeng/ebin-player#readme)
+- [Examples](https://github.com/debingfeng/ebin-player/tree/main/examples)

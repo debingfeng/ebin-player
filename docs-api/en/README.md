@@ -258,7 +258,7 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ```bash
 # Clone the repository
-git clone https://github.com/fengdebing/ebin-player.git
+git clone https://github.com/debingfeng/ebin-player.git
 
 # Install dependencies
 pnpm install

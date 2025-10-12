@@ -213,7 +213,7 @@ function generateMainIndex() {
             <div class="nav-card">
                 <h3>🚀 快速开始</h3>
                 <p>5分钟快速上手EbinPlayer，从安装到第一个播放器。</p>
-                <a href="https://github.com/fengdebing/ebin-player#quick-start">开始使用</a>
+                <a href="https://github.com/debingfeng/ebin-player#quick-start">开始使用</a>
             </div>
             <div class="nav-card">
                 <h3>🌍 English Docs</h3>
