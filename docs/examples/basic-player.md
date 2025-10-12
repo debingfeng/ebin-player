@@ -94,7 +94,7 @@
 // 等待DOM加载完成
 document.addEventListener('DOMContentLoaded', function() {
     // 初始化播放器
-    const player = new EbinPlayer(document.getElementById('player'), {
+    const player = new PlayerInstance(document.getElementById('player'), {
         src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
         width: 800,
         height: 450,

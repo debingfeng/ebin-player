@@ -48,7 +48,7 @@
 const container = document.getElementById('player-container');
 
 // 创建播放器实例
-const player = new EbinPlayer(container, {
+const player = new PlayerInstance(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
     width: 800,
     height: 450,
@@ -62,7 +62,7 @@ const player = new EbinPlayer(container, {
 EbinPlayer 提供了丰富的配置选项：
 
 ```javascript
-const player = new EbinPlayer(container, {
+const player = new PlayerInstance(container, {
     // 视频源
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
     
@@ -128,12 +128,12 @@ player.on('error', (event) => {
 
 ```javascript
 // 单个视频源
-const player = new EbinPlayer(container, {
+const player = new PlayerInstance(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4'
 });
 
 // 多个视频源（自动选择最佳格式）
-const player = new EbinPlayer(container, {
+const player = new PlayerInstance(container, {
     src: [
         { src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4', type: 'video/mp4' },
         { src: 'video.webm', type: 'video/webm' },
@@ -145,7 +145,7 @@ const player = new EbinPlayer(container, {
 ### 播放器选项
 
 ```javascript
-const player = new EbinPlayer(container, {
+const player = new PlayerInstance(container, {
     // 基础配置
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4',
     width: 800,

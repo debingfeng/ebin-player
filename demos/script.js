@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初始化所有播放器
     function initPlayers() {
         // 基础播放器
-        players.basic = new EbinPlayer(document.getElementById('basic-demo-player'), {
+        players.basic = new PlayerInstance(document.getElementById('basic-demo-player'), {
             src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
             width: '100%',
             height: 400,
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // 自定义UI播放器
-        players.customUI = new EbinPlayer(document.getElementById('custom-ui-demo-player'), {
+        players.customUI = new PlayerInstance(document.getElementById('custom-ui-demo-player'), {
             src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
             width: '100%',
             height: 400,
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // 插件播放器
-        players.plugins = new EbinPlayer(document.getElementById('plugins-demo-player'), {
+        players.plugins = new PlayerInstance(document.getElementById('plugins-demo-player'), {
             src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
             width: '100%',
             height: 400,
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // 主题播放器
-        players.themes = new EbinPlayer(document.getElementById('themes-demo-player'), {
+        players.themes = new PlayerInstance(document.getElementById('themes-demo-player'), {
             src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
             width: '100%',
             height: 400,
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // 高级功能播放器
-        players.advanced = new EbinPlayer(document.getElementById('advanced-demo-player'), {
+        players.advanced = new PlayerInstance(document.getElementById('advanced-demo-player'), {
             src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
             width: '100%',
             height: 400,
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 togglePlaybackRateBtn.textContent = '启用播放速度插件';
                 togglePlaybackRateBtn.classList.remove('active');
             } else {
-                players.plugins.use(EbinPlayer.PlaybackRatePlugin, {
+                players.plugins.use(PlayerInstance.PlaybackRatePlugin, {
                     rates: [0.5, 0.75, 1, 1.25, 1.5, 2]
                 });
                 togglePlaybackRateBtn.textContent = '禁用播放速度插件';

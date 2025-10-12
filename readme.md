@@ -58,7 +58,7 @@ yarn add ebin-player
     <div id="player-container"></div>
     <script src="node_modules/ebin-player/dist/ebin-player.umd.js"></script>
     <script>
-        const player = new EbinPlayer.PlayerInstance(
+        const player = new PlayerInstance(
             document.getElementById('player-container'),
             {
                 src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
