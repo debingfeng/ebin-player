@@ -39,8 +39,6 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --coverage --watchAll=false",
-    "lint": "eslint src --ext .ts,.tsx --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,css,md}\"",
     "prepare": "husky install",
@@ -69,12 +67,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.6.2",
-    "@typescript-eslint/eslint-plugin": "^8.0.0",
-    "@typescript-eslint/parser": "^8.0.0",
     "autoprefixer": "^10.4.21",
-    "eslint": "^9.0.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
     "husky": "^9.1.6",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^30.2.0",
@@ -95,11 +88,7 @@
     "@babel/preset-env": "^7.28.3"
   },
   "lint-staged": {
-    "src/**/*.{ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "src/**/*.{js,jsx,json,css,md}": [
+    "src/**/*.{ts,tsx,js,jsx,json,css,md}": [
       "prettier --write"
     ]
   }

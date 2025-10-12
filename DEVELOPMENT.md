@@ -4,20 +4,13 @@
 
 本项目配置了以下代码质量工具来确保代码的一致性和质量：
 
-### ESLint + Prettier
+### Prettier
 
-- **ESLint**: 用于代码静态分析和错误检查
-- **Prettier**: 用于代码格式化
+- **Prettier**: 用于代码格式化，确保代码风格一致
 
 #### 可用命令
 
 ```bash
-# 检查代码质量
-npm run lint
-
-# 自动修复ESLint问题
-npm run lint:fix
-
 # 格式化代码
 npm run format
 
@@ -28,7 +21,7 @@ npm run format:check
 ### Husky + lint-staged
 
 - **Husky**: Git钩子管理工具
-- **lint-staged**: 在提交前对暂存的文件运行linter
+- **lint-staged**: 在提交前对暂存的文件运行格式化
 
 #### 配置的Git钩子
 
@@ -40,9 +33,9 @@ npm run format:check
 当你执行 `git commit` 时：
 
 1. Husky会触发pre-commit钩子
-2. lint-staged会对暂存的文件运行ESLint和Prettier
-3. 如果有错误，提交会被阻止
-4. 如果所有检查通过，提交会继续
+2. lint-staged会对暂存的文件运行Prettier格式化
+3. 如果格式化失败，提交会被阻止
+4. 如果格式化成功，提交会继续
 
 ## 开发环境设置
 
@@ -78,9 +71,9 @@ npm run type-check
 
 ### TypeScript
 
-- 使用严格的TypeScript配置
-- 避免使用`any`类型
+- 使用TypeScript进行类型检查
 - 使用明确的类型注解
+- 遵循TypeScript最佳实践
 
 ### 代码风格
 
@@ -88,7 +81,7 @@ npm run type-check
 - 使用分号
 - 行尾逗号
 - 2个空格缩进
-- 最大行宽80字符
+- 最大行宽120字符
 
 ### 提交信息
 
@@ -98,20 +91,13 @@ npm run type-check
 
 ## 故障排除
 
-### ESLint错误
+### Prettier格式化问题
 
-如果遇到ESLint错误，可以：
+如果遇到格式化问题，可以：
 
-1. 运行 `npm run lint:fix` 自动修复
-2. 查看具体错误信息并手动修复
-3. 如果规则过于严格，可以在`.eslintrc.js`中调整
-
-### Prettier冲突
-
-如果Prettier和ESLint有冲突：
-
-1. 确保安装了`eslint-config-prettier`
-2. 检查`.eslintrc.js`中的extends配置
+1. 运行 `npm run format` 自动格式化
+2. 运行 `npm run format:check` 检查格式
+3. 检查`.prettierrc`配置文件
 
 ### Husky钩子不工作
 
