@@ -5,7 +5,7 @@
 ```bash
 pnpm add ebin-player-react ebin-player
 # 或
-npm install @ebin-player-react ebin-player
+npm install @ebin/player-react ebin-player
 # 或
 yarn add ebin-player-react ebin-player
 ```
@@ -157,7 +157,7 @@ export default function App({ Component, pageProps }) {
 import dynamic from 'next/dynamic';
 
 const EbinPlayer = dynamic(
-  () => import('@ebin-player/react').then(mod => ({ default: mod.EbinPlayer })),
+  () => import('@ebin/player/react').then(mod => ({ default: mod.EbinPlayer })),
   { ssr: false }
 );
 
@@ -212,7 +212,7 @@ export default function Home() {
 ## 类型支持
 
 ```tsx
-import type { ReactEbinPlayerProps, ReactEbinPlayerRef } from '@ebin-player/react';
+import type { ReactEbinPlayerProps, ReactEbinPlayerRef } from '@ebin/player/react';
 
 const props: ReactEbinPlayerProps = {
   src: 'video.mp4',

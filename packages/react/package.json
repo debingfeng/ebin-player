@@ -1,8 +1,11 @@
 {
-  "name": "@ebin-player/react",
+  "name": "@ebin/player-react",
   "version": "0.0.4",
   "description": "React bindings for ebin-player",
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -23,7 +26,7 @@
     "react-dom": ">=17"
   },
   "dependencies": {
-    "@ebin-player": "^0.0.4"
+    "@ebin/player": "^0.0.4"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",

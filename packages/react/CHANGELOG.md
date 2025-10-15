@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Initial release of @ebin-player/react
+- Initial release of @ebin/player/react
 - React component wrapper for ebin-player
 - Automatic and manual style injection strategies
 - SSR support with Next.js integration

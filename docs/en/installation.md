@@ -7,7 +7,7 @@ This guide will help you install and set up EbinPlayer in your project.
 ### NPM
 
 ```bash
-npm install @ebin-player
+npm install @ebin/player
 ```
 
 ### Yarn
@@ -27,7 +27,7 @@ pnpm add ebin-player
 ### ES6 Module (Recommended)
 
 ```javascript
-import EbinPlayer from '@ebin-player';
+import EbinPlayer from '@ebin/player';
 import 'ebin-player/dist/styles.css';
 
 const player = new EbinPlayer(container, {
@@ -66,7 +66,7 @@ EbinPlayer is written in TypeScript and provides full type definitions.
 ### TypeScript Configuration
 
 ```typescript
-import { createPlayer, type PlayerOptions } from '@ebin-player';
+import { createPlayer, type PlayerOptions } from '@ebin/player';
 
 const options: PlayerOptions = {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4',
@@ -123,7 +123,7 @@ The package includes comprehensive TypeScript definitions:
 
 ```jsx
 import React, { useEffect, useRef } from 'react';
-import EbinPlayer from '@ebin-player';
+import EbinPlayer from '@ebin/player';
 import 'ebin-player/dist/styles.css';
 
 function VideoPlayer({ src, options = {} }) {
@@ -157,7 +157,7 @@ function VideoPlayer({ src, options = {} }) {
 </template>
 
 <script>
-import EbinPlayer from '@ebin-player';
+import EbinPlayer from '@ebin/player';
 import 'ebin-player/dist/styles.css';
 
 export default {
@@ -185,7 +185,7 @@ export default {
 
 ```typescript
 import { Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
-import EbinPlayer from '@ebin-player';
+import EbinPlayer from '@ebin/player';
 import 'ebin-player/dist/styles.css';
 
 @Component({

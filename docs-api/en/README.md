@@ -17,7 +17,7 @@ A modular, plugin-based web video player with modern architecture and TypeScript
 ### NPM
 
 ```bash
-npm install @ebin-player
+npm install @ebin/player
 ```
 
 ### Yarn
@@ -66,7 +66,7 @@ pnpm add ebin-player
 ### ES6 Module
 
 ```javascript
-import EbinPlayer from '@ebin-player';
+import EbinPlayer from '@ebin/player';
 import 'ebin-player/dist/styles.css';
 
 const player = new EbinPlayer(container, {
@@ -79,7 +79,7 @@ const player = new EbinPlayer(container, {
 ### TypeScript
 
 ```typescript
-import { createPlayer, type PlayerOptions } from '@ebin-player';
+import { createPlayer, type PlayerOptions } from '@ebin/player';
 
 const options: PlayerOptions = {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4',

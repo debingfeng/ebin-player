@@ -11,7 +11,7 @@
 
 ```bash
 # 安装
-npm install @ebin-player-react ebin-player
+npm install @ebin/player-react ebin-player
 # 或
 pnpm add ebin-player-react ebin-player
 # 或
@@ -88,7 +88,7 @@ pnpm run test:react-app
 # 创建测试项目
 mkdir test-project && cd test-project
 npm init -y
-npm install @ebin-player-react ebin-player
+npm install @ebin/player-react ebin-player
 
 # 测试导入
 node -e "const { EbinPlayer } = require('ebin-player-react'); console.log('✅ 导入成功:', typeof EbinPlayer);"

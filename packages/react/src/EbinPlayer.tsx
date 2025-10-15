@@ -7,7 +7,7 @@ import {
   type PlayerTheme,
   type PluginDefinition,
   version as coreVersion,
-} from '@ebin-player';
+} from '@ebin/player';
 import { ensureStylesInjected, type StyleInjectionMode } from './styleInjection';
 
 export interface ReactEbinPlayerProps extends Omit<HTMLAttributes<HTMLDivElement>, 

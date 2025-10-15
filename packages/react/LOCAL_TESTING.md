@@ -1,6 +1,6 @@
 # 本地测试指南
 
-本指南介绍如何在其他项目中本地引用和测试 `@ebin-player/react` 包。
+本指南介绍如何在其他项目中本地引用和测试 `@ebin/player/react` 包。
 
 ## 方法一：使用 pnpm link（推荐）
 
@@ -17,13 +17,13 @@ pnpm link --global
 ```bash
 # 在你的测试项目中
 cd /path/to/your-test-project
-pnpm link @ebin-player/react
+pnpm link @ebin/player/react
 ```
 
 ### 3. 使用包
 
 ```tsx
-import { EbinPlayer } from '@ebin-player/react';
+import { EbinPlayer } from '@ebin/player/react';
 import 'ebin-player/styles'; // 需要手动引入样式
 
 function App() {
@@ -44,7 +44,7 @@ function App() {
 ```json
 {
   "dependencies": {
-    "@ebin-player/react": "file:../path/to/ebin-player/packages/react",
+    "@ebin/player/react": "file:../path/to/ebin-player/packages/react",
     "ebin-player": "file:../path/to/ebin-player"
   }
 }
@@ -89,7 +89,7 @@ packages:
 ```json
 {
   "dependencies": {
-    "@ebin-player/react": "workspace:*",
+    "@ebin/player/react": "workspace:*",
     "ebin-player": "workspace:*"
   }
 }
@@ -102,7 +102,7 @@ packages:
 ```tsx
 // App.tsx
 import React, { useRef, useState } from 'react';
-import { EbinPlayer } from '@ebin-player/react';
+import { EbinPlayer } from '@ebin/player/react';
 import 'ebin-player/styles';
 
 function App() {
@@ -151,11 +151,11 @@ export default App;
 ```tsx
 // pages/index.tsx
 import dynamic from 'next/dynamic';
-import { EbinPlayer } from '@ebin-player/react';
+import { EbinPlayer } from '@ebin/player/react';
 
 // 动态导入，禁用 SSR
 const DynamicEbinPlayer = dynamic(
-  () => import('@ebin-player/react').then(mod => ({ default: mod.EbinPlayer })),
+  () => import('@ebin/player/react').then(mod => ({ default: mod.EbinPlayer })),
   { ssr: false }
 );
 
@@ -241,7 +241,7 @@ A: 尝试删除 `node_modules` 和 `pnpm-lock.yaml`，然后重新安装
 
 ## 开发模式
 
-如果你在开发 `@ebin-player/react` 包，建议使用 `pnpm link` 方法，这样修改源码后会自动反映到测试项目中。
+如果你在开发 `@ebin/player/react` 包，建议使用 `pnpm link` 方法，这样修改源码后会自动反映到测试项目中。
 
 ```bash
 # 修改源码后重新构建

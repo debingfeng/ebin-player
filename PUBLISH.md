@@ -50,8 +50,8 @@ pnpm publish
 
 ### 5. 发布后验证
 - [ ] 检查 npm 包页面：https://www.npmjs.com/package/ebin-player
-- [ ] 测试安装：`npm install @ebin-player`
-- [ ] 验证导入：`import EbinPlayer from '@ebin-player'`
+- [ ] 测试安装：`npm install @ebin/player`
+- [ ] 验证导入：`import EbinPlayer from '@ebin/player'`
 
 ## 🔧 常见问题
 

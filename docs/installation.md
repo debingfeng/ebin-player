@@ -17,7 +17,7 @@ pnpm add ebin-player
 ### 2. NPM 安装
 
 ```bash
-npm install @ebin-player
+npm install @ebin/player
 ```
 
 ### 3. Yarn 安装
@@ -40,17 +40,17 @@ yarn add ebin-player
 
 ### 稳定版 (推荐)
 ```bash
-npm install @ebin-player@latest
+npm install @ebin/player@latest
 ```
 
 ### 开发版
 ```bash
-npm install @ebin-player@beta
+npm install @ebin/player@beta
 ```
 
 ### 预发布版
 ```bash
-npm install @ebin-player@alpha
+npm install @ebin/player@alpha
 ```
 
 ## 导入方式
@@ -59,11 +59,11 @@ npm install @ebin-player@alpha
 
 ```typescript
 // 完整导入
-import { createPlayer, PlayerInstance } from '@ebin-player';
+import { createPlayer, PlayerInstance } from '@ebin/player';
 
 // 按需导入
-import { createPlayer } from '@ebin-player';
-import type { PlayerOptions } from '@ebin-player';
+import { createPlayer } from '@ebin/player';
+import type { PlayerOptions } from '@ebin/player';
 ```
 
 ### CommonJS 导入
@@ -101,7 +101,7 @@ import 'ebin-player/dist/styles.css';
 EbinPlayer 提供完整的 TypeScript 类型定义，无需额外安装类型包。
 
 ```typescript
-import { createPlayer, type PlayerOptions } from '@ebin-player';
+import { createPlayer, type PlayerOptions } from '@ebin/player';
 
 const options: PlayerOptions = {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4',

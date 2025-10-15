@@ -1,6 +1,6 @@
 # EbinPlayer React 测试应用
 
-这是一个用于测试 `@ebin-player/react` 包的示例应用。
+这是一个用于测试 `@ebin/player/react` 包的示例应用。
 
 ## 快速开始
 
@@ -41,7 +41,7 @@ pnpm run dev
 
 ## 开发模式
 
-如果你在开发 `@ebin-player/react` 包：
+如果你在开发 `@ebin/player/react` 包：
 
 1. 修改 `packages/react` 中的源码
 2. 运行 `pnpm run build` 重新构建
