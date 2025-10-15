@@ -1,6 +1,6 @@
 # 🎬 Ebin Player
 
-<div align="right">
+<div align="left">
   <p>
     <a href="./README.zhCN.md">中文文档</a> |
     <a href="./README.md">English Documentation</a>
@@ -109,14 +109,14 @@ const player = createPlayer(container, {
 
 ## 🎨 UI Modes
 
-Ebin Player provides four UI modes to meet different scenario requirements:
+Ebin Player provides three UI modes to meet different scenario requirements:
 
 ### 1. Native Control Bar Mode (`native`)
 
 Uses browser native HTML5 control bar for optimal performance:
 
 ```javascript
-const player = new EbinPlayer(container, {
+const player = new PlayerInstance(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'native'
 });
@@ -127,7 +127,7 @@ const player = new EbinPlayer(container, {
 Modern custom interface based on ImprovedDefaultUI:
 
 ```javascript
-const player = new EbinPlayer(container, {
+const player = new PlayerInstance(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'custom',
     uiConfig: {
@@ -147,48 +147,12 @@ const player = new EbinPlayer(container, {
 });
 ```
 
-### 3. Advanced UI Mode (`advanced`)
-
-Complete UI interface with all features:
-
-```javascript
-const player = new EbinPlayer(container, {
-    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
-    uiMode: 'advanced',
-    uiConfig: {
-        // Basic controls
-        playButton: true,
-        progressBar: true,
-        timeDisplay: true,
-        volumeControl: true,
-        fullscreenButton: true,
-        
-        // Advanced features
-        playbackRateControl: true,
-        pictureInPictureButton: true,
-        qualitySelector: true,
-        subtitleToggle: true,
-        aspectRatio: true,
-        screenshot: true,
-        skipButtons: true
-    },
-    theme: {
-        primaryColor: '#3b82f6',
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        textColor: '#ffffff',
-        controlBarHeight: 60,
-        borderRadius: 8,
-        fontFamily: 'system-ui, -apple-system, sans-serif'
-    }
-});
-```
-
-### 4. No UI Mode (`none`)
+### 3. No UI Mode (`none`)
 
 Pure player core, suitable for custom development:
 
 ```javascript
-const player = new EbinPlayer(container, {
+const player = new PlayerInstance(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'none'
 });
