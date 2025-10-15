@@ -1,6 +1,6 @@
 # 🎬 Ebin Player
 
-<div align="right">
+<div align="left">
   <p>
     <a href="./README.md">English Documentation</a>
     <a href="./README.zhCN.md">中文文档</a> | 
@@ -63,13 +63,13 @@ yarn add @ebin-player/core
 </head>
 <body>
     <div id="player-container"></div>
-    <script src="node_modules/ebin-player/dist/ebin-player.umd.js"></script>
+    <script src="node_modules/@ebin-player/core/dist/ebin-player.umd.js"></script>
     <script>
-        const player = new EbinPlayer(
+        const player = new PlayerInstance(
             document.getElementById('player-container'),
             {
                 src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
-                uiMode: 'advanced',
+                uiMode: 'custom',
                 debug: true
             }
         );
@@ -84,9 +84,9 @@ yarn add @ebin-player/core
 import { PlayerInstance } from '@ebin-player/core';
 import '@ebin-player/core/styles';
 
-const player = new EbinPlayer(container, {
+const player = new PlayerInstance(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
-    uiMode: 'advanced',
+    uiMode: 'custom',
     debug: true
 });
 ```
@@ -109,14 +109,14 @@ const player = createPlayer(container, {
 
 ## 🎨 UI 模式
 
-Ebin Player 提供四种UI模式，满足不同场景需求：
+Ebin Player 提供三种UI模式，满足不同场景需求：
 
 ### 1. 原生控制条模式 (`native`)
 
 使用浏览器原生HTML5控制条，性能最优：
 
 ```javascript
-const player = new EbinPlayer(container, {
+const player = new PlayerInstance(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'native'
 });
@@ -127,7 +127,7 @@ const player = new EbinPlayer(container, {
 基于 ImprovedDefaultUI 的现代化自定义界面：
 
 ```javascript
-const player = new EbinPlayer(container, {
+const player = new PlayerInstance(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'custom',
     uiConfig: {
@@ -147,48 +147,12 @@ const player = new EbinPlayer(container, {
 });
 ```
 
-### 3. 高级UI模式 (`advanced`)
-
-包含所有功能的完整UI界面：
-
-```javascript
-const player = new EbinPlayer(container, {
-    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
-    uiMode: 'advanced',
-    uiConfig: {
-        // 基础控制
-        playButton: true,
-        progressBar: true,
-        timeDisplay: true,
-        volumeControl: true,
-        fullscreenButton: true,
-        
-        // 高级功能
-        playbackRateControl: true,
-        pictureInPictureButton: true,
-        qualitySelector: true,
-        subtitleToggle: true,
-        aspectRatio: true,
-        screenshot: true,
-        skipButtons: true
-    },
-    theme: {
-        primaryColor: '#3b82f6',
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        textColor: '#ffffff',
-        controlBarHeight: 60,
-        borderRadius: 8,
-        fontFamily: 'system-ui, -apple-system, sans-serif'
-    }
-});
-```
-
-### 4. 无UI模式 (`none`)
+### 3. 无UI模式 (`none`)
 
 纯播放器核心，适合自定义开发：
 
 ```javascript
-const player = new EbinPlayer(container, {
+const player = new PlayerInstance(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'none'
 });
@@ -215,6 +179,64 @@ player.subscribe(state => console.log('状态更新:', state));
 | `Shift + <` | 播放速度减慢 |
 | `Shift + >` | 播放速度加快 |
 
+## 📡 事件系统
+
+Ebin Player 提供完整的事件系统，支持所有标准的HTML5视频事件以及自定义事件。
+
+### 支持的事件类型
+
+```typescript
+type PlayerEventType =
+  | "loadstart"           // 开始加载
+  | "loadedmetadata"      // 元数据加载完成
+  | "loadeddata"          // 数据加载完成
+  | "canplay"             // 可以开始播放
+  | "canplaythrough"      // 可以播放到结束
+  | "play"                // 开始播放
+  | "pause"               // 暂停播放
+  | "ended"               // 播放结束
+  | "error"               // 播放错误
+  | "timeupdate"          // 时间更新
+  | "volumechange"        // 音量变化
+  | "ratechange"          // 播放速度变化
+  | "seeking"             // 开始跳转
+  | "seeked"              // 跳转完成
+  | "waiting"             // 等待数据
+  | "stalled"             // 数据停滞
+  | "progress"            // 加载进度
+  | "durationchange"      // 时长变化
+  | "resize"              // 尺寸变化
+  | "fullscreenchange"    // 全屏状态变化
+  | "enterpictureinpicture"  // 进入画中画
+  | "leavepictureinpicture"  // 退出画中画
+  | "lifecyclechange"     // 生命周期变化
+  | "statechange";        // 状态变化
+```
+
+### 事件监听示例
+
+```typescript
+// 监听播放事件
+player.on('play', (event) => {
+  console.log('开始播放', event);
+});
+
+// 监听时间更新事件
+player.on('timeupdate', (event) => {
+  console.log('当前时间:', player.getCurrentTime());
+});
+
+// 监听全屏变化
+player.on('fullscreenchange', (event) => {
+  console.log('全屏状态:', event.data?.isFullscreen);
+});
+
+// 监听状态变化
+player.on('statechange', (event) => {
+  console.log('状态更新:', event.data?.state);
+});
+```
+
 ## 🔧 API 参考
 
 ### PlayerInstance
@@ -224,7 +246,7 @@ player.subscribe(state => console.log('状态更新:', state));
 #### 构造函数
 
 ```typescript
-new EbinPlayer(container: HTMLElement, options: PlayerOptions)
+new PlayerInstance(container: HTMLElement, options: PlayerOptions)
 ```
 
 #### 核心方法
@@ -250,6 +272,13 @@ player.setMuted(muted: boolean): PlayerInstance
 // 播放速度
 player.getPlaybackRate(): number
 player.setPlaybackRate(rate: number): PlayerInstance
+
+// 播放状态
+player.getPaused(): boolean
+player.getEnded(): boolean
+player.getReadyState(): number
+player.getNetworkState(): number
+player.getError(): MediaError | null
 ```
 
 ##### 状态管理
@@ -300,7 +329,7 @@ player.isPictureInPicture(): boolean
 ##### 插件系统
 ```typescript
 // 插件管理
-player.use(plugin: PluginDefinition): PlayerInstance
+player.use(plugin: PluginDefinition<unknown, unknown>): PlayerInstance
 player.unuse(pluginId: string): PlayerInstance
 player.getPlugin(pluginId: string): PluginDefinition | undefined
 ```
@@ -351,6 +380,7 @@ interface PlayerOptions {
     poster?: string;                // 封面图
     width?: number | string;        // 宽度
     height?: number | string;       // 高度
+    controls?: boolean;             // 已废弃，使用uiMode替代
     loop?: boolean;                 // 循环播放
     preload?: 'none' | 'metadata' | 'auto';  // 预加载策略
     crossOrigin?: 'anonymous' | 'use-credentials' | '';  // 跨域设置
@@ -392,6 +422,7 @@ interface ControlBarConfig {
     qualitySelector?: boolean;
     subtitleToggle?: boolean;
     aspectRatio?: boolean;
+    pictureInPicture?: boolean;  // 注意：实际类型中有这个属性
     screenshot?: boolean;
     skipButtons?: boolean;
     
@@ -589,6 +620,41 @@ class MyPlugin extends BasePlugin<MyPluginConfig, MyPluginExports> {
 // 使用插件
 const plugin = new MyPlugin();
 player.use(plugin);
+```
+
+#### PluginDefinition 接口
+
+```typescript
+interface PluginDefinition<Config = unknown, Exports = unknown> {
+    meta: PluginMeta;
+    defaultConfig?: Config;
+    validateConfig?: (config: unknown) => { valid: boolean; errors?: string[] };
+    commands?: Record<string, (args: unknown, ctx: PluginContext) => unknown>;
+    configVersion?: number;
+    migrations?: Array<{
+        from: number;
+        to: number;
+        migrate: (oldConfig: unknown) => unknown;
+    }>;
+    
+    // 生命周期钩子
+    onInit?: (ctx: PluginContext) => Promise<Exports> | Exports | void;
+    onStart?: (ctx: PluginContext) => Promise<void> | void;
+    onEvent?: <T extends PlayerEventType>(event: PlayerEventBase<T>, ctx: PluginContext) => void;
+    onConfigChange?: (newConfig: Partial<Config>, ctx: PluginContext) => void;
+    onDestroy?: (ctx: PluginContext) => Promise<void> | void;
+}
+
+interface PluginMeta {
+    id: string;
+    version: string;
+    displayName?: string;
+    description?: string;
+    requires?: Record<string, string>;  // 依赖的插件版本
+    optional?: Record<string, string>;  // 可选依赖
+    capabilities?: string[];            // 插件能力
+    permissions?: string[];             // 所需权限
+}
 ```
 
 #### 插件上下文 API
@@ -817,9 +883,9 @@ src/
 // 基础播放器
 import { PlayerInstance } from '@ebin-player/core';
 
-const player = new EbinPlayer(container, {
+const player = new PlayerInstance(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
-    uiMode: 'advanced',
+    uiMode: 'custom',
     debug: true
 });
 
@@ -838,7 +904,7 @@ player.subscribe(state => {
 
 ```javascript
 // 使用内置插件
-const player = new EbinPlayer(container, {
+const player = new PlayerInstance(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
     uiMode: 'custom',
     builtinPlugins: {
