@@ -9,6 +9,8 @@
 
 A modern, modular web video player built with TypeScript, featuring a brand-new architecture design with powerful plugin system and highly customizable UI.
 
+> Framework integrations: React, Vue 2, Vue 3, Angular. See Framework Bindings and the docs/frameworks overview.
+
 ## ✨ Core Features
 
 ### 🏗️ Modern Architecture

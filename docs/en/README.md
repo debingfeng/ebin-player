@@ -7,6 +7,7 @@ A modular, plugin-based web video player with modern architecture and TypeScript
 - [Installation](#installation)
 - [Quick Start](#quick-start)
 - [Framework Bindings](#framework-bindings)
+  - See also: [Frameworks Overview](./frameworks.md)
 - [API Reference](#api-reference)
 - [Examples](#examples)
 - [Plugin Development](#plugin-development)

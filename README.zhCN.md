@@ -9,6 +9,8 @@
 
 一个现代化的、模块化的 Web 视频播放器，基于 TypeScript 构建，采用全新架构设计，支持强大的插件系统和高度可定制的 UI。
 
+> 框架适配：React、Vue 2、Vue 3、Angular。参见下文框架绑定与 docs/frameworks 总览。
+
 ## ✨ 核心特性
 
 ### 🏗️ 现代架构
