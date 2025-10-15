@@ -15,6 +15,11 @@
 - [主题定制](./examples/theming.md) - 主题定制示例
 - [高级功能](./examples/advanced-features.md) - 高级功能使用
 
+### 框架绑定
+- [React 绑定](../packages/react/README.md) - React 组件使用指南
+- [Vue 2 绑定](../packages/vue2/README.md) - Vue 2 组件使用指南
+- [Vue 3 绑定](../packages/vue3/README.md) - Vue 3 组件使用指南
+
 ### API 文档
 - [完整API文档](../docs-api/) - 自动生成的API参考文档
 - [播放器API](./api/player-api.md) - 播放器核心API

@@ -18,7 +18,13 @@
 - [ ] API 文档更新：`pnpm run docs:build`
 - [ ] 示例代码测试通过
 
-### 4. 发布流程
+### 4. 包发布顺序
+- [ ] 先发布主包：`@ebin-player/core`
+- [ ] 再发布React包：`@ebin-player/react`
+- [ ] 然后发布Vue2包：`@ebin-player/vue2`
+- [ ] 最后发布Vue3包：`@ebin-player/vue3`
+
+### 5. 发布流程
 
 #### 方式一：使用便捷脚本（推荐）
 ```bash

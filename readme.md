@@ -51,6 +51,84 @@ npm install @ebin-player/core
 yarn add @ebin-player/core
 ```
 
+### Framework Bindings
+
+Ebin Player provides official bindings for popular frontend frameworks:
+
+#### React
+```bash
+npm install @ebin-player/react @ebin-player/core
+```
+
+```tsx
+import { EbinPlayer } from '@ebin-player/react';
+import '@ebin-player/core/styles';
+
+function App() {
+  return (
+    <EbinPlayer
+      src="video.mp4"
+      uiMode="advanced"
+      onReady={() => console.log('Player ready')}
+    />
+  );
+}
+```
+
+#### Vue 2
+```bash
+npm install @ebin-player/vue2 @ebin-player/core
+```
+
+```vue
+<template>
+  <EbinPlayer
+    :src="videoSrc"
+    :ui-mode="'advanced'"
+    @ready="onReady"
+  />
+</template>
+
+<script>
+import { EbinPlayer } from '@ebin-player/vue2';
+import '@ebin-player/core/styles';
+
+export default {
+  components: { EbinPlayer },
+  data() {
+    return { videoSrc: 'video.mp4' };
+  },
+  methods: {
+    onReady() { console.log('Player ready'); }
+  }
+};
+</script>
+```
+
+#### Vue 3
+```bash
+npm install @ebin-player/vue3 @ebin-player/core
+```
+
+```vue
+<template>
+  <EbinPlayer
+    :src="videoSrc"
+    :ui-mode="'advanced'"
+    @ready="onReady"
+  />
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import { EbinPlayer } from '@ebin-player/vue3';
+import '@ebin-player/core/styles';
+
+const videoSrc = ref('video.mp4');
+const onReady = () => console.log('Player ready');
+</script>
+```
+
 ### Basic Usage
 
 #### HTML Import
