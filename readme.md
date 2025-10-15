@@ -782,6 +782,18 @@ Complete accessibility support based on `ErrorHandler` and ARIA standards:
 - **Edge** 79+
 - **Mobile Browsers** iOS Safari 12+, Chrome Mobile 60+
 
+### 🔧 Compatibility Features
+
+Ebin Player includes comprehensive compatibility adapters for seamless cross-browser experience:
+
+- **Autoplay Management** - Smart fallback strategies for different browsers
+- **Fullscreen/PiP Support** - Unified APIs across all platforms
+- **Subtitle Rendering** - Custom renderer bypassing browser limitations
+- **Touch Gestures** - Mobile-optimized interaction handling
+- **Memory Management** - Efficient resource usage for mobile devices
+
+See [Browser Compatibility Guide](./docs/en/compatibility.md) for detailed information.
+
 ## 📦 Build and Development
 
 ### Development Environment
@@ -864,6 +876,7 @@ src/
 - [🚀 Quick Start](./docs/en/quick-start.md)
 - [🔌 Plugin Development](./docs/en/examples/plugin-development.md)
 - [🎨 Theme Customization](./docs/en/examples/theming.md)
+- [🌐 Browser Compatibility](./docs/en/compatibility.md)
 - [📋 API Documentation](./docs-api/)
 
 ## 🎯 Online Demos

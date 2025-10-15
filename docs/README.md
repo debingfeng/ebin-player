@@ -27,7 +27,9 @@
 - [播放器API](./api/player-api.md) - 播放器核心API
 - [插件API](./api/plugin-api.md) - 插件系统API
 - [UI组件API](./api/ui-api.md) - UI组件API
+- [兼容性API](./api/compatibility-api.md) - 兼容性适配API
 - [类型定义](./api/types.md) - TypeScript类型定义
+- [兼容性指南](./compatibility.md) - 浏览器兼容性适配指南
 
 ### 在线演示
 - [完整演示](../demos/) - 在线功能演示

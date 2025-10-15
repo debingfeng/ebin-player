@@ -9,6 +9,7 @@ A modular, plugin-based web video player with modern architecture and TypeScript
 - [Framework Bindings](#framework-bindings)
   - See also: [Frameworks Overview](./frameworks.md)
 - [API Reference](#api-reference)
+- [Compatibility Guide](#compatibility-guide)
 - [Examples](#examples)
 - [Plugin Development](#plugin-development)
 - [Theme Customization](#theme-customization)
@@ -196,6 +197,42 @@ const onReady = () => console.log('Player ready');
 ### PlayerInstance
 
 The main player class that integrates core functionality, state management, and plugin system.
+
+## Compatibility Guide
+
+Ebin Player provides comprehensive browser compatibility support with built-in adapter layers for autoplay, fullscreen, picture-in-picture, and subtitle rendering.
+
+### Quick Start
+
+```typescript
+import { 
+  AutoplayManager, 
+  FullscreenAdapter, 
+  PictureInPictureAdapter, 
+  SubtitleRenderer,
+  detectCapabilities 
+} from '@ebin-player/core';
+
+// Detect browser capabilities
+const capabilities = await detectCapabilities();
+
+// Use compatibility adapters
+const autoplayManager = new AutoplayManager();
+const fullscreenAdapter = new FullscreenAdapter();
+const pipAdapter = new PictureInPictureAdapter();
+const subtitleRenderer = new SubtitleRenderer(container);
+```
+
+### Key Features
+
+- **Cross-browser autoplay handling** - Automatic fallback strategies
+- **Unified fullscreen API** - Works across all browsers
+- **Picture-in-picture support** - With graceful degradation
+- **Custom subtitle rendering** - Bypass browser limitations
+- **Touch gesture support** - Mobile-optimized interactions
+- **Memory management** - Mobile-friendly resource handling
+
+For detailed compatibility information, see [Compatibility Guide](./compatibility.md).
 
 #### Constructor
 
