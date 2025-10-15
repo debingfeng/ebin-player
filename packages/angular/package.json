@@ -1,6 +1,6 @@
 {
   "name": "@ebin-player/angular",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Angular bindings for ebin-player",
   "private": false,
   "sideEffects": false,
@@ -24,7 +24,7 @@
     "zone.js": "~0.15.0"
   },
   "dependencies": {
-    "@ebin-player/core": "^0.0.4"
+    "@ebin-player/core": "^0.0.5"
   },
   "devDependencies": {
     "@angular/common": "^20.3.4",

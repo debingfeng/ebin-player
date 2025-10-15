@@ -1,6 +1,6 @@
 {
   "name": "@ebin-player/react",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "React bindings for ebin-player",
   "private": false,
   "publishConfig": {
@@ -26,7 +26,7 @@
     "react-dom": ">=17"
   },
   "dependencies": {
-    "@ebin-player/core": "^0.0.4"
+    "@ebin-player/core": "^0.0.5"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",

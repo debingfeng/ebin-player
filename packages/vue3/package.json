@@ -1,6 +1,6 @@
 {
   "name": "@ebin-player/vue3",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Vue 3 bindings for ebin-player",
   "private": false,
   "main": "dist/index.js",
@@ -22,7 +22,7 @@
     "vue": "^3.0.0"
   },
   "dependencies": {
-    "@ebin-player/core": "^0.0.4"
+    "@ebin-player/core": "^0.0.5"
   },
   "devDependencies": {
     "@types/node": "^24.6.2",
