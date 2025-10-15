@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EbinPlayer React 基础示例</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .player-container {
+            width: 100%;
+            height: 400px;
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #f0f0f0;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>EbinPlayer React 基础示例</h1>
+        <p>这是一个使用 @ebin-player/react 的基础示例，展示了组件的各种功能。</p>
+        
+        <div id="root"></div>
+        
+        <div class="controls">
+            <button id="play-btn">播放</button>
+            <button id="pause-btn">暂停</button>
+            <button id="mute-btn">静音</button>
+            <button id="fullscreen-btn">全屏</button>
+            <button id="rate-btn">1.5x</button>
+        </div>
+        
+        <div class="status" id="status">
+            状态: 准备中...
+        </div>
+    </div>
+
+    <script type="module">
+        import { EbinPlayer } from '/packages/react/dist/index.esm.js';
+        import React from 'https://esm.sh/react@18';
+        import ReactDOM from 'https://esm.sh/react-dom@18';
+
+        const { useState, useRef, useEffect } = React;
+
+        function App() {
+            const [isPlaying, setIsPlaying] = useState(false);
+            const [isMuted, setIsMuted] = useState(false);
+            const [currentTime, setCurrentTime] = useState(0);
+            const [duration, setDuration] = useState(0);
+            const playerRef = useRef(null);
+
+            const handlePlay = () => {
+                setIsPlaying(true);
+                updateStatus('播放中...');
+            };
+
+            const handlePause = () => {
+                setIsPlaying(false);
+                updateStatus('已暂停');
+            };
+
+            const handleTimeUpdate = (time) => {
+                setCurrentTime(time);
+                updateStatus(`播放中... ${formatTime(time)} / ${formatTime(duration)}`);
+            };
+
+            const handleLoadedMetadata = () => {
+                const player = playerRef.current?.getInstance();
+                if (player) {
+                    setDuration(player.getDuration());
+                    updateStatus('视频已加载');
+                }
+            };
+
+            const updateStatus = (message) => {
+                document.getElementById('status').textContent = `状态: ${message}`;
+            };
+
+            const formatTime = (seconds) => {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            };
+
+            // 控制按钮事件
+            useEffect(() => {
+                const playBtn = document.getElementById('play-btn');
+                const pauseBtn = document.getElementById('pause-btn');
+                const muteBtn = document.getElementById('mute-btn');
+                const fullscreenBtn = document.getElementById('fullscreen-btn');
+                const rateBtn = document.getElementById('rate-btn');
+
+                const handlePlayClick = () => {
+                    const player = playerRef.current?.getInstance();
+                    if (player) player.play();
+                };
+
+                const handlePauseClick = () => {
+                    const player = playerRef.current?.getInstance();
+                    if (player) player.pause();
+                };
+
+                const handleMuteClick = () => {
+                    const player = playerRef.current?.getInstance();
+                    if (player) {
+                        const newMuted = !player.getMuted();
+                        player.setMuted(newMuted);
+                        setIsMuted(newMuted);
+                        updateStatus(newMuted ? '已静音' : '取消静音');
+                    }
+                };
+
+                const handleFullscreenClick = () => {
+                    const player = playerRef.current?.getInstance();
+                    if (player) {
+                        if (player.isFullscreen()) {
+                            player.exitFullscreen();
+                        } else {
+                            player.requestFullscreen();
+                        }
+                    }
+                };
+
+                const handleRateClick = () => {
+                    const player = playerRef.current?.getInstance();
+                    if (player) {
+                        const currentRate = player.getPlaybackRate();
+                        const newRate = currentRate === 1 ? 1.5 : 1;
+                        player.setPlaybackRate(newRate);
+                        updateStatus(`播放速度: ${newRate}x`);
+                    }
+                };
+
+                playBtn.addEventListener('click', handlePlayClick);
+                pauseBtn.addEventListener('click', handlePauseClick);
+                muteBtn.addEventListener('click', handleMuteClick);
+                fullscreenBtn.addEventListener('click', handleFullscreenClick);
+                rateBtn.addEventListener('click', handleRateClick);
+
+                return () => {
+                    playBtn.removeEventListener('click', handlePlayClick);
+                    pauseBtn.removeEventListener('click', handlePauseClick);
+                    muteBtn.removeEventListener('click', handleMuteClick);
+                    fullscreenBtn.removeEventListener('click', handleFullscreenClick);
+                    rateBtn.removeEventListener('click', handleRateClick);
+                };
+            }, []);
+
+            return React.createElement('div', null,
+                React.createElement('h2', null, '基础播放器'),
+                React.createElement(EbinPlayer, {
+                    ref: playerRef,
+                    src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
+                    uiMode: 'advanced',
+                    styleInjection: 'auto',
+                    onPlay: handlePlay,
+                    onPause: handlePause,
+                    onTimeUpdate: handleTimeUpdate,
+                    onLoadedMetadata: handleLoadedMetadata,
+                    onReady: () => updateStatus('播放器已准备就绪'),
+                    className: 'player-container'
+                }),
+                React.createElement('div', { className: 'status' },
+                    `当前状态: ${isPlaying ? '播放中' : '暂停'} | 静音: ${isMuted ? '是' : '否'}`
+                )
+            );
+        }
+
+        ReactDOM.render(React.createElement(App), document.getElementById('root'));
+    </script>
+</body>
+</html>

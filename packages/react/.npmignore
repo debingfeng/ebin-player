@@ -1,0 +1,40 @@
+# Source files
+src/
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Config files
+tsconfig.json
+jest.config.js
+.github/
+
+# Documentation
+README.md
+USAGE.md
+
+# Examples
+examples/
+
+# Development files
+.gitignore
+.npmignore
+
+# Coverage
+coverage/
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Dependencies
+node_modules/

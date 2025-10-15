@@ -1,0 +1,24 @@
+{
+  "name": "ebin-player-react-nextjs-example",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "13.0.0",
+    "react": "18.0.0",
+    "react-dom": "18.0.0",
+    "@ebin-player/react": "file:../../packages/react",
+    "ebin-player": "file:../../"
+  },
+  "devDependencies": {
+    "@types/node": "18.0.0",
+    "@types/react": "18.0.0",
+    "@types/react-dom": "18.0.0",
+    "typescript": "4.9.0"
+  }
+}

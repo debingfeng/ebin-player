@@ -46,7 +46,7 @@ A modern, modular web video player built with TypeScript, featuring a brand-new 
 ```bash
 pnpm add ebin-player
 # or
-npm install ebin-player
+npm install @ebin-player
 # or
 yarn add ebin-player
 ```
@@ -81,7 +81,7 @@ yarn add ebin-player
 #### ES6 Module Usage
 
 ```javascript
-import { PlayerInstance } from 'ebin-player';
+import { PlayerInstance } from '@ebin-player';
 import 'ebin-player/styles';
 
 const player = new EbinPlayer(container, {
@@ -94,7 +94,7 @@ const player = new EbinPlayer(container, {
 #### Using createPlayer Factory Function
 
 ```javascript
-import { createPlayer } from 'ebin-player';
+import { createPlayer } from '@ebin-player';
 import 'ebin-player/styles';
 
 const player = createPlayer(container, {
@@ -519,7 +519,7 @@ const player = new EbinPlayer(container, {
 #### Base Plugin Class
 
 ```typescript
-import { BasePlugin, PluginDefinition, PluginContext } from 'ebin-player';
+import { BasePlugin, PluginDefinition, PluginContext } from '@ebin-player';
 
 interface MyPluginConfig {
     enabled: boolean;
@@ -651,7 +651,7 @@ builtinPlugins: {
 }
 
 // Or manually install
-import { PlaybackRatePlugin } from 'ebin-player';
+import { PlaybackRatePlugin } from '@ebin-player';
 player.use(PlaybackRatePlugin);
 ```
 
@@ -815,7 +815,7 @@ src/
 
 ```javascript
 // Basic player
-import { PlayerInstance } from 'ebin-player';
+import { PlayerInstance } from '@ebin-player';
 
 const player = new EbinPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',

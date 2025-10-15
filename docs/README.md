@@ -34,7 +34,7 @@
 ### 安装
 
 ```bash
-npm install ebin-player
+npm install @ebin-player
 ```
 
 ### 基础使用
@@ -62,7 +62,7 @@ npm install ebin-player
 ### 高级使用
 
 ```typescript
-import { createPlayer, PlaybackRatePlugin } from 'ebin-player';
+import { createPlayer, PlaybackRatePlugin } from '@ebin-player';
 
 const player = createPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',

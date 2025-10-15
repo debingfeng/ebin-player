@@ -1,5 +1,5 @@
 {
-  "name": "ebin-player",
+  "name": "@ebin-player",
   "version": "0.0.4",
   "description": "A modular, plugin-based web video player with modern architecture",
   "main": "dist/ebin-player.umd.js",
@@ -28,14 +28,17 @@
     "url": "https://github.com/debingfeng/ebin-player/issues"
   },
   "scripts": {
-    "build": "npm run clean && npm run build:css:prod && rollup -c --bundleConfigAsCjs",
-    "build:dev": "npm run clean && npm run build:css && rollup -c --bundleConfigAsCjs",
+    "build": "pnpm run clean && pnpm run build:css:prod && rollup -c --bundleConfigAsCjs",
+    "build:dev": "pnpm run clean && pnpm run build:css && rollup -c --bundleConfigAsCjs",
     "dev": "rollup -c -w --bundleConfigAsCjs",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
     "build:css": "npx @tailwindcss/cli -i ./src/styles/tailwind.css -o ./dist/styles.css --watch",
     "build:css:prod": "npx @tailwindcss/cli -i ./src/styles/tailwind.css -o ./dist/styles.css --minify",
     "test": "jest",
+    "test:all": "pnpm -r test",
+    "test:react": "pnpm -C packages/react test",
+    "test:react-app": "./scripts/test-react.sh",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:ci": "jest --ci --coverage --watchAll=false",
@@ -56,10 +59,10 @@
     "prepublishOnly": "pnpm run build",
     "prepack": "pnpm run build",
     "prepublish": "pnpm run build",
-    "publish:patch": "pnpm run version:patch && pnpm run build && pnpm publish",
-    "publish:minor": "pnpm run version:minor && pnpm run build && pnpm publish",
-    "publish:major": "pnpm run version:major && pnpm run build && pnpm publish",
-    "publish:dry": "pnpm run build && pnpm publish --dry-run"
+    "publish:patch": "pnpm run version:patch && pnpm run build && pnpm -r publish",
+    "publish:minor": "pnpm run version:minor && pnpm run build && pnpm -r publish",
+    "publish:major": "pnpm run version:major && pnpm run build && pnpm -r publish",
+    "publish:dry": "pnpm run build && pnpm -r publish --dry-run"
   },
   "keywords": [
     "video-player",

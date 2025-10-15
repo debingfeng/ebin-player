@@ -46,7 +46,7 @@
 ```bash
 pnpm add ebin-player
 # 或
-npm install ebin-player
+npm install @ebin-player
 # 或
 yarn add ebin-player
 ```
@@ -81,7 +81,7 @@ yarn add ebin-player
 #### ES6 模块使用
 
 ```javascript
-import { PlayerInstance } from 'ebin-player';
+import { PlayerInstance } from '@ebin-player';
 import 'ebin-player/styles';
 
 const player = new EbinPlayer(container, {
@@ -94,7 +94,7 @@ const player = new EbinPlayer(container, {
 #### 使用 createPlayer 工厂函数
 
 ```javascript
-import { createPlayer } from 'ebin-player';
+import { createPlayer } from '@ebin-player';
 import 'ebin-player/styles';
 
 const player = createPlayer(container, {
@@ -519,7 +519,7 @@ const player = new EbinPlayer(container, {
 #### 基础插件类
 
 ```typescript
-import { BasePlugin, PluginDefinition, PluginContext } from 'ebin-player';
+import { BasePlugin, PluginDefinition, PluginContext } from '@ebin-player';
 
 interface MyPluginConfig {
     enabled: boolean;
@@ -651,7 +651,7 @@ builtinPlugins: {
 }
 
 // 或手动安装
-import { PlaybackRatePlugin } from 'ebin-player';
+import { PlaybackRatePlugin } from '@ebin-player';
 player.use(PlaybackRatePlugin);
 ```
 
@@ -815,7 +815,7 @@ src/
 
 ```javascript
 // 基础播放器
-import { PlayerInstance } from 'ebin-player';
+import { PlayerInstance } from '@ebin-player';
 
 const player = new EbinPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
