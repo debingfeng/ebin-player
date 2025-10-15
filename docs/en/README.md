@@ -150,6 +150,27 @@ export default {
 npm install @ebin-player/vue3 @ebin-player/core
 ```
 
+### Angular
+```bash
+npm install @ebin-player/angular @ebin-player/core
+```
+
+```ts
+// app.module.ts
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { EbinPlayerModule } from '@ebin-player/angular';
+
+@NgModule({
+  imports: [BrowserModule, EbinPlayerModule],
+})
+export class AppModule {}
+```
+
+```html
+<ebin-player [src]="'video.mp4'" [uiMode]="'advanced'" (ready)="onReady()"></ebin-player>
+```
+
 ```vue
 <template>
   <EbinPlayer

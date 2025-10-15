@@ -19,6 +19,7 @@
 - [React 绑定](../packages/react/README.md) - React 组件使用指南
 - [Vue 2 绑定](../packages/vue2/README.md) - Vue 2 组件使用指南
 - [Vue 3 绑定](../packages/vue3/README.md) - Vue 3 组件使用指南
+- [Angular 绑定](../packages/angular/README.md) - Angular 组件使用指南
 
 ### API 文档
 - [完整API文档](../docs-api/) - 自动生成的API参考文档

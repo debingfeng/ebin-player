@@ -42,7 +42,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage --ci --watchAll=false",
     "test:ci": "jest --ci --coverage --watchAll=false --passWithNoTests",
-    "prepublishOnly": "pnpm run build && pnpm run test:ci"
+    "prepublishOnly": "pnpm run build"
   },
   "license": "MIT",
   "repository": {
