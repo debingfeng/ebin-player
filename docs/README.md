@@ -34,7 +34,7 @@
 ### 安装
 
 ```bash
-npm install @ebin/player
+npm install @ebin-player/core
 ```
 
 ### 基础使用
@@ -43,7 +43,7 @@ npm install @ebin/player
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="node_modules/ebin-player/dist/styles.css">
+    <link rel="stylesheet" href="node_modules/@ebin-player/core/dist/styles.css">
 </head>
 <body>
     <div id="player"></div>
@@ -62,7 +62,7 @@ npm install @ebin/player
 ### 高级使用
 
 ```typescript
-import { createPlayer, PlaybackRatePlugin } from '@ebin/player';
+import { createPlayer, PlaybackRatePlugin } from '@ebin-player/core';
 
 const player = createPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/SubaruOutbackOnStreetAndDirt.mp4',

@@ -1,20 +1,20 @@
-# ebin-player-react
+# @ebin-player/react
 
 React 适配层：将 `ebin-player` 以 React 组件方式提供，支持自动/手动样式注入、SSR 安全、插件直通与命令式控制。
 
 ## 安装
 
 ```bash
-pnpm add ebin-player-react ebin-player
+pnpm add @ebin-player/react ebin-player
 # 或 npm/yarn
 ```
 
-> 注意：样式默认自动注入；也可手动引入 `import 'ebin-player/styles'`。
+> 注意：样式默认自动注入；也可手动引入 `import '@ebin-player/core/styles'`。
 
 ## 快速开始
 
 ```tsx
-import { EbinPlayer } from 'ebin-player-react';
+import { EbinPlayer } from '@ebin-player/react';
 
 export default function Demo() {
   return (

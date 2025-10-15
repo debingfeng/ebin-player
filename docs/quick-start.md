@@ -15,7 +15,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EbinPlayer 快速开始</title>
-    <link rel="stylesheet" href="node_modules/ebin-player/dist/styles.css">
+    <link rel="stylesheet" href="node_modules/@ebin-player/core/dist/styles.css">
 </head>
 <body>
     <div id="player-container"></div>
@@ -33,7 +33,7 @@
 
 ```html
 <!-- CSS 样式 -->
-<link rel="stylesheet" href="node_modules/ebin-player/dist/styles.css">
+<link rel="stylesheet" href="node_modules/@ebin-player/core/dist/styles.css">
 
 <!-- JavaScript 库 -->
 <script src="node_modules/ebin-player/dist/ebin-player.umd.js"></script>

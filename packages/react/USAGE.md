@@ -1,20 +1,20 @@
-# ebin-player-react 使用指南
+# @ebin-player/react 使用指南
 
 ## 安装
 
 ```bash
-pnpm add ebin-player-react ebin-player
+pnpm add @ebin-player/react @ebin-player/core
 # 或
-npm install @ebin/player-react ebin-player
+npm install @ebin-player/react @ebin-player/core
 # 或
-yarn add ebin-player-react ebin-player
+yarn add @ebin-player/react @ebin-player/core
 ```
 
 ## 基础使用
 
 ```tsx
 import React from 'react';
-import { EbinPlayer } from 'ebin-player-react';
+import { EbinPlayer } from '@ebin-player/react';
 
 function App() {
   return (
@@ -38,7 +38,7 @@ function App() {
 ### 手动注入（推荐用于 Next.js）
 ```tsx
 // 在 _app.tsx 或全局 CSS 中引入
-import 'ebin-player/styles';
+import '@ebin-player/core/styles';
 
 <EbinPlayer src="video.mp4" styleInjection="manual" />
 ```
@@ -72,7 +72,7 @@ import 'ebin-player/styles';
 
 ```tsx
 import React, { useRef } from 'react';
-import { EbinPlayer } from 'ebin-player-react';
+import { EbinPlayer } from '@ebin-player/react';
 
 function App() {
   const playerRef = useRef(null);
@@ -112,7 +112,7 @@ function App() {
 ## 插件使用
 
 ```tsx
-import { EbinPlayer } from 'ebin-player-react';
+import { EbinPlayer } from '@ebin-player/react';
 
 // 内置插件
 <EbinPlayer
@@ -145,7 +145,7 @@ import { EbinPlayer } from 'ebin-player-react';
 
 ### pages/_app.tsx
 ```tsx
-import 'ebin-player/styles';
+import '@ebin-player/core/styles';
 
 export default function App({ Component, pageProps }) {
   return <Component {...pageProps} />;
@@ -157,7 +157,7 @@ export default function App({ Component, pageProps }) {
 import dynamic from 'next/dynamic';
 
 const EbinPlayer = dynamic(
-  () => import('@ebin/player/react').then(mod => ({ default: mod.EbinPlayer })),
+  () => import('@ebin-player/react').then(mod => ({ default: mod.EbinPlayer })),
   { ssr: false }
 );
 
@@ -212,7 +212,7 @@ export default function Home() {
 ## 类型支持
 
 ```tsx
-import type { ReactEbinPlayerProps, ReactEbinPlayerRef } from '@ebin/player/react';
+import type { ReactEbinPlayerProps, ReactEbinPlayerRef } from '@ebin-player/react';
 
 const props: ReactEbinPlayerProps = {
   src: 'video.mp4',

@@ -31,7 +31,7 @@
 ### 基础使用
 
 ```typescript
-import { createPlayer } from '@ebin/player';
+import { createPlayer } from '@ebin-player/core';
 
 const player = createPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4',
@@ -55,7 +55,7 @@ player.on('pause', () => {
 ### 插件使用
 
 ```typescript
-import { PlaybackRatePlugin } from '@ebin/player';
+import { PlaybackRatePlugin } from '@ebin-player/core';
 
 player.use(PlaybackRatePlugin, {
     rates: [0.5, 1, 1.25, 1.5, 2]

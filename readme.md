@@ -44,11 +44,11 @@ A modern, modular web video player built with TypeScript, featuring a brand-new 
 ### Installation
 
 ```bash
-pnpm add ebin-player
+pnpm add @ebin-player/core
 # or
-npm install @ebin/player
+npm install @ebin-player/core
 # or
-yarn add ebin-player
+yarn add @ebin-player/core
 ```
 
 ### Basic Usage
@@ -59,7 +59,7 @@ yarn add ebin-player
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="node_modules/ebin-player/dist/styles.css">
+    <link rel="stylesheet" href="node_modules/@ebin-player/core/dist/styles.css">
 </head>
 <body>
     <div id="player-container"></div>
@@ -81,8 +81,8 @@ yarn add ebin-player
 #### ES6 Module Usage
 
 ```javascript
-import { PlayerInstance } from '@ebin/player';
-import 'ebin-player/styles';
+import { PlayerInstance } from '@ebin-player/core';
+import '@ebin-player/core/styles';
 
 const player = new EbinPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
@@ -94,8 +94,8 @@ const player = new EbinPlayer(container, {
 #### Using createPlayer Factory Function
 
 ```javascript
-import { createPlayer } from '@ebin/player';
-import 'ebin-player/styles';
+import { createPlayer } from '@ebin-player/core';
+import '@ebin-player/core/styles';
 
 const player = createPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
@@ -519,7 +519,7 @@ const player = new EbinPlayer(container, {
 #### Base Plugin Class
 
 ```typescript
-import { BasePlugin, PluginDefinition, PluginContext } from '@ebin/player';
+import { BasePlugin, PluginDefinition, PluginContext } from '@ebin-player/core';
 
 interface MyPluginConfig {
     enabled: boolean;
@@ -651,7 +651,7 @@ builtinPlugins: {
 }
 
 // Or manually install
-import { PlaybackRatePlugin } from '@ebin/player';
+import { PlaybackRatePlugin } from '@ebin-player/core';
 player.use(PlaybackRatePlugin);
 ```
 
@@ -815,7 +815,7 @@ src/
 
 ```javascript
 // Basic player
-import { PlayerInstance } from '@ebin/player';
+import { PlayerInstance } from '@ebin-player/core';
 
 const player = new EbinPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',

@@ -1,27 +1,27 @@
-# ebin-player-react 发布总结
+# @ebin-player/react 发布总结
 
 ## 📦 包信息
 
-- **包名**: `ebin-player-react`
+- **包名**: `@ebin-player/react`
 - **当前版本**: `0.0.4`
-- **NPM 地址**: https://www.npmjs.com/package/ebin-player-react
+- **NPM 地址**: https://www.npmjs.com/package/@ebin-player/react
 - **发布者**: freddy (ifengdb@163.com)
 
 ## 🚀 安装使用
 
 ```bash
 # 安装
-npm install @ebin/player-react ebin-player
+npm install @ebin-player/react @ebin-player/core
 # 或
-pnpm add ebin-player-react ebin-player
+pnpm add @ebin-player/react @ebin-player/core
 # 或
-yarn add ebin-player-react ebin-player
+yarn add @ebin-player/react @ebin-player/core
 ```
 
 ```tsx
 // 使用
-import { EbinPlayer } from 'ebin-player-react';
-import 'ebin-player/styles';
+import { EbinPlayer } from '@ebin-player/react';
+import '@ebin-player/core/styles';
 
 function App() {
   return (
@@ -88,10 +88,10 @@ pnpm run test:react-app
 # 创建测试项目
 mkdir test-project && cd test-project
 npm init -y
-npm install @ebin/player-react ebin-player
+npm install @ebin-player/react @ebin-player/core
 
 # 测试导入
-node -e "const { EbinPlayer } = require('ebin-player-react'); console.log('✅ 导入成功:', typeof EbinPlayer);"
+node -e "const { EbinPlayer } = require('@ebin-player/react'); console.log('✅ 导入成功:', typeof EbinPlayer);"
 ```
 
 ## 📚 文档

@@ -7,7 +7,7 @@ This guide will help you install and set up EbinPlayer in your project.
 ### NPM
 
 ```bash
-npm install @ebin/player
+npm install @ebin-player/core
 ```
 
 ### Yarn
@@ -27,8 +27,8 @@ pnpm add ebin-player
 ### ES6 Module (Recommended)
 
 ```javascript
-import EbinPlayer from '@ebin/player';
-import 'ebin-player/dist/styles.css';
+import EbinPlayer from '@ebin-player/core';
+import '@ebin-player/core/dist/styles.css';
 
 const player = new EbinPlayer(container, {
     src: 'video.mp4',
@@ -41,7 +41,7 @@ const player = new EbinPlayer(container, {
 
 ```javascript
 const EbinPlayer = require('ebin-player');
-require('ebin-player/dist/styles.css');
+require('@ebin-player/core/dist/styles.css');
 
 const player = new EbinPlayer(container, {
     src: 'video.mp4',
@@ -66,7 +66,7 @@ EbinPlayer is written in TypeScript and provides full type definitions.
 ### TypeScript Configuration
 
 ```typescript
-import { createPlayer, type PlayerOptions } from '@ebin/player';
+import { createPlayer, type PlayerOptions } from '@ebin-player/core';
 
 const options: PlayerOptions = {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4',
@@ -95,7 +95,7 @@ The package includes comprehensive TypeScript definitions:
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="https://unpkg.com/ebin-player/dist/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/@ebin-player/core/dist/styles.css">
 </head>
 <body>
     <div id="player"></div>
@@ -114,7 +114,7 @@ The package includes comprehensive TypeScript definitions:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/ebin-player/dist/ebin-player.umd.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ebin-player/dist/styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ebin-player/core/dist/styles.css">
 ```
 
 ## Framework Integration
@@ -123,8 +123,8 @@ The package includes comprehensive TypeScript definitions:
 
 ```jsx
 import React, { useEffect, useRef } from 'react';
-import EbinPlayer from '@ebin/player';
-import 'ebin-player/dist/styles.css';
+import EbinPlayer from '@ebin-player/core';
+import '@ebin-player/core/dist/styles.css';
 
 function VideoPlayer({ src, options = {} }) {
     const containerRef = useRef(null);
@@ -157,8 +157,8 @@ function VideoPlayer({ src, options = {} }) {
 </template>
 
 <script>
-import EbinPlayer from '@ebin/player';
-import 'ebin-player/dist/styles.css';
+import EbinPlayer from '@ebin-player/core';
+import '@ebin-player/core/dist/styles.css';
 
 export default {
     name: 'VideoPlayer',
@@ -185,8 +185,8 @@ export default {
 
 ```typescript
 import { Component, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
-import EbinPlayer from '@ebin/player';
-import 'ebin-player/dist/styles.css';
+import EbinPlayer from '@ebin-player/core';
+import '@ebin-player/core/dist/styles.css';
 
 @Component({
     selector: 'app-video-player',
@@ -260,7 +260,7 @@ export default defineConfig({
     css: {
         preprocessorOptions: {
             css: {
-                additionalData: `@import 'ebin-player/dist/styles.css';`
+                additionalData: `@import '@ebin-player/core/dist/styles.css';`
             }
         }
     }

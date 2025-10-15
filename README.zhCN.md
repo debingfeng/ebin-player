@@ -44,11 +44,11 @@
 ### 安装
 
 ```bash
-pnpm add ebin-player
+pnpm add @ebin-player/core
 # 或
-npm install @ebin/player
+npm install @ebin-player/core
 # 或
-yarn add ebin-player
+yarn add @ebin-player/core
 ```
 
 ### 基础使用
@@ -59,7 +59,7 @@ yarn add ebin-player
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="node_modules/ebin-player/dist/styles.css">
+    <link rel="stylesheet" href="node_modules/@ebin-player/core/dist/styles.css">
 </head>
 <body>
     <div id="player-container"></div>
@@ -81,8 +81,8 @@ yarn add ebin-player
 #### ES6 模块使用
 
 ```javascript
-import { PlayerInstance } from '@ebin/player';
-import 'ebin-player/styles';
+import { PlayerInstance } from '@ebin-player/core';
+import '@ebin-player/core/styles';
 
 const player = new EbinPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
@@ -94,8 +94,8 @@ const player = new EbinPlayer(container, {
 #### 使用 createPlayer 工厂函数
 
 ```javascript
-import { createPlayer } from '@ebin/player';
-import 'ebin-player/styles';
+import { createPlayer } from '@ebin-player/core';
+import '@ebin-player/core/styles';
 
 const player = createPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',
@@ -519,7 +519,7 @@ const player = new EbinPlayer(container, {
 #### 基础插件类
 
 ```typescript
-import { BasePlugin, PluginDefinition, PluginContext } from '@ebin/player';
+import { BasePlugin, PluginDefinition, PluginContext } from '@ebin-player/core';
 
 interface MyPluginConfig {
     enabled: boolean;
@@ -651,7 +651,7 @@ builtinPlugins: {
 }
 
 // 或手动安装
-import { PlaybackRatePlugin } from '@ebin/player';
+import { PlaybackRatePlugin } from '@ebin-player/core';
 player.use(PlaybackRatePlugin);
 ```
 
@@ -815,7 +815,7 @@ src/
 
 ```javascript
 // 基础播放器
-import { PlayerInstance } from '@ebin/player';
+import { PlayerInstance } from '@ebin-player/core';
 
 const player = new EbinPlayer(container, {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4',

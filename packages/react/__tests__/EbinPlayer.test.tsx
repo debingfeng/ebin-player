@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { EbinPlayer } from '../src/EbinPlayer';
 
 // Mock ebin-player
-jest.mock('ebin-player', () => ({
+jest.mock('@ebin-player/core', () => ({
   createPlayer: jest.fn(() => ({
     on: jest.fn(() => () => {}),
     play: jest.fn(),
@@ -50,7 +50,7 @@ describe('EbinPlayer', () => {
   });
 
   it('calls createPlayer with correct options', () => {
-    const { createPlayer } = require('ebin-player');
+    const { createPlayer } = require('@ebin-player/core');
     render(<EbinPlayer src="test.mp4" uiMode="advanced" autoplay containerProps={{ 'data-testid': 'c' }} />);
     
     expect(createPlayer).toHaveBeenCalledWith(
@@ -74,7 +74,7 @@ describe('EbinPlayer', () => {
     );
 
     // 模拟事件触发
-    const { createPlayer } = require('ebin-player');
+    const { createPlayer } = require('@ebin-player/core');
     const mockPlayer = createPlayer.mock.results[0].value;
     
     // 模拟 on 方法被调用
@@ -128,7 +128,7 @@ describe('EbinPlayer', () => {
   });
 
   it('handles incremental updates', () => {
-    const { createPlayer } = require('ebin-player');
+    const { createPlayer } = require('@ebin-player/core');
     const { rerender } = render(<EbinPlayer src="test.mp4" muted={false} />);
     const mockPlayer = createPlayer.mock.results[0]?.value;
     
@@ -139,7 +139,7 @@ describe('EbinPlayer', () => {
   });
 
   it('handles reinitializeOn correctly', () => {
-    const { createPlayer } = require('ebin-player');
+    const { createPlayer } = require('@ebin-player/core');
     
     const { rerender } = render(
       <EbinPlayer
@@ -163,7 +163,7 @@ describe('EbinPlayer', () => {
   });
 
   it('cleans up on unmount', () => {
-    const { createPlayer } = require('ebin-player');
+    const { createPlayer } = require('@ebin-player/core');
     const { unmount } = render(<EbinPlayer src="test.mp4" />);
     const mockPlayer = createPlayer.mock.results[0]?.value;
     

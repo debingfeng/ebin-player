@@ -10,7 +10,7 @@ Get up and running with EbinPlayer in minutes.
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="node_modules/ebin-player/dist/styles.css">
+    <link rel="stylesheet" href="node_modules/@ebin-player/core/dist/styles.css">
 </head>
 <body>
     <div id="player"></div>

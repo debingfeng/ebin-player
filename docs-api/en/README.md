@@ -17,7 +17,7 @@ A modular, plugin-based web video player with modern architecture and TypeScript
 ### NPM
 
 ```bash
-npm install @ebin/player
+npm install @ebin-player/core
 ```
 
 ### Yarn
@@ -36,7 +36,7 @@ pnpm add ebin-player
 
 ```html
 <script src="https://unpkg.com/ebin-player/dist/ebin-player.umd.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/ebin-player/dist/styles.css">
+<link rel="stylesheet" href="https://unpkg.com/@ebin-player/core/dist/styles.css">
 ```
 
 ## Quick Start
@@ -47,7 +47,7 @@ pnpm add ebin-player
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="node_modules/ebin-player/dist/styles.css">
+    <link rel="stylesheet" href="node_modules/@ebin-player/core/dist/styles.css">
 </head>
 <body>
     <div id="player"></div>
@@ -66,8 +66,8 @@ pnpm add ebin-player
 ### ES6 Module
 
 ```javascript
-import EbinPlayer from '@ebin/player';
-import 'ebin-player/dist/styles.css';
+import EbinPlayer from '@ebin-player/core';
+import '@ebin-player/core/dist/styles.css';
 
 const player = new EbinPlayer(container, {
     src: 'video.mp4',
@@ -79,7 +79,7 @@ const player = new EbinPlayer(container, {
 ### TypeScript
 
 ```typescript
-import { createPlayer, type PlayerOptions } from '@ebin/player';
+import { createPlayer, type PlayerOptions } from '@ebin-player/core';
 
 const options: PlayerOptions = {
     src: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/VolkswagenGTIReview.mp4',

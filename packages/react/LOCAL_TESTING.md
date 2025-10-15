@@ -1,6 +1,6 @@
 # 本地测试指南
 
-本指南介绍如何在其他项目中本地引用和测试 `@ebin/player/react` 包。
+本指南介绍如何在其他项目中本地引用和测试 `@ebin-player/react` 包。
 
 ## 方法一：使用 pnpm link（推荐）
 
@@ -17,14 +17,14 @@ pnpm link --global
 ```bash
 # 在你的测试项目中
 cd /path/to/your-test-project
-pnpm link @ebin/player/react
+pnpm link @ebin-player/react
 ```
 
 ### 3. 使用包
 
 ```tsx
-import { EbinPlayer } from '@ebin/player/react';
-import 'ebin-player/styles'; // 需要手动引入样式
+import { EbinPlayer } from '@ebin-player/react';
+import '@ebin-player/core/styles'; // 需要手动引入样式
 
 function App() {
   return (
@@ -44,7 +44,7 @@ function App() {
 ```json
 {
   "dependencies": {
-    "@ebin/player/react": "file:../path/to/ebin-player/packages/react",
+    "@ebin-player/react": "file:../path/to/ebin-player/packages/react",
     "ebin-player": "file:../path/to/ebin-player"
   }
 }
@@ -64,14 +64,14 @@ pnpm install
 cd /path/to/ebin-player/packages/react
 pnpm run build
 npm pack
-# 这会生成 ebin-player-react-0.0.1.tgz
+# 这会生成 @ebin-player/react-0.0.1.tgz
 ```
 
 ### 2. 在测试项目中安装
 
 ```bash
 cd /path/to/your-test-project
-pnpm add /path/to/ebin-player/packages/react/ebin-player-react-0.0.1.tgz
+pnpm add /path/to/ebin-player/packages/react/@ebin-player/react-0.0.1.tgz
 ```
 
 ## 方法四：使用 pnpm workspace（推荐用于 monorepo）
@@ -89,7 +89,7 @@ packages:
 ```json
 {
   "dependencies": {
-    "@ebin/player/react": "workspace:*",
+    "@ebin-player/react": "workspace:*",
     "ebin-player": "workspace:*"
   }
 }
@@ -102,8 +102,8 @@ packages:
 ```tsx
 // App.tsx
 import React, { useRef, useState } from 'react';
-import { EbinPlayer } from '@ebin/player/react';
-import 'ebin-player/styles';
+import { EbinPlayer } from '@ebin-player/react';
+import '@ebin-player/core/styles';
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -151,11 +151,11 @@ export default App;
 ```tsx
 // pages/index.tsx
 import dynamic from 'next/dynamic';
-import { EbinPlayer } from '@ebin/player/react';
+import { EbinPlayer } from '@ebin-player/react';
 
 // 动态导入，禁用 SSR
 const DynamicEbinPlayer = dynamic(
-  () => import('@ebin/player/react').then(mod => ({ default: mod.EbinPlayer })),
+  () => import('@ebin-player/react').then(mod => ({ default: mod.EbinPlayer })),
   { ssr: false }
 );
 
@@ -176,7 +176,7 @@ export default function Home() {
 
 ```tsx
 // pages/_app.tsx
-import 'ebin-player/styles';
+import '@ebin-player/core/styles';
 
 export default function App({ Component, pageProps }) {
   return <Component {...pageProps} />;
@@ -228,7 +228,7 @@ playerRef.current?.getInstance()?.requestFullscreen();
 ## 常见问题
 
 ### Q: 样式没有生效？
-A: 确保引入了样式文件：`import 'ebin-player/styles'`
+A: 确保引入了样式文件：`import '@ebin-player/core/styles'`
 
 ### Q: Next.js 中播放器不显示？
 A: 使用动态导入并设置 `ssr: false`
@@ -241,7 +241,7 @@ A: 尝试删除 `node_modules` 和 `pnpm-lock.yaml`，然后重新安装
 
 ## 开发模式
 
-如果你在开发 `@ebin/player/react` 包，建议使用 `pnpm link` 方法，这样修改源码后会自动反映到测试项目中。
+如果你在开发 `@ebin-player/react` 包，建议使用 `pnpm link` 方法，这样修改源码后会自动反映到测试项目中。
 
 ```bash
 # 修改源码后重新构建
