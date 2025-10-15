@@ -1,6 +1,6 @@
 {
   "name": "@ebin-player/core",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A modular, plugin-based web video player with modern architecture",
   "publishConfig": {
     "access": "public"
