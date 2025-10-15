@@ -47,6 +47,9 @@ export { TimeDisplay } from "./ui/components/TimeDisplay";
 // UI配置
 export { UIConfigManager } from "./ui/config/UIConfig";
 
+// 适配层导出（统一 compat 目录）
+export * from "./compat";
+
 // 工具函数
 export const createPlayer = (
   container: HTMLElement,

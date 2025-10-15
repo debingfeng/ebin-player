@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Fullscreen & PiP</title>
+  <link rel="stylesheet" href="/../dist/styles.css" />
+  <style>body{font-family:system-ui;padding:16px}</style>
+</head>
+<body>
+  <h1>Fullscreen & PiP</h1>
+  <div id="wrap" style="position:relative;width:640px;height:360px;background:#000">
+    <video id="v" width="640" height="360" playsinline controls preload="metadata"></video>
+  </div>
+  <div>
+    <button id="fs">Fullscreen</button>
+    <button id="pip">PiP</button>
+  </div>
+  <script type="module">
+    import { FullscreenAdapter, PictureInPictureAdapter } from '../../../dist/ebin-player.esm.js';
+    const v = document.getElementById('v');
+    v.src = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4';
+    const fs = new FullscreenAdapter();
+    const pip = new PictureInPictureAdapter();
+    document.getElementById('fs').onclick = () => fs.request(document.getElementById('wrap'));
+    document.getElementById('pip').onclick = () => pip.request(v).catch(e => alert(e.message));
+  </script>
+</body>
+</html>

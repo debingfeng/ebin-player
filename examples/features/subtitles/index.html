@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Subtitle Renderer</title>
+  <link rel="stylesheet" href="/../dist/styles.css" />
+  <style>body{font-family:system-ui;padding:16px}</style>
+</head>
+<body>
+  <h1>Subtitle Renderer</h1>
+  <div id="wrap" style="position:relative;width:640px;height:360px;background:#000">
+    <video id="v" width="640" height="360" playsinline controls preload="metadata"></video>
+    <div id="subs"></div>
+  </div>
+  <script type="module">
+    import { SubtitleRenderer } from '../../../dist/ebin-player.esm.js';
+    const v = document.getElementById('v');
+    v.src = 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4';
+    const r = new SubtitleRenderer(document.getElementById('subs'));
+    const cues = [
+      { startTime: 0, endTime: 3, text: 'Hello World' },
+      { startTime: 3, endTime: 6, text: 'Ebin Player Subtitle Renderer' }
+    ];
+    v.addEventListener('timeupdate', () => r.render(cues, v.currentTime));
+  </script>
+</body>
+</html>
